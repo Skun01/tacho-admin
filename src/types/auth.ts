@@ -9,11 +9,14 @@ export interface RegisterRequest {
   displayName: string
 }
 
+export type UserRole = 'user' | 'editor' | 'admin'
+
 export interface UserDTO {
   id: string
   email: string
   displayName: string
   avatarUrl?: string
+  role: UserRole
   createdAt: string
 }
 

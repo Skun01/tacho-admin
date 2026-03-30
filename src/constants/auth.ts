@@ -1,15 +1,18 @@
 export const AUTH_LOGIN_COPY = {
-  heading: 'Chào mừng trở lại',
-  subheading: 'Đăng nhập để tiếp tục hành trình của bạn.',
+  heading: 'Tacho Admin',
+  subheading: 'Đăng nhập để quản lý nội dung và hệ thống.',
+  badge: 'Studio Scholar',
   emailLabel: 'Email',
-  emailPlaceholder: 'you@example.com',
+  emailPlaceholder: 'admin@tacho.app',
   passwordLabel: 'Mật khẩu',
   passwordPlaceholder: '••••••••',
   submitButton: 'Đăng nhập',
-  loadingButton: 'Đang đăng nhập...',
-  registerPrompt: 'Chưa có tài khoản?',
-  registerLink: 'Đăng ký',
+  loadingButton: 'Đang xác thực...',
+  registerPrompt: '',
+  registerLink: '',
   forgotPassword: 'Quên mật khẩu?',
+  roleNote: 'Chỉ tài khoản Editor hoặc Admin mới có thể đăng nhập.',
+  errorInvalidRole: 'Tài khoản này không có quyền truy cập trang quản trị.',
 } as const
 
 export const AUTH_REGISTER_COPY = {

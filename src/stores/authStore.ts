@@ -23,12 +23,30 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: () => set({ token: null, user: null, isLoading: false }),
 
   init: async () => {
+    if (import.meta.env.DEV) {
+      set({
+        token: 'dev-mock-token',
+        user: {
+          id: 'dev-user-id',
+          email: 'admin@tacho.dev',
+          displayName: 'Admin Dev',
+          avatarUrl: undefined,
+          createdAt: new Date().toISOString(),
+          role: 'admin',
+        },
+        isLoading: false,
+      })
+      return
+    }
     set({ isLoading: true })
     try {
       const { authService } = await import('@/services/authService')
-      const { data } = await authService.refresh()
+      const refreshRes = await authService.refresh()
+      const token = refreshRes.data.data.accessToken
+      const meRes = await authService.getMe()
       set({
-        token: data.data.accessToken,
+        token,
+        user: meRes.data.data,
         isLoading: false,
       })
     } catch {

@@ -7,5 +7,6 @@ export function GuestRoute() {
 
   if (isLoading) return null
 
+  if (import.meta.env.DEV) return <Outlet />
   return token ? <Navigate to="/dashboard" replace /> : <Outlet />
 }

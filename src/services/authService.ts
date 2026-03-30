@@ -1,5 +1,5 @@
 import type { ApiResponse } from '@/types/api'
-import type { AuthDTO, LoginRequest, RegisterRequest } from '@/types/auth'
+import type { AuthDTO, LoginRequest, RegisterRequest, UserDTO } from '@/types/auth'
 import api from './api'
 
 export const authService = {
@@ -14,4 +14,7 @@ export const authService = {
 
   logout: () =>
     api.post<ApiResponse<null>>('/auth/logout'),
+
+  getMe: () =>
+    api.get<ApiResponse<UserDTO>>('/auth/me'),
 }

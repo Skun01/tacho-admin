@@ -37,7 +37,12 @@ export function setupInterceptors() {
   })
 
   api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+      if (typeof response.data?.success !== 'boolean') {
+        return Promise.reject(new Error('Invalid API response'))
+      }
+      return response
+    },
     async (error) => {
       const originalRequest = error.config as InternalAxiosRequestConfig & {
         _retry?: boolean
