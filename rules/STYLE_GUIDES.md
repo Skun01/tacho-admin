@@ -16,35 +16,18 @@
       │   ├── ui/               # shadcn components (button, input, label, card, form...)
       │   │
       │   ├── auth/             # Form components + routing guards liên quan đến auth
-      │   │   ├── LoginForm.tsx
-      │   │   ├── RegisterForm.tsx
-      │   │   ├── ProtectedRoute.tsx   # Redirect → /login nếu chưa auth
-      │   │   └── GuestRoute.tsx       # Redirect → /dashboard nếu đã auth
       │   │
       │   └── layout/
       │       └── Navbar.tsx           # Landing page navbar — sticky, blur-on-scroll
       │
       ├── pages/
-      │   ├── HomePage.tsx       # Landing page: hero, features, how-it-works, CTA, footer
-      │   ├── LoginPage.tsx      # Split layout: minh hoạ bên trái + form bên phải
-      │   ├── RegisterPage.tsx   # Split layout: minh hoạ bên trái + form bên phải
-      │   └── DashboardPage.tsx  # [OUT OF SCOPE — chỉ export placeholder, không implement]
       │
       ├── constants/             # Toàn bộ text/data tĩnh — component chỉ render, không hardcode
-      │   ├── home.ts            # HOME_HERO, HOME_FEATURES, HOME_HOW_IT_WORKS, HOME_CTA
-      │   └── auth.ts            # AUTH_LOGIN_COPY, AUTH_REGISTER_COPY (label, placeholder, link text)
       │
       ├── services/
-      │   ├── api.ts             # Axios instance — baseURL từ env, withCredentials: true
-      │   ├── authService.ts     # Gọi API: login, register, refresh, logout
-      │   └── setupInterceptors.ts  # Request interceptor gắn Bearer token
-      │                             # Response interceptor: 401 → refresh → retry queue
-      │                             # Export setupInterceptors() — gọi trong main.tsx
       │
       ├── stores/
       │   └── authStore.ts       # Zustand — accessToken lưu in-memory (KHÔNG localStorage)
-      │                          # Shape: { token, user, isLoading, login(), logout(), init() }
-      │                          # init(): gọi refresh API khi app load để khôi phục session
       │
       ├── hooks/
       │   └── .gitkeep           # Custom hooks đặt tại đây — prefix "use", ví dụ: useAuth.ts
@@ -162,7 +145,35 @@
 
   ## 7. Borders & dividers
   - NEVER use `border`, `border-b`, `divide-y` to separate sections — this violates the No-Line Rule.
-  - Separate sections using background color shifts instead:
-    - `bg-[#fff9eb]` → `bg-[#f9f3e5]` → `bg-[#e8e2d4]` (light to darker surface)
-  - Separate list items using vertical spacing (`space-y-4`) or alternating `bg-*`, never `divide-y`.
-  - Ghost border (accessibility fallback only): `border border-[#1d1c13]/15`
+
+  
+  ## Component & Code Organization
+
+  Before writing any component, list out everything it needs to do.
+  If it does more than 2 things → split first, then code.
+
+  A component does "one thing" means it has only one reason to change.
+  For example, if drag-and-drop logic changes, you should not need to
+  touch the layout file.
+
+  **Split into a separate file when:**
+  - Any modal / dialog / overlay
+  - Async logic or data fetching (useEffect + fetch/mutation)
+  - A group of 2+ related states + handlers tied to one feature
+  - A JSX block that has its own distinct purpose and can be named
+    meaningfully (e.g. DeckHeader, CardList, EmptyState)
+  - Any UI that appears in more than one place
+
+  **OK to keep inline:**
+  - UI-only state: isOpen, searchText, activeTab
+  - JSX that doesn't have a clear standalone purpose
+  - Simple toggle with no side effects
+
+  **Self-review before finishing:**
+  - [ ] Can I list exactly one reason this component would change?
+  - [ ] Is there any modal/dialog not extracted yet?
+  - [ ] Is there any useEffect or async logic sitting directly in a page component?
+  - [ ] Is there any JSX block I can give a meaningful name to that hasn't
+        been extracted yet?
+
+  If any box is unchecked → refactor before responding.

@@ -1,86 +1,93 @@
-# Design System Document
+# Design System Specification: Cinematic Learning Interface
 
-## 1. Overview & Creative North Star: "Tacho"
+## 1. Overview & Creative North Star
+**Creative North Star: "The Celestial Archive"**
 
-This design system is a high-end editorial framework designed to transform Japanese language education into a serene, meditative experience. Eschewing the frantic, gamified layouts of modern apps, our Creative North Star is **Tacho**.
+This design system moves away from the sterile, utilitarian nature of typical administration panels. Instead, it treats the management of Japanese language data as an act of cosmic curation. Inspired by the sprawling night skies and vibrant comet trails of Shinkai-esque landscapes, the system utilizes high-contrast typography, deep tonal layering, and "light-bleed" aesthetics to create a premium, cinematic experience.
 
-The interface mimics the tactile elegance of traditional Japanese block prints and fine Vietnamese calligraphy. We achieve a premium feel through **intentional asymmetry**, where content is balanced rather than centered, and a **non-linear layout** that guides the eye like a brushstroke across a canvas. This system breaks the "bootstrap template" aesthetic by using deep indigo depth against weathered cream surfaces, ensuring every pixel feels like a deliberate piece of art.
+To break the "template" look, layouts should lean into **Intentional Asymmetry**. Key metrics or callouts should be offset from the main grid, and background elements (like subtle comet-trail gradients) should bleed across container boundaries to create a sense of vast, uncontained space.
 
 ---
 
-## 2. Colors: Tonal Serenity
+## 2. Colors
+The palette is a transition from the deep, obsidian depths of the night sky to the electric energy of a falling comet.
 
-The palette is derived from *The Great Wave off Kanagawa*, prioritizing the interplay between deep indigos and aged paper tones.
-
--   **Primary (`#002453`) & Primary Container (`#1a3a6d`):** Used for authoritative elements and deep-sea accents. These represent the "Ink" of our scholar's kit.
--   **Surface & Background (`#fff9eb`):** This is the "Fine Paper." It provides the scholarly warmth that keeps the experience gentle on the eyes.
--   **Secondary (`#4a6267`):** Soft grey-blues that act as the mist or the secondary wave, providing a bridge between the dark ink and the paper.
+### The Palette (Core Tokens)
+- **Background (`#080e1d`):** The midnight base. Never use pure black; this deep navy maintains atmospheric depth.
+- **Primary (`#7de9ff`):** The "Comet Core." Used for active states and critical information.
+- **Secondary (`#bdc2ff`):** The "Evening Mist." A softened violet-blue for supportive UI elements.
+- **Tertiary (`#ffd16f`):** The "City Glow." Warm, high-contrast accents used for highlights and celebratory feedback (e.g., student achievements).
 
 ### The "No-Line" Rule
-To maintain a "traditional" and "gentle" vibe, **1px solid borders are strictly prohibited** for sectioning. Boundaries must be defined through:    
-1.  **Color Shifts:** A section on `surface` transitioning into a `surface-container-low` (`#f9f3e5`) section.
-2.  **Negative Space:** Using the `16` (5.5rem) or `20` (7rem) spacing tokens to create breathing room between conceptual blocks.
+**Strict Prohibition:** 1px solid borders are forbidden for sectioning. 
+Boundaries must be defined by:
+1. **Background Color Shifts:** Use `surface_container_low` against `surface` to define a sidebar.
+2. **Tonal Transitions:** Use a soft gradient transition from `surface` to `surface_container_high` to indicate a header.
 
-### Surface Hierarchy & Nesting
-Treat the UI as stacked sheets of fine paper. Use `surface-container` tiers to create depth:
-*   **Base:** `surface` (`#fff9eb`)
-*   **Low Contrast:** `surface-container-low` (`#f9f3e5`) for secondary content blocks.
-*   **High Contrast:** `surface-container-highest` (`#e8e2d4`) for focal points like call-to-action cards.
-
-### Signature Textures & Gradients
-Avoid flat digital voids. For main CTAs or Hero sections, use subtle linear gradients from `primary` to `primary_container`. This mimics the natural "fade" of woodblock ink, providing a professional polish.
+### The "Glass & Gradient" Rule
+Floating elements (modals, dropdowns, hovered cards) must use **Glassmorphism**.
+- **Surface:** `surface_variant` with 60% opacity.
+- **Effect:** `backdrop-blur: 12px`.
+- **Accent:** A subtle 1px "Ghost Border" using `outline_variant` at 15% opacity to catch light, mimicking the edge of a glass lens.
 
 ---
 
-## 3. Typography: The Harmony of Scripts
+## 3. Typography
+We use a high-contrast pairing to balance "Modern Cinematic" with "Educational Clarity."
 
-The system employs a bilingual typographic hierarchy to ensure both Vietnamese and Japanese text feel scholarly and balanced.
-
-*   **Japanese & Decorative Headings ('Kiwi Maru' / `notoSerif` equivalent):** Use for `display-lg` through `headline-sm`. This font represents the "Art." It is used for kanji, decorative pull-quotes, and section titles. Its organic, hand-drawn serif qualities evoke traditional brushwork.
-*   **Vietnamese Body & Labels ('Nunito' / `beVietnamPro` equivalent):** Use for `title-lg` through `body-sm`. This is the "Knowledge." A clean, rounded sans-serif that ensures high legibility for educational content without feeling cold or industrial.
-
-**Editorial Rule:** Large `display-lg` headings should often be placed with intentional offset or vertical orientation (for Japanese characters) to disrupt the rigid horizontal grid.
+- **Display & Headlines (Plus Jakarta Sans):** Chosen for its wide, geometric stance. Use `display-lg` and `headline-md` with generous letter-spacing (-0.02em) to evoke a premium, editorial feel.
+- **Body & Labels (Inter):** The workhorse for educational content. Inter’s tall x-height ensures kanji and kana remain legible even at `body-sm`.
+- **Hierarchy Logic:** Use `tertiary` (`#ffd16f`) for small `label-md` tags to make them pop against the dark background, acting like distant city lights.
 
 ---
 
-## 4. Elevation & Depth: Tonal Layering
+## 4. Elevation & Depth
+In this system, depth is not "shadow"; depth is "atmosphere."
 
-Traditional design doesn't use artificial drop shadows; it uses physical overlap.
+### Tonal Layering
+Instead of shadows, we stack the surface tiers:
+- **Base Level:** `surface` (The sky).
+- **Secondary Level:** `surface_container_low` (Distanced clouds/panels).
+- **Interactive Level:** `surface_container_highest` (Foreground focus/active cards).
 
--   **The Layering Principle:** Depth is achieved by placing a `surface-container-lowest` card on a `surface-container-low` section. This creates a soft, natural lift reminiscent of layered rice paper.
--   **Ambient Shadows:** If a floating element (like a modal) is required, use a shadow with a massive blur (32px+) and low opacity (4%-6%). The shadow color must be a tinted version of `on-surface` (`#1d1c13`), never a pure grey.
--   **The "Ghost Border" Fallback:** If accessibility requires a container edge, use the `outline_variant` token at **15% opacity**. This creates a hint of an edge—a "ghost border"—rather than a harsh line.
--   **Glassmorphism:** For top navigation or floating action buttons, use a semi-transparent `surface_bright` with a `backdrop-blur` of 12px. This allows the indigo "waves" of the background to bleed through, softening the interface.
+### Ambient Shadows
+Where a floating effect is mandatory (e.g., a "New Lesson" modal), use an **Ambient Light Shadow**:
+- **Color:** `on_surface` (at 6% opacity).
+- **Blur:** 40px to 60px spread. 
+- **Offset:** No Y-offset; the light source is omnipresent, not directional.
 
 ---
 
-## 5. Components: Scholarly Primitives
+## 5. Components
 
 ### Buttons
-*   **Primary:** Indigo-to-Blue gradient (`primary` to `primary_container`) with `on_primary` text. Use `xl` (0.75rem) roundedness to keep the vibe "gentle."
-*   **Tertiary:** No background, no border. Use `primary` text and a subtle `surface-variant` background on hover.
+- **Primary:** `primary` background with `on_primary` text. Apply a subtle outer glow (box-shadow) using the `primary` color at 20% opacity to mimic a glowing comet.
+- **Secondary:** Transparent background with a `ghost-border` (outline-variant at 20%). On hover, fill with `secondary_container`.
+- **Corner Radius:** Use `md` (0.75rem) for a modern, approachable feel.
+
+### Input Fields
+- **Architecture:** Forgo the "box" look. Use a `surface_container_lowest` background with a bottom-only `outline_variant` (30% opacity). 
+- **Focus State:** The bottom border transitions to `primary` with a soft `primary_dim` glow bleed.
+
+### Progress Bars (Lesson Tracking)
+- **Style:** Use a linear gradient from `secondary` to `primary`. 
+- **Detail:** Add a small "spark" (a pure white circle with a 4px blur) at the leading edge of the progress bar to represent the comet head.
 
 ### Cards & Lists
-*   **The Divider Ban:** Strictly forbid 1px horizontal lines between list items. Use vertical white space (`spacing.4`) or alternating backgrounds (`surface` and `surface-container-low`) to separate items.
-*   **Selection Chips:** Use `secondary_container` for the active state. The roundedness should be `full` to mimic smooth river stones.
-
-### Text Inputs
-*   **Style:** No 4-sided borders. Use a "bottom-only" border using `outline` token at 40% opacity, or a fully filled `surface-container-highest` block. This keeps the scholarly, "notebook" feel.
-
-### Specialized Components
-*   **Vertical Kanji Strips:** For decorative headers, use Japanese characters oriented vertically to emphasize the traditional aesthetic.
-*   **Calligraphy Stamps:** Use the `tertiary` color (`#3d1d00`) for small, square-framed labels that mimic traditional red signature stamps.
+- **Rule:** Forbid divider lines.
+- **Spacing:** Use `spacing-6` (1.5rem) to separate list items. 
+- **Separation:** Use a subtle background shift to `surface_container_low` on hover to provide feedback without cluttering the UI with lines.
 
 ---
 
 ## 6. Do's and Don'ts
 
-### Do:
-*   **Embrace Asymmetry:** Offset your text blocks. Let the "Great Wave" of the layout flow naturally.
-*   **Prioritize Legibility:** Ensure Vietnamese text in 'Nunito' has ample line height (`1.6` or higher) to accommodate diacritics.
-*   **Use Intentional Voids:** Treat empty space as a design element, not "missing" content.
+### Do
+- **DO** use the `spacing-20` scale for generous top-margins on headlines to create an "Editorial" feel.
+- **DO** use semi-transparent `tertiary` glows for "Correct Answer" or "Pass" states to mimic city warmth.
+- **DO** overlap elements (e.g., a character illustration slightly overlapping a lesson card) to break the grid.
 
-### Don't:
-*   **Don't Use Pure Black:** Use `on_surface` or `primary` for text. Pure black is too harsh for this "gentle" palette.
-*   **Don't Use Sharp Corners:** Avoid the `none` or `sm` roundedness scale. This system lives in the `md` to `xl` range to maintain its softness.
-*   **Don't Over-Animate:** Animations should be "slow-in/slow-out" transitions that mimic the sliding of a shoji screen. Avoid bouncy or "snappy" modern transitions.
+### Don't
+- **DON'T** use 100% opaque borders. It kills the "ethereal" cinematic quality.
+- **DON'T** use pure white (`#FFFFFF`) for body text. Use `on_surface_variant` (`#9faace`) to reduce eye strain in dark mode.
+- **DON'T** use traditional Material Design shadows. They look "muddy" against a deep blue background; stick to tonal layering and wide ambient glows.
