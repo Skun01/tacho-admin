@@ -4,6 +4,7 @@ import {
   Cards,
   Stack,
   ChatTeardropText,
+  ChatDots,
   Bell,
   Users,
 } from '@phosphor-icons/react'
@@ -16,6 +17,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
   Cards,
   Stack,
   ChatTeardropText,
+  ChatDots,
   Bell,
   Users,
 }

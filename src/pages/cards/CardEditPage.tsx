@@ -4,6 +4,7 @@ import { VocabCardForm } from '@/components/cards/VocabCardForm'
 import { GrammarCardForm } from '@/components/cards/GrammarCardForm'
 import { cardService } from '@/services/cardService'
 import type { AnyCard } from '@/types/card'
+import { MOCK_VOCAB_CARDS, MOCK_GRAMMAR_CARDS } from '@/mocks/data'
 
 export function CardEditPage() {
   const { id } = useParams<{ id: string }>()
@@ -16,7 +17,16 @@ export function CardEditPage() {
     if (!id) return
     cardService.getById(id)
       .then((res) => setCard(res.data.data))
-      .catch(() => setError('Không tìm thấy thẻ'))
+      .catch(() => {
+        if (import.meta.env.DEV) {
+          const mock =
+            (MOCK_VOCAB_CARDS.find((c) => c.id === id) as AnyCard | undefined) ??
+            (MOCK_GRAMMAR_CARDS.find((c) => c.id === id) as AnyCard | undefined)
+          if (mock) { setCard(mock) } else { setError('Không tìm thấy thẻ') }
+        } else {
+          setError('Không tìm thấy thẻ')
+        }
+      })
       .finally(() => setLoading(false))
   }, [id])
 

@@ -1,4 +1,4 @@
-import type { CardListItem } from '@/types/card'
+import type { CardListItem, VocabCard, GrammarCard } from '@/types/card'
 import type { Deck } from '@/types/deck'
 import type { Comment } from '@/types/comment'
 import type { SystemNotif } from '@/types/notification'
@@ -15,6 +15,117 @@ export const MOCK_CARDS: CardListItem[] = [
   { id: '8', type: 'vocab',   jlptLevel: 'N2', content: '承認',     reading: 'しょうにん', meaning: 'phê duyệt',  createdAt: '2024-01-08T00:00:00Z' },
   { id: '9', type: 'grammar', jlptLevel: 'N3', content: '〜ように',  reading: undefined,  meaning: 'để ~, sao cho ~', createdAt: '2024-01-09T00:00:00Z' },
   { id: '10', type: 'vocab',  jlptLevel: 'N1', content: '概念',     reading: 'がいねん', meaning: 'khái niệm',     createdAt: '2024-01-10T00:00:00Z' },
+]
+
+export const MOCK_VOCAB_CARDS: VocabCard[] = [
+  {
+    id: '1', type: 'vocab', jlptLevel: 'N5', content: '食べる', reading: 'たべる', meaning: 'ăn',
+    pitchPattern: [0, 1, 1],
+    acceptedReadings: [],
+    dictEntries: [
+      { id: 'd1', partOfSpeech: 'Động từ nhóm 2', definitions: [{ definition: 'ăn, dùng bữa', position: 0 }], position: 0 },
+    ],
+    examples: [
+      { id: 'e1', japaneseSentence: '{毎日|まいにち}{野菜|やさい}を{食|た}べています。', vietnameseMeaning: 'Mỗi ngày tôi ăn rau.', jlptLevel: 'N5', hiddenPart: '食べて', position: 0 },
+    ],
+    createdAt: '2024-01-01T00:00:00Z',
+  },
+  {
+    id: '2', type: 'vocab', jlptLevel: 'N5', content: '飲む', reading: 'のむ', meaning: 'uống',
+    pitchPattern: [1, 0],
+    acceptedReadings: [],
+    dictEntries: [
+      { id: 'd2', partOfSpeech: 'Động từ nhóm 1', definitions: [{ definition: 'uống', position: 0 }], position: 0 },
+    ],
+    examples: [
+      { id: 'e2', japaneseSentence: '{水|みず}を{飲|の}みます。', vietnameseMeaning: 'Tôi uống nước.', jlptLevel: 'N5', position: 0 },
+    ],
+    createdAt: '2024-01-02T00:00:00Z',
+  },
+  {
+    id: '3', type: 'vocab', jlptLevel: 'N4', content: '勉強する', reading: 'べんきょうする', meaning: 'học bài',
+    acceptedReadings: [],
+    dictEntries: [
+      { id: 'd3', partOfSpeech: 'Động từ nhóm 3', definitions: [{ definition: 'học bài, học tập', position: 0 }], position: 0 },
+    ],
+    examples: [],
+    createdAt: '2024-01-03T00:00:00Z',
+  },
+  {
+    id: '4', type: 'vocab', jlptLevel: 'N4', content: '電車', reading: 'でんしゃ', meaning: 'tàu điện',
+    acceptedReadings: [],
+    dictEntries: [
+      { id: 'd4', partOfSpeech: 'Danh từ', definitions: [{ definition: 'tàu điện, xe điện', position: 0 }], position: 0 },
+    ],
+    examples: [
+      { id: 'e3', japaneseSentence: '{電車|でんしゃ}で{学校|がっこう}に{行|い}きます。', vietnameseMeaning: 'Tôi đi học bằng tàu điện.', jlptLevel: 'N4', position: 0 },
+    ],
+    createdAt: '2024-01-04T00:00:00Z',
+  },
+  {
+    id: '7', type: 'vocab', jlptLevel: 'N3', content: '経験', reading: 'けいけん', meaning: 'kinh nghiệm',
+    acceptedReadings: [],
+    dictEntries: [
+      { id: 'd5', partOfSpeech: 'Danh từ', definitions: [{ definition: 'kinh nghiệm, trải nghiệm', position: 0 }], position: 0 },
+    ],
+    examples: [],
+    createdAt: '2024-01-07T00:00:00Z',
+  },
+  {
+    id: '8', type: 'vocab', jlptLevel: 'N2', content: '承認', reading: 'しょうにん', meaning: 'phê duyệt',
+    acceptedReadings: [],
+    dictEntries: [
+      { id: 'd6', partOfSpeech: 'Danh từ', definitions: [{ definition: 'phê duyệt, chấp thuận', position: 0 }], position: 0 },
+    ],
+    examples: [],
+    createdAt: '2024-01-08T00:00:00Z',
+  },
+  {
+    id: '10', type: 'vocab', jlptLevel: 'N1', content: '概念', reading: 'がいねん', meaning: 'khái niệm',
+    acceptedReadings: [],
+    dictEntries: [
+      { id: 'd7', partOfSpeech: 'Danh từ', definitions: [{ definition: 'khái niệm, concept', position: 0 }], position: 0 },
+    ],
+    examples: [],
+    createdAt: '2024-01-10T00:00:00Z',
+  },
+]
+
+export const MOCK_GRAMMAR_CARDS: GrammarCard[] = [
+  {
+    id: '5', type: 'grammar', jlptLevel: 'N5', content: '〜てください', meaning: 'Hãy làm ~',
+    structure: 'Vて + ください',
+    aboutText: 'Dùng để yêu cầu lịch sự ai đó làm gì.',
+    examples: [
+      { id: 'eg1', japaneseSentence: '{座|すわ}ってください。', vietnameseMeaning: 'Hãy ngồi xuống.', jlptLevel: 'N5', hiddenPart: 'ください', position: 0 },
+      { id: 'eg2', japaneseSentence: '{名前|なまえ}を{書|か}いてください。', vietnameseMeaning: 'Hãy viết tên vào.', jlptLevel: 'N5', position: 1, isAboutExample: true },
+    ],
+    grammarLinks: [],
+    references: [],
+    createdAt: '2024-01-05T00:00:00Z',
+  },
+  {
+    id: '6', type: 'grammar', jlptLevel: 'N4', content: '〜ている', meaning: 'đang ~ / trạng thái ~',
+    structure: 'Vて + いる',
+    aboutText: 'Diễn tả hành động đang xảy ra hoặc trạng thái kết quả.',
+    examples: [
+      { id: 'eg3', japaneseSentence: '{今|いま}{食|た}べています。', vietnameseMeaning: 'Tôi đang ăn bây giờ.', jlptLevel: 'N4', hiddenPart: 'ています', position: 0 },
+    ],
+    grammarLinks: [],
+    references: [],
+    createdAt: '2024-01-06T00:00:00Z',
+  },
+  {
+    id: '9', type: 'grammar', jlptLevel: 'N3', content: '〜ように', meaning: 'để ~, sao cho ~',
+    structure: 'V辞書形 / Vない形 + ように',
+    aboutText: 'Diễn tả mục đích hoặc mong muốn đạt được trạng thái nào đó.',
+    examples: [
+      { id: 'eg4', japaneseSentence: '{毎日|まいにち}{練習|れんしゅう}するように{努力|どりょく}しています。', vietnameseMeaning: 'Tôi đang cố gắng tập luyện mỗi ngày.', jlptLevel: 'N3', position: 0 },
+    ],
+    grammarLinks: [],
+    references: [],
+    createdAt: '2024-01-09T00:00:00Z',
+  },
 ]
 
 export const MOCK_DECKS: Deck[] = [

@@ -16,8 +16,8 @@ export const JLPT_COLORS: Record<JlptLevel, { bg: string; text: string }> = {
 }
 
 export const GRAMMAR_REGISTER_LABELS: Record<GrammarRegister, string> = {
-  casual:   'Thông thường',
-  standard: 'Trung lập',
+  casual:   'Thân mật',
+  standard: 'Tiêu chuẩn',
   polite:   'Lịch sự',
   formal:   'Trang trọng',
 }

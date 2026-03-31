@@ -6,7 +6,5 @@ export function GuestRoute() {
   const isLoading = useAuthStore((s) => s.isLoading)
 
   if (isLoading) return null
-
-  if (import.meta.env.DEV) return <Outlet />
   return token ? <Navigate to="/dashboard" replace /> : <Outlet />
 }

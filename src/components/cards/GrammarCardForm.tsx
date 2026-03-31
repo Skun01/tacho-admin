@@ -59,6 +59,18 @@ export function GrammarCardForm({ initial }: GrammarCardFormProps) {
         register:      values.register as GrammarRegister | undefined,
         aboutText:     values.aboutText || undefined,
         notes:         values.notes     || undefined,
+        examples: examples.map((e, i) => ({
+          japaneseSentence: e.japaneseSentence,
+          vietnameseMeaning: e.vietnameseMeaning,
+          jlptLevel: e.jlptLevel,
+          audioUrl: e.audioUrl,
+          hiddenPart: e.hiddenPart,
+          hint: e.hint,
+          visibleHint: e.visibleHint,
+          alternativeAnswers: e.alternativeAnswers,
+          isAboutExample: e.isAboutExample ?? false,
+          position: i,
+        })),
       }
 
       if (isEdit && initial) {
@@ -74,138 +86,168 @@ export function GrammarCardForm({ initial }: GrammarCardFormProps) {
     }
   }
 
+  const inputCls = "rounded-xl border-0 bg-surface-container-low px-3 py-3 text-sm text-on-surface outline-none ring-1 ring-outline-variant focus:ring-primary transition-shadow"
+  const labelCls = "text-[12px] font-semibold uppercase tracking-wide text-on-surface-variant"
+  const optLabelCls = "text-[12px] font-semibold uppercase tracking-wide text-outline"
+  const sectionCls = "rounded-2xl bg-card p-5 space-y-4"
+  const sectionTitleCls = "text-[11px] font-bold uppercase tracking-widest text-outline"
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form onSubmit={handleSubmit(onSubmit)}>
       {rootError && (
-        <div className="flex items-start gap-2 rounded-xl bg-tertiary-container px-4 py-3">
+        <div className="mb-5 flex items-start gap-2 rounded-xl bg-tertiary-container px-4 py-3">
           <Warning size={16} weight="fill" className="mt-0.5 shrink-0 text-tertiary" />
           <p className="text-[13px] text-on-tertiary-container">{rootError}</p>
         </div>
       )}
 
-      {/* Core fields */}
-      <section className="rounded-2xl bg-card p-6 space-y-5">
-        <h3 className="text-[14px] font-semibold text-on-surface" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          Thông tin cơ bản
-        </h3>
+      <div className="grid grid-cols-3 gap-5 items-start">
 
-        <div className="grid grid-cols-2 gap-5">
-          {/* JLPT Level */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-on-surface-variant">Cấp JLPT</label>
-            <select
-              {...register('jlptLevel')}
-              className="rounded-xl border-0 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface outline-none ring-1 ring-outline-variant focus:ring-primary"
+        {/* ── LEFT COLUMN (main content) ── */}
+        <div className="col-span-2 space-y-4">
+
+          {/* Nội dung chính */}
+          <section className={sectionCls}>
+            <p className={sectionTitleCls}>Nội dung chính</p>
+
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>
+                Mẫu câu ngữ pháp <span className="text-tertiary normal-case tracking-normal font-normal ml-1">*</span>
+              </label>
+              <input
+                {...register('content')}
+                className={inputCls}
+                placeholder="例：〜てください"
+                style={{ fontFamily: "'Kiwi Maru', serif", fontSize: 18 }}
+              />
+              {errors.content && (
+                <span className="flex items-center gap-1 text-[12px] text-tertiary">
+                  <Warning size={11} weight="fill" /> {errors.content.message}
+                </span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>
+                Nghĩa tiếng Việt <span className="text-tertiary normal-case tracking-normal font-normal ml-1">*</span>
+              </label>
+              <input
+                {...register('meaning')}
+                className={inputCls}
+                placeholder="Hãy làm ~"
+              />
+              {errors.meaning && (
+                <span className="flex items-center gap-1 text-[12px] text-tertiary">
+                  <Warning size={11} weight="fill" /> {errors.meaning.message}
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className={optLabelCls}>Cấu trúc đầy đủ <span className="normal-case font-normal">(tuỳ chọn)</span></label>
+                <input
+                  {...register('structure')}
+                  className={inputCls}
+                  placeholder="動詞て形 + ください"
+                  style={{ fontFamily: "'Kiwi Maru', serif" }}
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className={optLabelCls}>Biến thể lịch sự hơn <span className="normal-case font-normal">(tuỳ chọn)</span></label>
+                <input
+                  {...register('formalVariant')}
+                  className={inputCls}
+                  placeholder="〜てくださいませ"
+                  style={{ fontFamily: "'Kiwi Maru', serif" }}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Giải thích chi tiết */}
+          <section className={sectionCls}>
+            <p className={sectionTitleCls}>Giải thích chi tiết</p>
+
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-baseline justify-between">
+                <label className={optLabelCls}>Nội dung giải thích <span className="normal-case font-normal">(tuỳ chọn)</span></label>
+                <span className="text-[11px] text-outline">Hỗ trợ HTML</span>
+              </div>
+              <textarea
+                {...register('aboutText')}
+                rows={8}
+                className={`${inputCls} resize-y`}
+                placeholder="<p>Giải thích ngữ pháp...</p>"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className={optLabelCls}>Ghi chú thêm <span className="normal-case font-normal">(tuỳ chọn)</span></label>
+              <textarea
+                {...register('notes')}
+                rows={3}
+                className={`${inputCls} resize-y`}
+                placeholder="Chú ý đặc biệt, điểm dễ nhầm..."
+              />
+            </div>
+          </section>
+
+          {/* Câu ví dụ học tập */}
+          <section className={sectionCls}>
+            <CardExamplesEditor examples={examples} onChange={setExamples} cardType="grammar" />
+          </section>
+        </div>
+
+        {/* ── RIGHT COLUMN (meta) ── */}
+        <div className="col-span-1 space-y-4 sticky top-6">
+
+          {/* Phân loại */}
+          <section className={sectionCls}>
+            <p className={sectionTitleCls}>Phân loại</p>
+
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>Cấp JLPT</label>
+              <select
+                {...register('jlptLevel')}
+                className={inputCls}
+              >
+                {JLPT_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className={optLabelCls}>Sắc thái sử dụng <span className="normal-case font-normal">(tuỳ chọn)</span></label>
+              <select
+                {...register('register')}
+                className={inputCls}
+              >
+                <option value="">— Không xác định</option>
+                {(Object.entries(GRAMMAR_REGISTER_LABELS) as [GrammarRegister, string][]).map(([k, v]) => (
+                  <option key={k} value={k}>{v}</option>
+                ))}
+              </select>
+            </div>
+          </section>
+
+          {/* Actions */}
+          <div className="flex flex-col gap-2 pt-1">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full rounded-xl bg-primary px-4 py-3 text-[13px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
             >
-              {JLPT_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
-            </select>
-          </div>
-
-          {/* Register */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-on-surface-variant">Văn phong (tuỳ chọn)</label>
-            <select
-              {...register('register')}
-              className="rounded-xl border-0 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface outline-none ring-1 ring-outline-variant focus:ring-primary"
+              {isSubmitting ? 'Đang lưu...' : isEdit ? 'Lưu thay đổi' : 'Tạo thẻ'}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/cards')}
+              className="w-full rounded-xl px-4 py-2.5 text-[13px] font-medium text-outline transition-colors hover:bg-surface-container-low"
             >
-              <option value="">—</option>
-              {(Object.entries(GRAMMAR_REGISTER_LABELS) as [GrammarRegister, string][]).map(([k, v]) => (
-                <option key={k} value={k}>{v}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Pattern */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-on-surface-variant">Mẫu ngữ pháp</label>
-            <input
-              {...register('content')}
-              className="rounded-xl border-0 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface outline-none ring-1 ring-outline-variant focus:ring-primary"
-              placeholder="例：〜てください"
-              style={{ fontFamily: "'Kiwi Maru', serif", fontSize: 15 }}
-            />
-            {errors.content && <span className="text-[12px] text-tertiary">{errors.content.message}</span>}
-          </div>
-
-          {/* Meaning */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-on-surface-variant">Nghĩa (Tiếng Việt)</label>
-            <input
-              {...register('meaning')}
-              className="rounded-xl border-0 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface outline-none ring-1 ring-outline-variant focus:ring-primary"
-              placeholder="Hãy làm ~"
-            />
-            {errors.meaning && <span className="text-[12px] text-tertiary">{errors.meaning.message}</span>}
-          </div>
-
-          {/* Structure */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-on-surface-variant">Cấu trúc (tuỳ chọn)</label>
-            <input
-              {...register('structure')}
-              className="rounded-xl border-0 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface outline-none ring-1 ring-outline-variant focus:ring-primary"
-              placeholder="動詞て形 + ください"
-            />
-          </div>
-
-          {/* Formal variant */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-on-surface-variant">Dạng trang trọng (tuỳ chọn)</label>
-            <input
-              {...register('formalVariant')}
-              className="rounded-xl border-0 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface outline-none ring-1 ring-outline-variant focus:ring-primary"
-              placeholder="〜てくださいませ"
-            />
+              Huỷ
+            </button>
           </div>
         </div>
-      </section>
-
-      {/* About text */}
-      <section className="rounded-2xl bg-card p-6 space-y-4">
-        <h3 className="text-[14px] font-semibold text-on-surface" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          Mô tả chi tiết
-        </h3>
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[13px] font-medium text-on-surface-variant">Giải thích (Markdown)</label>
-          <textarea
-            {...register('aboutText')}
-            rows={6}
-            className="rounded-xl border-0 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface outline-none ring-1 ring-outline-variant focus:ring-primary resize-y"
-            placeholder="Nhập giải thích ngữ pháp (hỗ trợ Markdown)..."
-          />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[13px] font-medium text-on-surface-variant">Ghi chú (tuỳ chọn)</label>
-          <textarea
-            {...register('notes')}
-            rows={3}
-            className="rounded-xl border-0 bg-surface-container-low px-3 py-2.5 text-sm text-on-surface outline-none ring-1 ring-outline-variant focus:ring-primary resize-y"
-            placeholder="Chú ý đặc biệt..."
-          />
-        </div>
-      </section>
-
-      {/* Extra examples */}
-      <section className="rounded-2xl bg-card p-6">
-        <CardExamplesEditor examples={examples} onChange={setExamples} />
-      </section>
-
-      {/* Actions */}
-      <div className="flex items-center justify-end gap-3">
-        <button
-          type="button"
-          onClick={() => navigate('/cards')}
-          className="rounded-xl px-6 py-2.5 text-[13px] font-medium text-outline transition-colors hover:bg-surface-container-low"
-        >
-          Huỷ
-        </button>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded-xl bg-primary px-6 py-2.5 text-[13px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
-        >
-          {isSubmitting ? 'Đang lưu...' : isEdit ? 'Lưu thay đổi' : 'Tạo thẻ'}
-        </button>
       </div>
     </form>
   )

@@ -1,24 +1,58 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { AUTH_REGISTER_COPY } from '@/constants/auth'
 import { registerSchema, type RegisterSchema } from '@/lib/validations/auth'
+import { authService } from '@/services/authService'
+import { useAuthStore } from '@/stores/authStore'
+import { API_ERROR_MESSAGES } from '@/types/api'
+import { gooeyToast } from '@/components/ui/goey-toaster'
 
 export function RegisterForm() {
+  const navigate = useNavigate()
+  const login = useAuthStore((s) => s.login)
+
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
   })
 
-  const onSubmit = async (_data: RegisterSchema) => {
-    // TODO: wire up authService.register
+  const onSubmit = async (data: RegisterSchema) => {
+    try {
+      const res = await authService.register({
+        displayName: data.displayName,
+        email: data.email,
+        password: data.password,
+      })
+
+      const { accessToken, user } = res.data.data
+      if (user.role === 'user') {
+        setError('root', { message: 'Tài khoản mới chưa có quyền truy cập trang quản trị.' })
+        return
+      }
+
+      login(accessToken, user)
+      gooeyToast.success(`Chào mừng, ${user.displayName}!`)
+      navigate('/dashboard', { replace: true })
+    } catch (err: unknown) {
+      const code = err instanceof Error ? err.message : ''
+      const msg = API_ERROR_MESSAGES[code] ?? 'Đã xảy ra lỗi. Vui lòng thử lại.'
+      setError('root', { message: msg })
+    }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      {errors.root && (
+        <p className="rounded-xl bg-tertiary-container px-4 py-3 text-[13px] text-on-tertiary-container">
+          {errors.root.message}
+        </p>
+      )}
+
       <div className="flex flex-col gap-2">
         <label className="text-sm font-medium text-foreground">
           {AUTH_REGISTER_COPY.displayNameLabel}

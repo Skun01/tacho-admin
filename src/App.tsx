@@ -19,6 +19,7 @@ import { CommentsPage } from './pages/CommentsPage'
 import { SystemNotifPage } from './pages/SystemNotifPage'
 import { UserListPage } from './pages/users/UserListPage'
 import { UserDetailPage } from './pages/users/UserDetailPage'
+import { ExamplesPage } from './pages/examples/ExamplesPage'
 
 function App() {
   const init = useAuthStore((s) => s.init)
@@ -47,6 +48,7 @@ function App() {
               <Route path="/cards" element={<CardListPage />} />
               <Route path="/cards/new" element={<CardCreatePage />} />
               <Route path="/cards/:id/edit" element={<CardEditPage />} />
+              <Route path="/examples" element={<ExamplesPage />} />
               <Route path="/decks" element={<DeckListPage />} />
               <Route path="/decks/new" element={<DeckCreatePage />} />
               <Route path="/decks/:id/edit" element={<DeckEditPage />} />

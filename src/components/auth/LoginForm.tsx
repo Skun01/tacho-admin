@@ -36,8 +36,7 @@ export function LoginForm() {
       gooeyToast.success(`Chào mừng, ${user.displayName}!`)
       navigate('/dashboard', { replace: true })
     } catch (err: unknown) {
-      const code = (err as { response?: { data?: { message?: string } } })
-        ?.response?.data?.message ?? ''
+      const code = err instanceof Error ? err.message : ''
       const msg = API_ERROR_MESSAGES[code] ?? 'Đã xảy ra lỗi. Vui lòng thử lại.'
       setError('root', { message: msg })
     }

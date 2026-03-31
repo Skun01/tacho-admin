@@ -2,19 +2,29 @@ import type { ApiResponse } from '@/types/api'
 import type { AuthDTO, LoginRequest, RegisterRequest, UserDTO } from '@/types/auth'
 import api from './api'
 
+type ApiResult<T> = Promise<{ data: ApiResponse<T> }>
+
+async function unwrap<T>(request: Promise<{ data: ApiResponse<T> }>): Promise<{ data: ApiResponse<T> }> {
+  const response = await request
+  if (!response.data.success) {
+    throw new Error(response.data.message ?? 'INTERNAL_SERVER_ERROR')
+  }
+  return response
+}
+
 export const authService = {
   login: (payload: LoginRequest) =>
-    api.post<ApiResponse<AuthDTO>>('/auth/login', payload),
+    unwrap(api.post<ApiResponse<AuthDTO>>('/auth/login', payload) as ApiResult<AuthDTO>),
 
   register: (payload: RegisterRequest) =>
-    api.post<ApiResponse<AuthDTO>>('/auth/register', payload),
+    unwrap(api.post<ApiResponse<AuthDTO>>('/auth/register', payload) as ApiResult<AuthDTO>),
 
   refresh: () =>
-    api.post<ApiResponse<{ accessToken: string }>>('/auth/refresh'),
+    unwrap(api.post<ApiResponse<AuthDTO>>('/auth/refresh-token') as ApiResult<AuthDTO>),
 
   logout: () =>
-    api.post<ApiResponse<null>>('/auth/logout'),
+    unwrap(api.post<ApiResponse<null>>('/auth/logout') as ApiResult<null>),
 
   getMe: () =>
-    api.get<ApiResponse<UserDTO>>('/auth/me'),
+    unwrap(api.get<ApiResponse<UserDTO>>('/auth/me') as ApiResult<UserDTO>),
 }

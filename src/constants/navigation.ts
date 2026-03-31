@@ -23,6 +23,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Nội dung',
     items: [
       { label: 'Thẻ', path: '/cards', icon: 'Cards' },
+      { label: 'Câu ví dụ', path: '/examples', icon: 'ChatDots' },
       { label: 'Bộ thẻ', path: '/decks', icon: 'Stack' },
     ],
   },

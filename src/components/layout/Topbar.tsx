@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router'
-import { SignOut } from '@phosphor-icons/react'
+import { SignOut, ArrowLeft } from '@phosphor-icons/react'
 import { useAuthStore } from '@/stores/authStore'
 import { authService } from '@/services/authService'
 import { ROLE_LABELS } from '@/constants/navigation'
@@ -13,9 +13,11 @@ const ROLE_CHIP: Record<string, { bg: string; text: string }> = {
 
 interface TopbarProps {
   title?: string
+  backPath?: string
+  backLabel?: string
 }
 
-export function Topbar({ title }: TopbarProps) {
+export function Topbar({ title, backPath, backLabel }: TopbarProps) {
   const user    = useAuthStore((s) => s.user)
   const logout  = useAuthStore((s) => s.logout)
   const navigate = useNavigate()
@@ -35,15 +37,29 @@ export function Topbar({ title }: TopbarProps) {
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between bg-surface px-6">
-      {title && (
-        <h1
-          className="text-[15px] font-semibold text-on-surface"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-        >
-          {title}
-        </h1>
-      )}
-      {!title && <div />}
+      <div className="flex items-center gap-3">
+        {backPath && (
+          <button
+            onClick={() => navigate(backPath)}
+            className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[12px] font-medium text-outline transition-colors hover:bg-surface-container-low hover:text-on-surface"
+          >
+            <ArrowLeft size={13} weight="bold" />
+            {backLabel ?? 'Quay lại'}
+          </button>
+        )}
+        {backPath && title && (
+          <span className="text-outline/40 text-[13px]">/</span>
+        )}
+        {title && (
+          <h1
+            className="text-[15px] font-semibold text-on-surface"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          >
+            {title}
+          </h1>
+        )}
+      </div>
+      {!title && !backPath && <div />}
 
       <div className="flex items-center gap-3">
         {user && chip && (

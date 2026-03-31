@@ -43,7 +43,7 @@ export const cardService = {
   restore: (id: string) =>
     api.patch<ApiResponse<null>>(`/admin/cards/${id}/restore`),
 
-  addExample: (cardId: string, payload: { japanese: string; vietnamese: string; jlptLevel?: JlptLevel; isAboutExample?: boolean }) =>
+  addExample: (cardId: string, payload: { japaneseSentence: string; vietnameseMeaning: string; jlptLevel?: JlptLevel; isAboutExample?: boolean }) =>
     api.post<ApiResponse<{ id: string }>>(`/admin/cards/${cardId}/examples`, payload),
 
   deleteExample: (cardId: string, exampleId: string) =>

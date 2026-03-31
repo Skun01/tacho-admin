@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, MagnifyingGlass } from '@phosphor-icons/react'
+import { Plus, MagnifyingGlass, ChatCircleDots } from '@phosphor-icons/react'
 import type { CardExample, CardType } from '@/types/card'
 import type { Example } from '@/types/example'
 import { ExampleSearchModal } from '@/components/examples/ExampleSearchModal'
@@ -55,9 +55,18 @@ export function CardExamplesEditor({ examples, onChange, cardType = 'vocab' }: C
     setEditingIdx(null)
   }
 
+  const openNew = () => {
+    setDetailIdx(null)
+    setEditingIdx(-1)
+  }
+
   const openEdit = (idx: number) => {
     setDetailIdx(null)
     setEditingIdx(idx)
+  }
+
+  const openDetail = (idx: number) => {
+    setDetailIdx(idx)
   }
 
   const handleDelete = (idx: number) => {
@@ -86,7 +95,7 @@ export function CardExamplesEditor({ examples, onChange, cardType = 'vocab' }: C
           </button>
           <button
             type="button"
-            onClick={() => setEditingIdx(-1)}
+            onClick={openNew}
             className="flex items-center gap-1.5 rounded-lg bg-primary-container px-3 py-1.5 text-[12px] font-medium text-on-primary-container transition-opacity hover:opacity-80"
           >
             <Plus size={13} weight="bold" />
@@ -108,13 +117,16 @@ export function CardExamplesEditor({ examples, onChange, cardType = 'vocab' }: C
             <button
               key={idx}
               type="button"
-              onClick={() => setDetailIdx(idx)}
-              className="w-full rounded-xl bg-surface-container-low px-4 py-3 text-left transition-colors hover:bg-surface-container"
+              onClick={() => openDetail(idx)}
+              className="w-full rounded-xl bg-surface-container-low px-4 py-3 text-left transition-colors hover:bg-surface-container group"
             >
               <div className="flex items-center gap-3">
+                {/* Index */}
                 <span className="shrink-0 text-[11px] font-semibold text-outline w-6 text-center">
                   {idx + 1}
                 </span>
+
+                {/* Content */}
                 <div className="min-w-0 flex-1 space-y-0.5">
                   <p
                     className="truncate text-[14px] text-on-surface"
@@ -126,6 +138,8 @@ export function CardExamplesEditor({ examples, onChange, cardType = 'vocab' }: C
                     {ex.vietnameseMeaning || <span className="italic text-outline">—</span>}
                   </p>
                 </div>
+
+                {/* Badges */}
                 <div className="flex shrink-0 items-center gap-1.5">
                   {ex.jlptLevel && (
                     <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
@@ -138,7 +152,7 @@ export function CardExamplesEditor({ examples, onChange, cardType = 'vocab' }: C
                     </span>
                   )}
                   {ex.hint && (
-                    <span className="inline-block h-2 w-2 rounded-full bg-amber-400" title="Có gợi ý" />
+                    <ChatCircleDots size={13} className="text-amber-500" weight="fill" />
                   )}
                 </div>
               </div>
@@ -159,7 +173,7 @@ export function CardExamplesEditor({ examples, onChange, cardType = 'vocab' }: C
         />
       )}
 
-      {/* Edit / create modal */}
+      {/* Edit modal (create or edit) */}
       {editingIdx !== null && (
         <ExampleEditModal
           example={editingIdx === -1 ? EMPTY_EXAMPLE() : examples[editingIdx]}

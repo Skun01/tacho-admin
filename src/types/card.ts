@@ -4,11 +4,15 @@ export type GrammarRegister = 'casual' | 'standard' | 'polite' | 'formal'
 
 export interface CardExample {
   id?: string
-  japanese: string
-  vietnamese: string
+  japaneseSentence: string
+  vietnameseMeaning: string
   audioUrl?: string
   jlptLevel?: JlptLevel
   isAboutExample?: boolean
+  hiddenPart?: string
+  hint?: string
+  visibleHint?: string
+  alternativeAnswers?: string[]
   position: number
 }
 
@@ -55,7 +59,7 @@ export interface VocabCard extends BaseCard {
   exampleMeaning?: string
   audioUrl?: string
   pitchAccent?: string
-  pitchPattern?: string
+  pitchPattern?: number[]
   acceptedReadings: string[]
   dictEntries: DictEntry[]
   examples: CardExample[]
@@ -95,8 +99,10 @@ export interface CreateVocabCardDTO {
   exampleMeaning?: string
   audioUrl?: string
   pitchAccent?: string
-  pitchPattern?: string
+  pitchPattern?: number[]
   acceptedReadings?: string[]
+  examples?: Omit<CardExample, 'id'>[]
+  dictEntries?: { partOfSpeech: string; definitions: string[]; position: number }[]
 }
 
 export interface CreateGrammarCardDTO {
@@ -108,4 +114,5 @@ export interface CreateGrammarCardDTO {
   register?: GrammarRegister
   aboutText?: string
   notes?: string
+  examples?: Omit<CardExample, 'id'>[]
 }
