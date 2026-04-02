@@ -4,6 +4,8 @@ import { GooeyToaster } from './components/ui/goey-toaster'
 import { AppInit } from './components/auth/AppInit'
 import { GuestRoute } from './components/auth/GuestRoute'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { AdminLayout } from './components/layout/AdminLayout'
+import { NProgressBar } from './components/layout/NProgressBar'
 import { LoginPage } from './pages/LoginPage'
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { ResetPasswordPage } from './pages/ResetPasswordPage'
@@ -23,6 +25,7 @@ function App() {
       <GooeyToaster position="top-right" />
       <BrowserRouter>
         <AppInit>
+          <NProgressBar />
           <Routes>
 
             {/* Guest-only — redirect /dashboard nếu đã đăng nhập */}
@@ -35,8 +38,16 @@ function App() {
 
             {/* Protected — yêu cầu đăng nhập + role editor/admin */}
             <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
+
+              {/* ProfilePage: layout riêng, không có sidebar */}
               <Route path="/profile" element={<ProfilePage />} />
+
+              {/* AdminLayout: tất cả page có sidebar */}
+              <Route element={<AdminLayout />}>
+                <Route path="/dashboard" element={<DashboardPage />} />
+                {/* Content pages sẽ thêm vào đây */}
+              </Route>
+
             </Route>
 
           </Routes>

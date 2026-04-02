@@ -15,111 +15,140 @@
   /* Radius — tighter than user app (editorial) */
   --radius: 0.5rem;
 
-  /* Admin Color Palette — Crimson / Slate */
+  /* Admin Color Palette — v2 Monochromatic Crimson */
   /* Background */
-  --background: #f8f9fa;
-  --foreground: #191c1d;
+  --background: #fdf7f6;
+  --foreground: #1c0f0e;
 
   /* Card */
   --card: #ffffff;
-  --card-foreground: #191c1d;
+  --card-foreground: #1c0f0e;
 
   /* Popover */
   --popover: #ffffff;
-  --popover-foreground: #191c1d;
+  --popover-foreground: #1c0f0e;
 
   /* Primary — Crimson "Red Seal" */
   --primary: #8f0020;
   --primary-foreground: #ffffff;
   --primary-container: #bc002d;
-  --primary-fixed-dim: #ffb3b3;
+  --primary-fixed-dim: #f5c0c8;
 
-  /* Secondary — Slate Blue */
-  --secondary: #4e6073;
+  /* Secondary — Deep Burgundy (sidebar) */
+  --secondary: #1a0008;
   --secondary-foreground: #ffffff;
-  --secondary-container: #cfe2f9;
-  --on-secondary-container: #0d1e2d;
+  --secondary-container: #f5dde0;
+  --on-secondary-container: #3d0011;
 
   /* Tertiary */
-  --tertiary: #693541;
+  --tertiary: #7a2535;
   --tertiary-foreground: #ffffff;
 
   /* Muted */
-  --muted: #f3f4f5;
-  --muted-foreground: #5c403f;
+  --muted: #f8f0ef;
+  --muted-foreground: #6b3a38;
 
   /* Accent */
-  --accent: #e8e9ea;
-  --accent-foreground: #191c1d;
+  --accent: #efe4e3;
+  --accent-foreground: #1c0f0e;
 
   /* Destructive */
   --destructive: #b91c1c;
 
   /* Border / Input / Ring */
-  --border: #191c1d26;
-  --input: #e8e9ea;
+  --border: #1c0f0e26;
+  --input: #efe4e3;
   --ring: #8f0020;
 
-  /* Surface hierarchy tokens */
-  --surface: #f8f9fa;
-  --surface-container-low: #f3f4f5;
-  --surface-container: #eeeff0;
+  /* Surface hierarchy tokens — warm tint */
+  --surface: #fdf7f6;
+  --surface-container-low: #f8f0ef;
+  --surface-container: #f2e8e7;
   --surface-container-lowest: #ffffff;
-  --surface-container-high: #e8e9ea;
-  --surface-container-highest: #e2e3e4;
-  --on-surface: #191c1d;
-  --on-surface-variant: #5c403f;
-  --on-secondary-container: #0d1e2d;
-  --outline-variant: #e4bdbc26;
+  --surface-container-high: #efe4e3;
+  --surface-container-highest: #e8d8d7;
+  --on-surface: #1c0f0e;
+  --on-surface-variant: #6b3a38;
+  --outline-variant: #e8c4c226;
+
+  /* ── Sidebar tokens (DESIGN.md §Sidebar) ────────────────────────── */
+  --sidebar-bg: #1a0008;
+  --sidebar-nav-text: rgba(255, 255, 255, 0.55);
+  --sidebar-nav-text-active: #ffffff;
+  --sidebar-nav-active-bg: rgba(255, 255, 255, 0.08);
+  --sidebar-avatar-bg: rgba(255, 255, 255, 0.15);
+  --sidebar-avatar-text: #ffffff;
+  --sidebar-icon-muted: rgba(255, 255, 255, 0.6);
+  --sidebar-separator: rgba(255, 255, 255, 0.1);
+
+  /* ── On-primary text (text trên nền --primary) ────────────── */
+  --on-primary: #ffffff;
+  --on-primary-muted: rgba(255, 255, 255, 0.65);
+  --on-primary-dim: rgba(255, 255, 255, 0.5);
 }
 
-/* Dark Mode */
+/* Dark Mode — v2 Warm Crimson dark */
 .dark {
-  --background: #191c1d;
-  --foreground: #e1e3e4;
+  --background: #1c1210;
+  --foreground: #f0e0de;
 
-  --card: #1e2122;
-  --card-foreground: #e1e3e4;
+  --card: #150d0c;
+  --card-foreground: #f0e0de;
 
-  --popover: #191c1d;
-  --popover-foreground: #e1e3e4;
+  --popover: #221615;
+  --popover-foreground: #f0e0de;
 
-  --primary: #ffb3b3;
+  --primary: #ffb3bc;
   --primary-foreground: #5c0010;
   --primary-container: #690016;
   --primary-fixed-dim: #930020;
 
-  --secondary: #b2c8e0;
-  --secondary-foreground: #0d1e2d;
-  --secondary-container: #354a5e;
-  --on-secondary-container: #daeeff;
+  /* Sidebar remains deep burgundy in dark mode */
+  --secondary: #1a0008;
+  --secondary-foreground: #ffffff;
+  --secondary-container: #4a1520;
+  --on-secondary-container: #ffdde2;
 
-  --tertiary: #f0b8c0;
+  --tertiary: #f5b8c4;
   --tertiary-foreground: #3e0016;
 
-  --muted: #1e2122;
-  --muted-foreground: #c8aaaa;
+  --muted: #221615;
+  --muted-foreground: #d4a8a5;
 
-  --accent: #272b2c;
-  --accent-foreground: #e1e3e4;
+  --accent: #2a1b1a;
+  --accent-foreground: #f0e0de;
 
   --destructive: #f87171;
 
-  --border: #e1e3e426;
-  --input: #272b2c;
-  --ring: #ffb3b3;
+  --border: #f0e0de26;
+  --input: #2a1b1a;
+  --ring: #ffb3bc;
 
-  /* Surface hierarchy — dark */
-  --surface: #191c1d;
-  --surface-container-low: #1e2122;
-  --surface-container: #232728;
-  --surface-container-lowest: #161919;
-  --surface-container-high: #272b2c;
-  --surface-container-highest: #313536;
-  --on-surface: #e1e3e4;
-  --on-surface-variant: #c8aaaa;
-  --on-secondary-container: #daeeff;
-  --outline-variant: #4a3333;
+  /* Surface hierarchy — warm dark */
+  --surface: #1c1210;
+  --surface-container-low: #221615;
+  --surface-container: #261817;
+  --surface-container-lowest: #150d0c;
+  --surface-container-high: #2a1b1a;
+  --surface-container-highest: #321f1e;
+  --on-surface: #f0e0de;
+  --on-surface-variant: #d4a8a5;
+  --outline-variant: #5a2e2c;
+
+  /* ── Sidebar tokens — dark mode (same sidebar bg, same white overlays) */
+  --sidebar-bg: #1a0008;
+  --sidebar-nav-text: rgba(255, 255, 255, 0.55);
+  --sidebar-nav-text-active: #ffffff;
+  --sidebar-nav-active-bg: rgba(255, 255, 255, 0.08);
+  --sidebar-avatar-bg: rgba(255, 255, 255, 0.15);
+  --sidebar-avatar-text: #ffffff;
+  --sidebar-icon-muted: rgba(255, 255, 255, 0.6);
+  --sidebar-separator: rgba(255, 255, 255, 0.1);
+
+  /* ── On-primary text — dark mode (làm sáng hơn trên nền crimson tối hơn) */
+  --on-primary: #ffffff;
+  --on-primary-muted: rgba(255, 255, 255, 0.70);
+  --on-primary-dim: rgba(255, 255, 255, 0.55);
 }
 
 @theme inline {
@@ -191,4 +220,18 @@
 
 h1, h2, h3, h4, h5, h6 {
   font-family: "Nunito", "Kiwi Maru", system-ui, sans-serif;
+}
+
+/* ─── NProgress — Crimson loading bar ───────────────────────────────────── */
+#nprogress .bar {
+  background: var(--primary) !important;
+  height: 2px !important;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px var(--primary), 0 0 5px var(--primary) !important;
+}
+
+#nprogress .spinner-icon {
+  display: none !important;
 }
