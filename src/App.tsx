@@ -1,38 +1,47 @@
-import {BrowserRouter, Route, Routes} from 'react-router'
-import { LoginPage } from './pages/LoginPage'
-import { RegisterPage } from './pages/RegisterPage'
-import { DashboardPage } from './pages/DashboardPage'
-import { HomePage } from './pages/HomePage'
+import { BrowserRouter, Route, Routes } from 'react-router'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { GooeyToaster } from './components/ui/goey-toaster'
+import { AppInit } from './components/auth/AppInit'
+import { GuestRoute } from './components/auth/GuestRoute'
+import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { LoginPage } from './pages/LoginPage'
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
+import { ResetPasswordPage } from './pages/ResetPasswordPage'
+import { DashboardPage } from './pages/DashboardPage'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { retry: 1, staleTime: 1000 * 60 * 5 },
+    mutations: { retry: 0 },
+  },
+})
 
 function App() {
-  return <>
-    <GooeyToaster position='top-right'/>
-    <BrowserRouter>
-      <Routes>
-        {/* public routes */}
-        <Route
-          path="/"
-          element={<HomePage/>}
-        />
+  return (
+    <QueryClientProvider client={queryClient}>
+      <GooeyToaster position="top-right" />
+      <BrowserRouter>
+        <AppInit>
+          <Routes>
 
-        <Route
-          path='/login'
-          element={<LoginPage/>}
-        />
-        <Route
-          path='/register'
-          element={<RegisterPage/>}
-        />
+            {/* Guest-only — redirect /dashboard nếu đã đăng nhập */}
+            <Route element={<GuestRoute />}>
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+            </Route>
 
-        {/* protected routes */}
-        <Route
-          path='/dashboard'
-          element={<DashboardPage/>}
-        />
-      </Routes>
-    </BrowserRouter>
-  </>
+            {/* Protected — yêu cầu đăng nhập + role editor/admin */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<DashboardPage />} />
+            </Route>
+
+          </Routes>
+        </AppInit>
+      </BrowserRouter>
+    </QueryClientProvider>
+  )
 }
 
 export default App

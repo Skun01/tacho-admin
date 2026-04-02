@@ -1,73 +1,111 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link } from 'react-router'
-import { AUTH_LOGIN_COPY } from '@/constants/auth'
+import { EyeIcon, EyeSlashIcon, SpinnerGapIcon } from '@phosphor-icons/react'
+import { useState } from 'react'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { loginSchema, type LoginSchema } from '@/lib/validations/auth'
+import { useLogin } from '@/hooks/useAuth'
+import { AUTH_LOGIN_COPY } from '@/constants/auth'
 
 export function LoginForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginSchema>({
+  const [showPassword, setShowPassword] = useState(false)
+  const { mutate: login, isPending } = useLogin()
+
+  const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
   })
 
-  const onSubmit = async (_data: LoginSchema) => {
-    // TODO: wire up authService.login
-  }
+  const onSubmit = (data: LoginSchema) => login(data)
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-foreground">
-          {AUTH_LOGIN_COPY.emailLabel}
-        </label>
-        <input
-          {...register('email')}
-          type="email"
-          placeholder={AUTH_LOGIN_COPY.emailPlaceholder}
-          className="border-b border-foreground/40 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground focus:border-primary"
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
+
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{AUTH_LOGIN_COPY.emailLabel}</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="email"
+                  placeholder={AUTH_LOGIN_COPY.emailPlaceholder}
+                  autoComplete="email"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.email && (
-          <span className="text-xs text-destructive">{errors.email.message}</span>
-        )}
-      </div>
 
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-foreground">
-            {AUTH_LOGIN_COPY.passwordLabel}
-          </label>
-          <a href="#" className="text-xs text-secondary hover:text-primary">
-            {AUTH_LOGIN_COPY.forgotPassword}
-          </a>
-        </div>
-        <input
-          {...register('password')}
-          type="password"
-          placeholder={AUTH_LOGIN_COPY.passwordPlaceholder}
-          className="border-b border-foreground/40 bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground focus:border-primary"
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center justify-between">
+                <FormLabel>{AUTH_LOGIN_COPY.passwordLabel}</FormLabel>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs hover:underline"
+                  style={{ color: 'var(--on-surface-variant)' }}
+                  tabIndex={-1}
+                >
+                  {AUTH_LOGIN_COPY.forgotPassword}
+                </Link>
+              </div>
+              <FormControl>
+                <div className="relative">
+                  <Input
+                    {...field}
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder={AUTH_LOGIN_COPY.passwordPlaceholder}
+                    autoComplete="current-password"
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    style={{ color: 'var(--on-surface-variant)' }}
+                    aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                  >
+                    {showPassword
+                      ? <EyeSlashIcon size={16} />
+                      : <EyeIcon size={16} />
+                    }
+                  </button>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.password && (
-          <span className="text-xs text-destructive">{errors.password.message}</span>
-        )}
-      </div>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="mt-2 rounded-xl bg-gradient-to-r from-primary to-primary-container px-8 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
-      >
-        {isSubmitting ? AUTH_LOGIN_COPY.loadingButton : AUTH_LOGIN_COPY.submitButton}
-      </button>
+        <Button
+          type="submit"
+          disabled={isPending}
+          className="mt-1 gap-2 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+        >
+          {isPending && <SpinnerGapIcon size={15} className="animate-spin" />}
+          {isPending ? AUTH_LOGIN_COPY.loadingButton : AUTH_LOGIN_COPY.submitButton}
+        </Button>
 
-      <p className="text-center text-sm text-muted-foreground">
-        {AUTH_LOGIN_COPY.registerPrompt}{' '}
-        <Link to="/register" className="font-semibold text-primary hover:underline">
-          {AUTH_LOGIN_COPY.registerLink}
-        </Link>
-      </p>
-    </form>
+      </form>
+    </Form>
   )
 }

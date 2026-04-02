@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "shadcn/tailwind.css";
 
-/* ─── Tacho Design System ─────────────────────────────────────── */
+/* Tacho Admin Design System — "The Digital Kanso" */
 :root {
   /* Typography */
   font-family: "Nunito", "Kiwi Maru", system-ui, sans-serif;
@@ -12,73 +12,123 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Radius — gentle (md → xl range) */
-  --radius: 0.75rem;
+  /* Radius — tighter than user app (editorial) */
+  --radius: 0.5rem;
 
-  /* ── Tacho Color Palette ──────────────────── */
-  /* Surface / Background */
-  --background: #fff9eb;
-  --foreground: #1d1c13;
+  /* Admin Color Palette — Crimson / Slate */
+  /* Background */
+  --background: #f8f9fa;
+  --foreground: #191c1d;
 
-  /* Card = surface-container-low */
-  --card: #f9f3e5;
-  --card-foreground: #1d1c13;
+  /* Card */
+  --card: #ffffff;
+  --card-foreground: #191c1d;
 
   /* Popover */
-  --popover: #fff9eb;
-  --popover-foreground: #1d1c13;
+  --popover: #ffffff;
+  --popover-foreground: #191c1d;
 
-  /* Primary — Deep Indigo "Ink" */
-  --primary: #002453;
-  --primary-foreground: #fff9eb;
+  /* Primary — Crimson "Red Seal" */
+  --primary: #8f0020;
+  --primary-foreground: #ffffff;
+  --primary-container: #bc002d;
+  --primary-fixed-dim: #ffb3b3;
 
-  /* Primary container */
-  --primary-container: #1a3a6d;
+  /* Secondary — Slate Blue */
+  --secondary: #4e6073;
+  --secondary-foreground: #ffffff;
+  --secondary-container: #cfe2f9;
+  --on-secondary-container: #0d1e2d;
 
-  /* Secondary — Mist / Grey-Blue */
-  --secondary: #4a6267;
-  --secondary-foreground: #fff9eb;
-
-  /* Secondary container */
-  --secondary-container: #d0dfe2;
-
-  /* Tertiary — Calligraphy Stamp Red-Brown */
-  --tertiary: #3d1d00;
-  --tertiary-foreground: #fff9eb;
+  /* Tertiary */
+  --tertiary: #693541;
+  --tertiary-foreground: #ffffff;
 
   /* Muted */
-  --muted: #f9f3e5;
-  --muted-foreground: #4a6267;
+  --muted: #f3f4f5;
+  --muted-foreground: #5c403f;
 
-  /* Accent = surface-container-highest */
-  --accent: #e8e2d4;
-  --accent-foreground: #1d1c13;
+  /* Accent */
+  --accent: #e8e9ea;
+  --accent-foreground: #191c1d;
 
   /* Destructive */
   --destructive: #b91c1c;
 
-  /* Ghost border — on-surface at 15% opacity */
-  --border: #1d1c1326;
-  --input: #e8e2d4;
-  --ring: #002453;
+  /* Border / Input / Ring */
+  --border: #191c1d26;
+  --input: #e8e9ea;
+  --ring: #8f0020;
 
   /* Surface hierarchy tokens */
-  --surface: #fff9eb;
-  --surface-container-low: #f9f3e5;
-  --surface-container: #f0ead9;
-  --surface-container-highest: #e8e2d4;
-  --on-surface: #1d1c13;
-  --outline-variant: #1d1c1326;
+  --surface: #f8f9fa;
+  --surface-container-low: #f3f4f5;
+  --surface-container: #eeeff0;
+  --surface-container-lowest: #ffffff;
+  --surface-container-high: #e8e9ea;
+  --surface-container-highest: #e2e3e4;
+  --on-surface: #191c1d;
+  --on-surface-variant: #5c403f;
+  --on-secondary-container: #0d1e2d;
+  --outline-variant: #e4bdbc26;
+}
+
+/* Dark Mode */
+.dark {
+  --background: #191c1d;
+  --foreground: #e1e3e4;
+
+  --card: #1e2122;
+  --card-foreground: #e1e3e4;
+
+  --popover: #191c1d;
+  --popover-foreground: #e1e3e4;
+
+  --primary: #ffb3b3;
+  --primary-foreground: #5c0010;
+  --primary-container: #690016;
+  --primary-fixed-dim: #930020;
+
+  --secondary: #b2c8e0;
+  --secondary-foreground: #0d1e2d;
+  --secondary-container: #354a5e;
+  --on-secondary-container: #daeeff;
+
+  --tertiary: #f0b8c0;
+  --tertiary-foreground: #3e0016;
+
+  --muted: #1e2122;
+  --muted-foreground: #c8aaaa;
+
+  --accent: #272b2c;
+  --accent-foreground: #e1e3e4;
+
+  --destructive: #f87171;
+
+  --border: #e1e3e426;
+  --input: #272b2c;
+  --ring: #ffb3b3;
+
+  /* Surface hierarchy — dark */
+  --surface: #191c1d;
+  --surface-container-low: #1e2122;
+  --surface-container: #232728;
+  --surface-container-lowest: #161919;
+  --surface-container-high: #272b2c;
+  --surface-container-highest: #313536;
+  --on-surface: #e1e3e4;
+  --on-surface-variant: #c8aaaa;
+  --on-secondary-container: #daeeff;
+  --outline-variant: #4a3333;
 }
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -107,8 +157,12 @@
   --color-surface: var(--surface);
   --color-surface-container-low: var(--surface-container-low);
   --color-surface-container: var(--surface-container);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-high: var(--surface-container-high);
   --color-surface-container-highest: var(--surface-container-highest);
   --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-on-secondary-container: var(--on-secondary-container);
   --color-outline-variant: var(--outline-variant);
 }
 
@@ -122,4 +176,19 @@
     min-width: 320px;
     min-height: 100vh;
   }
+}
+
+/* Font Utilities */
+.font-heading-vn {
+  font-family: "Nunito", system-ui, sans-serif;
+  font-weight: 700;
+}
+
+.font-heading-jp {
+  font-family: "Kiwi Maru", serif;
+  font-weight: 500;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Nunito", "Kiwi Maru", system-ui, sans-serif;
 }
