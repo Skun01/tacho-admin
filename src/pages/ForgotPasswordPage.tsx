@@ -1,12 +1,17 @@
+import { Helmet } from 'react-helmet-async'
 import { BrandLogo } from '@/components/auth/BrandLogo'
 import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm'
 import { AUTH_FORGOT_PASSWORD_COPY } from '@/constants/auth'
 
 export function ForgotPasswordPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
-      style={{ backgroundColor: 'var(--surface)' }}
-    >
+    <>
+      <Helmet>
+        <title>Tacho Admin — Quên mật khẩu</title>
+      </Helmet>
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
+        style={{ backgroundColor: 'var(--surface)' }}
+      >
       <div className="w-full max-w-sm">
 
         <div className="mb-8">
@@ -28,6 +33,7 @@ export function ForgotPasswordPage() {
         <ForgotPasswordForm />
 
       </div>
-    </div>
+      </div>
+    </>
   )
 }

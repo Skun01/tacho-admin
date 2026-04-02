@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
+import { HelmetProvider } from 'react-helmet-async'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { GooeyToaster } from './components/ui/goey-toaster'
 import { AppInit } from './components/auth/AppInit'
@@ -21,39 +22,35 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <GooeyToaster position="top-right" />
-      <BrowserRouter>
-        <AppInit>
-          <NProgressBar />
-          <Routes>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <GooeyToaster position="top-right" />
+        <BrowserRouter>
+          <AppInit>
+            <NProgressBar />
+            <Routes>
 
-            {/* Guest-only — redirect /dashboard nếu đã đăng nhập */}
-            <Route element={<GuestRoute />}>
-              <Route path="/" element={<LoginPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/reset-password" element={<ResetPasswordPage />} />
-            </Route>
-
-            {/* Protected — yêu cầu đăng nhập + role editor/admin */}
-            <Route element={<ProtectedRoute />}>
-
-              {/* ProfilePage: layout riêng, không có sidebar */}
-              <Route path="/profile" element={<ProfilePage />} />
-
-              {/* AdminLayout: tất cả page có sidebar */}
-              <Route element={<AdminLayout />}>
-                <Route path="/dashboard" element={<DashboardPage />} />
-                {/* Content pages sẽ thêm vào đây */}
+              {/* Guest-only */}
+              <Route element={<GuestRoute />}>
+                <Route path="/" element={<LoginPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
               </Route>
 
-            </Route>
+              {/* Protected */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route element={<AdminLayout />}>
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                </Route>
+              </Route>
 
-          </Routes>
-        </AppInit>
-      </BrowserRouter>
-    </QueryClientProvider>
+            </Routes>
+          </AppInit>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </HelmetProvider>
   )
 }
 

@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { UpdateProfileForm } from '@/components/auth/UpdateProfileForm'
 import { ChangePasswordForm } from '@/components/auth/ChangePasswordForm'
@@ -5,10 +6,14 @@ import { AUTH_PROFILE_COPY } from '@/constants/auth'
 
 export function ProfilePage() {
   return (
-    <div
-      className="min-h-screen"
-      style={{ backgroundColor: 'var(--surface)' }}
-    >
+    <>
+      <Helmet>
+        <title>Trang cá nhân | Tacho Admin</title>
+      </Helmet>
+      <div
+        className="min-h-screen"
+        style={{ backgroundColor: 'var(--surface)' }}
+      >
       <div className="mx-auto max-w-2xl px-6 py-10">
 
         {/* Header: back button + avatar + tên + role */}
@@ -47,6 +52,7 @@ export function ProfilePage() {
 
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }

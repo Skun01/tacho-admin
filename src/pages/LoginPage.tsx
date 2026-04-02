@@ -1,10 +1,16 @@
+import { Helmet } from 'react-helmet-async'
 import { BrandLogo } from '@/components/auth/BrandLogo'
 import { LoginForm } from '@/components/auth/LoginForm'
 import { AUTH_LOGIN_COPY } from '@/constants/auth'
 
 export function LoginPage() {
   return (
-    <div className="min-h-screen flex" style={{ backgroundColor: 'var(--surface)' }}>
+    <>
+      <Helmet>
+        <title>Tacho Admin — Đăng nhập</title>
+        <meta name="description" content="Hệ thống quản trị nội dung học tiếng Nhật Tacho." />
+      </Helmet>
+      <div className="min-h-screen flex" style={{ backgroundColor: 'var(--surface)' }}>
 
       {/* Left: Decorative panel */}
       <div
@@ -84,5 +90,6 @@ export function LoginPage() {
       </div>
 
     </div>
+  </>
   )
 }

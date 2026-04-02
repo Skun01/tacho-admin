@@ -1,13 +1,18 @@
+import { Helmet } from 'react-helmet-async'
 import { BrandLogo } from '@/components/auth/BrandLogo'
 import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm'
 import { AUTH_RESET_PASSWORD_COPY } from '@/constants/auth'
 
 export function ResetPasswordPage() {
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
-      style={{ backgroundColor: 'var(--surface)' }}
-    >
+    <>
+      <Helmet>
+        <title>Tacho Admin — Đặt lại mật khẩu</title>
+      </Helmet>
+      <div
+        className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
+        style={{ backgroundColor: 'var(--surface)' }}
+      >
       <div className="w-full max-w-sm">
 
         <div className="mb-8">
@@ -29,6 +34,7 @@ export function ResetPasswordPage() {
         <ResetPasswordForm />
 
       </div>
-    </div>
+      </div>
+    </>
   )
 }
