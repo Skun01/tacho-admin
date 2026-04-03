@@ -49,11 +49,14 @@ export function setupInterceptors() {
   // ── Response: handle business errors + 401 refresh ───────────────────
   api.interceptors.response.use(
     (response) => {
-      // Theo API_GUIDES §4: luôn check success trong body
-      const body = response.data
-      if (body && body.success === false) {
-        const err = new Error(body.message ?? 'Business error') as ApiError
-        err.apiData = body
+      // Backend trả HTTP 200 cho mọi response (kể cả lỗi nghiệp vụ).
+      // Nếu success/Success === false → reject để onError trong useMutation hoạt động đúng.
+      const isSuccess = response.data?.success ?? response.data?.Success;
+      if (response.data && isSuccess === false) {
+        const err = Object.assign(
+          new Error(response.data.message ?? response.data.Message ?? 'API Error'),
+          { apiData: response.data }, // { code, success, message, data } hoặc PascalCase
+        )
         return Promise.reject(err)
       }
       return response

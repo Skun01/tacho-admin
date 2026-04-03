@@ -1,5 +1,6 @@
 export const AUTH_ERROR_MESSAGES: Record<string, string> = {
   // Login
+  'Invalid_400': 'Email hoặc mật khẩu không chính xác.',
   'Email_NotFound_404': 'Email không tồn tại trong hệ thống.',
   'Password_Wrong_401': 'Mật khẩu không chính xác.',
   // Password

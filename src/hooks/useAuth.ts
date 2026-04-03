@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 import { gooeyToast } from '@/components/ui/goey-toaster'
 import { authService } from '@/services/authService'
 import { useAuthStore } from '@/stores/authStore'
-import type { ApiError } from '@/services/setupInterceptors'
+
 import type {
   ChangePasswordRequest,
   ForgotPasswordRequest,
@@ -14,25 +14,51 @@ import type {
 } from '@/types/auth'
 import { AUTH_ERROR_MESSAGES, AUTH_PROFILE_COPY } from '@/constants/auth'
 
+interface ApiErrorData {
+  code?: number
+  Code?: number
+  success?: boolean
+  Success?: boolean
+  message?: string | null
+  Message?: string | null
+  data?: unknown
+  Data?: unknown
+}
+
+interface CustomError extends Error {
+  apiData?: ApiErrorData
+  response?: {
+    data?: ApiErrorData
+  }
+}
+
 // ── Error helper ──────────────────────────────────────────────────────────────
 function getErrorMessage(error: unknown): string {
-  const apiData = (error as ApiError)?.apiData
-  const validationData = apiData?.data as Record<string, string[]> | undefined
+  const err = error as CustomError
+  const data = err?.apiData || err?.response?.data
 
-  if (apiData?.code === 400 && validationData && typeof validationData === 'object') {
+  if (!data) return AUTH_ERROR_MESSAGES.default
+
+  const code = data.code ?? data.Code
+  const message = data.message ?? data.Message
+  const validationData = (data.data ?? data.Data) as Record<string, string[]> | undefined
+
+  if (code === 400 && validationData && typeof validationData === 'object') {
     const firstError = Object.values(validationData)
       .flat()
-      .find((message) => Boolean(message))
+      .find((msg) => Boolean(msg))
 
     if (firstError && AUTH_ERROR_MESSAGES[firstError]) {
       return AUTH_ERROR_MESSAGES[firstError]
     }
   }
 
-  if (apiData?.message && AUTH_ERROR_MESSAGES[apiData.message]) {
-    return AUTH_ERROR_MESSAGES[apiData.message]
+  if (message && AUTH_ERROR_MESSAGES[message]) {
+    return AUTH_ERROR_MESSAGES[message]
   }
-  if (apiData?.code === 400) return AUTH_ERROR_MESSAGES['Validation_400']
+
+  if (code === 400) return AUTH_ERROR_MESSAGES['Validation_400']
+  
   return AUTH_ERROR_MESSAGES.default
 }
 
