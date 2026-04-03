@@ -26,6 +26,16 @@ export const authService = {
   updateProfile: (payload: UpdateProfileRequest) =>
     api.patch<ApiResponse<UserDTO>>('/auth/me/profile', payload),
 
+  uploadAvatar: (file: File) => {
+    const formData = new FormData()
+    formData.append('avatar', file)
+    return api.post<ApiResponse<UserDTO>>('/auth/me/avatar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
+
   changePassword: (payload: ChangePasswordRequest) =>
     api.patch<ApiResponse<boolean>>('/auth/change-password', payload),
 

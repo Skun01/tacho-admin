@@ -7,6 +7,10 @@ export const AUTH_ERROR_MESSAGES: Record<string, string> = {
   'ResetToken_Invalid_400': 'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.',
   // General
   'Validation_400': 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.',
+  'Avatar is required': 'Vui lòng chọn ảnh đại diện.',
+  'Avatar must not be empty': 'Ảnh đại diện không được để trống.',
+  'Avatar size must not exceed 5 MB': 'Ảnh đại diện tối đa 5MB.',
+  'Avatar content type is not supported': 'Chỉ hỗ trợ ảnh JPG, PNG hoặc WEBP.',
   'default': 'Đã có lỗi xảy ra. Vui lòng thử lại.',
 }
 
@@ -49,9 +53,13 @@ export const AUTH_PROFILE_COPY = {
   securitySection: 'Bảo mật',
   displayNameLabel: 'Tên hiển thị',
   displayNamePlaceholder: 'Nguyễn Văn A',
-  avatarUrlLabel: 'Ảnh đại diện (URL)',
-  avatarUrlPlaceholder: 'https://...',
+  avatarFileLabel: 'Ảnh đại diện',
+  avatarFileHint: 'Chọn ảnh JPG, PNG hoặc WEBP (tối đa 5MB).',
+  avatarFileSelected: 'Đã chọn ảnh',
+  avatarPreviewLabel: 'Xem trước',
+  avatarFileClearButton: 'Xóa ảnh đã chọn',
   saveProfileButton: 'Lưu thay đổi',
+  saveProfileSuccess: 'Thông tin đã được cập nhật.',
   currentPasswordLabel: 'Mật khẩu hiện tại',
   newPasswordLabel: 'Mật khẩu mới',
   confirmNewPasswordLabel: 'Xác nhận mật khẩu mới',

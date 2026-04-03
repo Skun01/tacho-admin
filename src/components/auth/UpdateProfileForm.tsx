@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect,  } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpinnerGapIcon } from '@phosphor-icons/react'
@@ -16,31 +16,39 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export function UpdateProfileForm() {
   const user = useAuthStore((s) => s.user)
   const { mutate: updateProfile, isPending } = useUpdateProfile()
 
+  const hasAvatarFileError = false;
   const form = useForm<UpdateProfileSchema>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
       displayName: user?.displayName ?? '',
-      avatarUrl: user?.avatarUrl ?? '',
+      avatarFile: null,
+      removeAvatar: false,
     },
   })
+  
+  const isRemovingAvatar = form.watch('removeAvatar')
+  
 
   // Sync khi user thay đổi sau khi save thành công
   useEffect(() => {
     form.reset({
       displayName: user?.displayName ?? '',
-      avatarUrl: user?.avatarUrl ?? '',
+      avatarFile: null,
+      removeAvatar: false,
     })
   }, [user, form])
 
   const onSubmit = (data: UpdateProfileSchema) => {
     updateProfile({
       displayName: data.displayName,
-      avatarUrl: data.avatarUrl || undefined,
+      avatarFile: data.avatarFile ?? null,
+      removeAvatar: data.removeAvatar,
     })
   }
 
@@ -68,17 +76,25 @@ export function UpdateProfileForm() {
 
         <FormField
           control={form.control}
-          name="avatarUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{AUTH_PROFILE_COPY.avatarUrlLabel}</FormLabel>
-              <FormControl>
-                <Input
-                  type="url"
-                  placeholder={AUTH_PROFILE_COPY.avatarUrlPlaceholder}
-                  {...field}
-                />
-              </FormControl>
+          name="avatarFile"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{AUTH_PROFILE_COPY.avatarFileLabel}</FormLabel>
+                <FormControl>
+                  <ImageUpload
+                    isAvatar
+                    defaultPreview={isRemovingAvatar ? null : user?.avatarUrl}
+                    value={field.value}
+                    onChange={(file) => {
+                      field.onChange(file)
+                      form.setValue('removeAvatar', false, { shouldDirty: true })
+                    }}
+                    onRemove={() => {
+                      field.onChange(null)
+                      form.setValue('removeAvatar', true, { shouldDirty: true })
+                    }}
+                  />
+                </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -86,7 +102,7 @@ export function UpdateProfileForm() {
 
         <Button
           type="submit"
-          disabled={isPending}
+          disabled={isPending || hasAvatarFileError}
           className="mt-1 self-start gap-2 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
         >
           {isPending && <SpinnerGapIcon size={15} className="animate-spin" />}

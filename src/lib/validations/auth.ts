@@ -37,11 +37,15 @@ export const updateProfileSchema = z.object({
     .string()
     .min(2, 'Tên hiển thị ít nhất 2 ký tự.')
     .max(50, 'Tên hiển thị tối đa 50 ký tự.'),
-  avatarUrl: z
-    .string()
-    .url('URL ảnh không hợp lệ.')
-    .optional()
-    .or(z.literal('')),
+  avatarFile: z
+    .custom<File | null | undefined>((value) => value == null || value instanceof File)
+    .refine((file) => !file || file.size <= 5 * 1024 * 1024, {
+      message: 'Ảnh đại diện tối đa 5MB.',
+    })
+    .refine((file) => !file || ['image/jpeg', 'image/png', 'image/webp'].includes(file.type), {
+      message: 'Chỉ hỗ trợ JPG, PNG hoặc WEBP.',
+    }),
+  removeAvatar: z.boolean().optional(),
 })
 
 export type LoginSchema = z.infer<typeof loginSchema>

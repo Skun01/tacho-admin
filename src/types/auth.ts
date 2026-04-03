@@ -10,6 +10,12 @@ export interface UpdateProfileRequest {
   avatarUrl?: string | null
 }
 
+export interface UpdateProfileFormPayload {
+  displayName: string
+  avatarFile?: File | null
+  removeAvatar?: boolean
+}
+
 export interface ChangePasswordRequest {
   currentPassword: string
   newPassword: string
