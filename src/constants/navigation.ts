@@ -1,6 +1,9 @@
 import type { Icon } from '@phosphor-icons/react'
 import {
   HouseSimpleIcon,
+  FolderNotchOpenIcon,
+  BookOpenTextIcon,
+  TextTIcon,
   CardsIcon,
   UsersIcon,
   GearIcon,
@@ -14,11 +17,27 @@ export interface NavItem {
   external?: boolean
 }
 
-export const ADMIN_NAV_ITEMS: NavItem[] = [
-  { icon: HouseSimpleIcon, label: 'Dashboard',    href: '/dashboard' },
-  { icon: CardsIcon,       label: 'Bộ thẻ',       href: '/decks' },
-  { icon: UsersIcon,       label: 'Người dùng',   href: '/users' },
-  { icon: GearIcon,        label: 'Cài đặt',      href: '/settings' },
+export interface NavGroup {
+  icon: Icon
+  label: string
+  children: NavItem[]
+}
+
+export type AdminNavEntry = NavItem | NavGroup
+
+export const ADMIN_NAV_ITEMS: AdminNavEntry[] = [
+  { icon: HouseSimpleIcon, label: 'Bảng điều khiển', href: '/dashboard' },
+  {
+    icon: FolderNotchOpenIcon,
+    label: 'Quản lý nội dung',
+    children: [
+      { icon: BookOpenTextIcon, label: 'Từ vựng', href: '/admin/vocabulary' },
+      { icon: TextTIcon, label: 'Câu ví dụ', href: '/admin/sentences' },
+    ],
+  },
+  { icon: CardsIcon, label: 'Bộ thẻ', href: '/decks' },
+  { icon: UsersIcon, label: 'Người dùng', href: '/users' },
+  { icon: GearIcon, label: 'Cài đặt', href: '/settings' },
 ]
 
 export const ADMIN_NAV_EXTERNAL: NavItem = {

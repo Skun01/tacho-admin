@@ -2,6 +2,7 @@ import { Link } from 'react-router'
 import { ArrowLineLeftIcon, ArrowLineRightIcon, XIcon } from '@phosphor-icons/react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { SidebarNavItem } from './SidebarNavItem'
+import { SidebarNavGroup } from './SidebarNavGroup'
 import { SidebarUserFooter } from './SidebarUserFooter'
 import { useSidebarStore } from '@/stores/sidebarStore'
 import { ADMIN_NAV_ITEMS, ADMIN_NAV_EXTERNAL } from '@/constants/navigation'
@@ -83,12 +84,21 @@ export function Sidebar() {
         {/*Nav items*/}
         <nav className="flex-1 px-2 space-y-1 overflow-y-auto">
           {ADMIN_NAV_ITEMS.map((item) => (
-            <SidebarNavItem
-              key={item.href}
-              item={item}
-              isCollapsed={isCollapsed}
-              onClick={close}
-            />
+            'children' in item ? (
+              <SidebarNavGroup
+                key={item.label}
+                item={item}
+                isCollapsed={isCollapsed}
+                onClick={close}
+              />
+            ) : (
+              <SidebarNavItem
+                key={item.href}
+                item={item}
+                isCollapsed={isCollapsed}
+                onClick={close}
+              />
+            )
           ))}
 
           {/* Tonal separator trước external link */}

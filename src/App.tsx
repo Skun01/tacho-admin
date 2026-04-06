@@ -12,6 +12,8 @@ import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { ProfilePage } from './pages/ProfilePage'
+import { AdminVocabularyPage } from './pages/AdminVocabularyPage'
+import { AdminSentencesPage } from './pages/AdminSentencesPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +45,8 @@ function App() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route element={<AdminLayout />}>
                   <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/admin/vocabulary" element={<AdminVocabularyPage />} />
+                  <Route path="/admin/sentences" element={<AdminSentencesPage />} />
                 </Route>
               </Route>
 

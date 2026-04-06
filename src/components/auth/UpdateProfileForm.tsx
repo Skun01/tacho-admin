@@ -1,5 +1,5 @@
-import { useEffect,  } from 'react'
-import { useForm } from 'react-hook-form'
+import { useEffect } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpinnerGapIcon } from '@phosphor-icons/react'
 import { AUTH_PROFILE_COPY } from '@/constants/auth'
@@ -22,7 +22,7 @@ export function UpdateProfileForm() {
   const user = useAuthStore((s) => s.user)
   const { mutate: updateProfile, isPending } = useUpdateProfile()
 
-  const hasAvatarFileError = false;
+  const hasAvatarFileError = false
   const form = useForm<UpdateProfileSchema>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
@@ -32,8 +32,7 @@ export function UpdateProfileForm() {
     },
   })
   
-  const isRemovingAvatar = form.watch('removeAvatar')
-  
+  const isRemovingAvatar = useWatch({ control: form.control, name: 'removeAvatar' })
 
   // Sync khi user thay đổi sau khi save thành công
   useEffect(() => {
@@ -77,24 +76,24 @@ export function UpdateProfileForm() {
         <FormField
           control={form.control}
           name="avatarFile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{AUTH_PROFILE_COPY.avatarFileLabel}</FormLabel>
-                <FormControl>
-                  <ImageUpload
-                    isAvatar
-                    defaultPreview={isRemovingAvatar ? null : user?.avatarUrl}
-                    value={field.value}
-                    onChange={(file) => {
-                      field.onChange(file)
-                      form.setValue('removeAvatar', false, { shouldDirty: true })
-                    }}
-                    onRemove={() => {
-                      field.onChange(null)
-                      form.setValue('removeAvatar', true, { shouldDirty: true })
-                    }}
-                  />
-                </FormControl>
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{AUTH_PROFILE_COPY.avatarFileLabel}</FormLabel>
+              <FormControl>
+                <ImageUpload
+                  isAvatar
+                  defaultPreview={isRemovingAvatar ? null : user?.avatarUrl}
+                  value={field.value}
+                  onChange={(file) => {
+                    field.onChange(file)
+                    form.setValue('removeAvatar', false, { shouldDirty: true })
+                  }}
+                  onRemove={() => {
+                    field.onChange(null)
+                    form.setValue('removeAvatar', true, { shouldDirty: true })
+                  }}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
