@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async'
 import { PlusIcon } from '@phosphor-icons/react'
+import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
-import { VocabularyUpsertForm } from '@/components/content/VocabularyUpsertForm'
 import { VocabularyAdminFilters } from '@/components/content/admin/VocabularyAdminFilters'
 import { VocabularyAdminTable } from '@/components/content/admin/VocabularyAdminTable'
 import { ADMIN_VOCABULARY_CONTENT } from '@/constants/adminContent'
@@ -9,6 +9,7 @@ import { useAdminVocabularyPageState } from '@/hooks/useAdminVocabularyPageState
 
 export function AdminVocabularyPage() {
   const state = useAdminVocabularyPageState()
+  const navigate = useNavigate()
 
   return (
     <>
@@ -24,25 +25,11 @@ export function AdminVocabularyPage() {
           <p className="text-sm" style={{ color: 'var(--on-surface-variant)' }}>
             {ADMIN_VOCABULARY_CONTENT.description}
           </p>
-          <Button type="button" onClick={state.handleOpenCreate} className="mt-2">
+          <Button type="button" onClick={() => navigate('/admin/vocabulary/create')} className="mt-2">
             <PlusIcon size={16} />
             {ADMIN_VOCABULARY_CONTENT.createLabel}
           </Button>
         </header>
-
-        <VocabularyUpsertForm
-          open={state.formMode !== null}
-          onOpenChange={(open) => {
-            if (!open) {
-              state.handleCloseForm()
-            }
-          }}
-          mode={state.formMode ?? 'create'}
-          initialData={state.editingItem}
-          isLoadingDetail={state.isLoadingDetail}
-          isSubmitting={state.isSubmitting}
-          onSubmit={state.handleSubmitForm}
-        />
 
         <VocabularyAdminFilters
           keywordInput={state.keywordInput}
@@ -66,7 +53,7 @@ export function AdminVocabularyPage() {
           currentPage={state.currentPage}
           totalPage={state.totalPage}
           onPageChange={state.handlePageChange}
-          onOpenEdit={state.handleOpenEdit}
+          onOpenEdit={(item) => navigate(`/admin/vocabulary/${item.id}/edit`)}
           onDelete={state.handleDelete}
         />
       </section>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { InfoIcon, MicrophoneIcon, StopIcon, UploadSimpleIcon, XIcon } from '@phosphor-icons/react'
@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { vocabularyUpsertSchema, type VocabularyUpsertInput } from '@/lib/validations/vocabularyAdmin'
 import { resourceService } from '@/services/resourceService'
@@ -22,7 +22,13 @@ interface VocabularyUpsertFormProps {
   initialData?: VocabularyAdminDetail | null
   isSubmitting: boolean
   isLoadingDetail?: boolean
-  onSubmit: (payload: VocabularyUpsertPayload) => void
+  onSubmit: (payload: VocabularyUpsertPayload) => Promise<void> | void
+  onDirtyChange?: (isDirty: boolean) => void
+}
+
+export interface VocabularyUpsertFormHandle {
+  submit: () => void
+  submitDraft: () => void
 }
 
 const WORD_TYPE_OPTIONS = [
@@ -147,7 +153,7 @@ async function convertBlobToWavFile(blob: Blob, fileNameBase: string) {
   }
 }
 
-export function VocabularyUpsertForm({
+export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, VocabularyUpsertFormProps>(function VocabularyUpsertForm({
   open,
   onOpenChange,
   mode,
@@ -155,7 +161,8 @@ export function VocabularyUpsertForm({
   isSubmitting,
   isLoadingDetail = false,
   onSubmit,
-}: VocabularyUpsertFormProps) {
+  onDirtyChange,
+}: VocabularyUpsertFormProps, ref) {
   const form = useForm<VocabularyUpsertInput>({
     resolver: zodResolver(vocabularyUpsertSchema) as never,
     defaultValues: DEFAULT_VALUES,
@@ -175,6 +182,7 @@ export function VocabularyUpsertForm({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const mediaStreamRef = useRef<MediaStream | null>(null)
   const chunksRef = useRef<Blob[]>([])
+  const submitAsDraftRef = useRef(false)
 
   const audioPreviewUrl = useMemo(() => audioUrl ?? initialData?.audioUrl ?? null, [audioUrl, initialData?.audioUrl])
   const watchedReading = useWatch({ control: form.control, name: 'reading' })
@@ -260,6 +268,10 @@ export function VocabularyUpsertForm({
       return trimmed
     })
   }, [readingChars])
+
+  useEffect(() => {
+    onDirtyChange?.(form.formState.isDirty)
+  }, [form.formState.isDirty, onDirtyChange])
 
   useEffect(() => {
     return () => {
@@ -397,14 +409,17 @@ export function VocabularyUpsertForm({
     })
   }
 
-  const handleSubmit = (values: VocabularyUpsertInput) => {
-    onSubmit({
+  const handleSubmit = async (values: VocabularyUpsertInput) => {
+    const saveAsDraft = submitAsDraftRef.current
+    submitAsDraftRef.current = false
+
+    await onSubmit({
       title: values.title.trim(),
       summary: values.summary.trim(),
       writing: values.title.trim(),
       reading: values.reading.trim() || null,
       level: values.level ?? null,
-      status: values.status ?? 'Draft',
+      status: saveAsDraft ? 'Draft' : (values.status ?? 'Draft'),
       wordType: values.wordType.trim() || null,
       tags: values.tags,
       pitchPattern: pitchPattern.length > 0 ? pitchPattern : null,
@@ -419,13 +434,37 @@ export function VocabularyUpsertForm({
     })
   }
 
+  const triggerSubmit = () => {
+    submitAsDraftRef.current = false
+    void form.handleSubmit(handleSubmit)()
+  }
+
+  const triggerDraftSubmit = () => {
+    submitAsDraftRef.current = true
+    void form.handleSubmit(handleSubmit, () => {
+      submitAsDraftRef.current = false
+    })()
+  }
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      submit: triggerSubmit,
+      submitDraft: triggerDraftSubmit,
+    }),
+  )
+
+  if (!open) {
+    return null
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92vh] max-w-[820px] overflow-y-auto lg:max-w-[900px]">
-        <DialogHeader>
-          <DialogTitle>{mode === 'create' ? ADMIN_VOCABULARY_CONTENT.form.dialogTitleCreate : ADMIN_VOCABULARY_CONTENT.form.dialogTitleEdit}</DialogTitle>
-          <DialogDescription>{ADMIN_VOCABULARY_CONTENT.form.dialogDescription}</DialogDescription>
-        </DialogHeader>
+    <Card>
+      <CardHeader>
+        <CardTitle>{mode === 'create' ? ADMIN_VOCABULARY_CONTENT.form.dialogTitleCreate : ADMIN_VOCABULARY_CONTENT.form.dialogTitleEdit}</CardTitle>
+        <CardDescription>{ADMIN_VOCABULARY_CONTENT.form.dialogDescription}</CardDescription>
+      </CardHeader>
+      <CardContent>
 
         {isLoadingDetail ? (
           <p className="text-sm" style={{ color: 'var(--on-surface-variant)' }}>
@@ -433,7 +472,10 @@ export function VocabularyUpsertForm({
           </p>
         ) : (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+              <section className="space-y-4">
+                <h3 className="text-base font-semibold">{ADMIN_VOCABULARY_CONTENT.form.sections.basicTitle}</h3>
+
               <FormField
                 control={form.control}
                 name="title"
@@ -649,6 +691,10 @@ export function VocabularyUpsertForm({
                   </FormItem>
                 )}
               />
+              </section>
+
+              <section className="space-y-4">
+                <h3 className="text-base font-semibold">{ADMIN_VOCABULARY_CONTENT.form.sections.meaningsTitle}</h3>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2">
@@ -666,7 +712,7 @@ export function VocabularyUpsertForm({
                 {meaningFieldArray.fields.map((field, index) => (
                   <div key={field.id} className="rounded-lg border p-3" style={{ borderColor: 'var(--border)' }}>
                     <div className="mb-3 flex items-center justify-between gap-2">
-                      <p className="text-sm font-medium">Nghĩa #{index + 1}</p>
+                      <p className="text-sm font-medium">{ADMIN_VOCABULARY_CONTENT.form.sections.meaningItemLabel(index + 1)}</p>
                       <Button
                         type="button"
                         variant="ghost"
@@ -759,6 +805,10 @@ export function VocabularyUpsertForm({
                   </div>
                 ))}
               </div>
+              </section>
+
+              <section className="space-y-4">
+                <h3 className="text-base font-semibold">{ADMIN_VOCABULARY_CONTENT.form.sections.relationsTitle}</h3>
 
               <FormField
                 control={form.control}
@@ -906,6 +956,10 @@ export function VocabularyUpsertForm({
                   </FormItem>
                 )}
               />
+              </section>
+
+              <section className="space-y-4">
+                <h3 className="text-base font-semibold">{ADMIN_VOCABULARY_CONTENT.form.sections.audioTitle}</h3>
 
               <FormItem>
                 <div className="flex items-center gap-2">
@@ -916,7 +970,7 @@ export function VocabularyUpsertForm({
                         <button
                           type="button"
                           className="inline-flex items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground"
-                          aria-label="Định dạng audio được hỗ trợ"
+                          aria-label={ADMIN_VOCABULARY_CONTENT.form.audioFormatHintAriaLabel}
                         >
                           <InfoIcon size={16} weight="duotone" />
                         </button>
@@ -995,19 +1049,25 @@ export function VocabularyUpsertForm({
                   </p>
                 )}
               </div>
+              </section>
 
-              <div className="flex flex-wrap gap-2">
+              <div className="sticky bottom-[-24px] z-10 -mx-6 border-t bg-background/95 px-6 py-4 backdrop-blur-sm lg:bottom-[-32px]">
+                <div className="flex flex-wrap gap-2">
                 <Button type="submit" disabled={isSubmitting || isLoadingDetail}>
                   {mode === 'create' ? ADMIN_VOCABULARY_CONTENT.form.createActionLabel : ADMIN_VOCABULARY_CONTENT.form.updateActionLabel}
+                </Button>
+                <Button type="button" variant="outline" onClick={triggerDraftSubmit} disabled={isSubmitting || isLoadingDetail}>
+                  {ADMIN_VOCABULARY_CONTENT.actions.saveDraft}
                 </Button>
                 <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
                   {ADMIN_VOCABULARY_CONTENT.form.cancelActionLabel}
                 </Button>
+                </div>
               </div>
             </form>
           </Form>
         )}
-      </DialogContent>
-    </Dialog>
+      </CardContent>
+    </Card>
   )
-}
+})
