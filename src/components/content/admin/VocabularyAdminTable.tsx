@@ -5,6 +5,7 @@ import { AdminTableSection } from '@/components/content/admin/AdminTableSection'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { ADMIN_COMMON_CONTENT, ADMIN_VOCABULARY_CONTENT } from '@/constants/adminContent'
 import type { VocabularyAdminItem } from '@/types/vocabularyAdmin'
+import { getVocabularyStatusLabel } from '@/types/vocabularyAdmin'
 
 interface VocabularyAdminTableProps {
   items: VocabularyAdminItem[]
@@ -68,7 +69,7 @@ export function VocabularyAdminTable({
                 <Badge variant="outline">{item.level ?? '-'}</Badge>
               </TableCell>
               <TableCell>
-                <Badge variant={item.status === 'Published' ? 'default' : 'secondary'}>{item.status}</Badge>
+                <Badge variant={item.status === 'Published' ? 'default' : 'secondary'}>{getVocabularyStatusLabel(item.status)}</Badge>
               </TableCell>
               <TableCell>
                 {item.updatedAt ? format(new Date(item.updatedAt), 'dd/MM/yyyy HH:mm') : ADMIN_COMMON_CONTENT.notUpdatedLabel}

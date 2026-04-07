@@ -4,6 +4,16 @@ export const VOCABULARY_STATUS_OPTIONS = ['Draft', 'Published', 'Archived'] as c
 export type VocabularyLevel = (typeof VOCABULARY_LEVEL_OPTIONS)[number]
 export type VocabularyStatus = (typeof VOCABULARY_STATUS_OPTIONS)[number]
 
+export const VOCABULARY_STATUS_LABELS: Record<VocabularyStatus, string> = {
+  Draft: 'Bản nháp',
+  Published: 'Đã xuất bản',
+  Archived: 'Đã lưu trữ',
+}
+
+export function getVocabularyStatusLabel(status: VocabularyStatus) {
+  return VOCABULARY_STATUS_LABELS[status]
+}
+
 export interface VocabularyAdminItem {
   id: string
   title: string

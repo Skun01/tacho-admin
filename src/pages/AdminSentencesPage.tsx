@@ -46,6 +46,7 @@ export function AdminSentencesPage() {
         <SentenceAdminFilters
           keywordInput={state.keywordInput}
           levelInput={state.levelInput}
+          totalItems={state.totalItems}
           onKeywordInputChange={state.setKeywordInput}
           onLevelToggle={(level) => state.setLevelInput((prev) => (prev === level ? undefined : level))}
           onSearch={state.handleSearch}

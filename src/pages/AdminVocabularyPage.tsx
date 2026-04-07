@@ -49,6 +49,7 @@ export function AdminVocabularyPage() {
           levelInput={state.levelInput}
           statusInput={state.statusInput}
           createdByMeInput={state.createdByMeInput}
+          totalItems={state.totalItems}
           onKeywordInputChange={state.setKeywordInput}
           onLevelToggle={(level) => state.setLevelInput((prev) => (prev === level ? undefined : level))}
           onStatusToggle={(status) => state.setStatusInput((prev) => (prev === status ? undefined : status))}

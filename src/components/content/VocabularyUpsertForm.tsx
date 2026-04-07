@@ -12,7 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { vocabularyUpsertSchema, type VocabularyUpsertInput } from '@/lib/validations/vocabularyAdmin'
 import { resourceService } from '@/services/resourceService'
 import type { VocabularyAdminDetail, VocabularyUpsertPayload } from '@/types/vocabularyAdmin'
-import { VOCABULARY_LEVEL_OPTIONS, VOCABULARY_STATUS_OPTIONS } from '@/types/vocabularyAdmin'
+import { VOCABULARY_LEVEL_OPTIONS, VOCABULARY_STATUS_LABELS, VOCABULARY_STATUS_OPTIONS } from '@/types/vocabularyAdmin'
 import { ADMIN_VOCABULARY_CONTENT } from '@/constants/adminContent'
 
 interface VocabularyUpsertFormProps {
@@ -23,12 +23,6 @@ interface VocabularyUpsertFormProps {
   isSubmitting: boolean
   isLoadingDetail?: boolean
   onSubmit: (payload: VocabularyUpsertPayload) => void
-}
-
-const STATUS_LABELS: Record<(typeof VOCABULARY_STATUS_OPTIONS)[number], string> = {
-  Draft: 'Bản nháp',
-  Published: 'Đã xuất bản',
-  Archived: 'Đã lưu trữ',
 }
 
 const WORD_TYPE_OPTIONS = [
@@ -572,7 +566,7 @@ export function VocabularyUpsertForm({
                             variant={field.value === status ? 'default' : 'outline'}
                             onClick={() => field.onChange(status)}
                           >
-                            {STATUS_LABELS[status]}
+                            {VOCABULARY_STATUS_LABELS[status]}
                           </Button>
                         ))}
                       </div>

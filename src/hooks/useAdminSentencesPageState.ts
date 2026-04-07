@@ -24,6 +24,7 @@ export function useAdminSentencesPageState() {
 
   const items = data?.data ?? []
   const meta = data?.metaData
+  const totalItems = meta?.total ?? items.length
   const currentPage = meta?.page ?? query.page
   const totalPage = meta ? Math.max(1, Math.ceil(meta.total / meta.pageSize)) : 1
 
@@ -112,6 +113,7 @@ export function useAdminSentencesPageState() {
     isDeleting: deleteMutation.isPending,
     isSubmitting: createMutation.isPending || updateMutation.isPending,
     items,
+    totalItems,
     currentPage,
     totalPage,
     setKeywordInput,
