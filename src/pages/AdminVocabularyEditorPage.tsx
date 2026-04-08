@@ -3,7 +3,7 @@ import { ArrowLeftIcon } from '@phosphor-icons/react'
 import { Helmet } from 'react-helmet-async'
 import { useBlocker, useNavigate, useParams } from 'react-router'
 import { gooeyToast } from '@/components/ui/goey-toaster'
-import { VocabularyUpsertForm, type VocabularyUpsertFormHandle } from '@/components/content/VocabularyUpsertForm'
+import { VocabularyUpsertForm } from '@/components/vocabulary/VocabularyUpsertForm'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ADMIN_VOCABULARY_CONTENT } from '@/constants/adminContent'
@@ -15,7 +15,6 @@ export function AdminVocabularyEditorPage() {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const isEditMode = Boolean(id)
-  const formRef = useRef<VocabularyUpsertFormHandle | null>(null)
 
   const [isDirty, setIsDirty] = useState(false)
   const [isLeaveConfirmOpen, setIsLeaveConfirmOpen] = useState(false)
@@ -151,7 +150,6 @@ export function AdminVocabularyEditorPage() {
           </p>
         ) : (
           <VocabularyUpsertForm
-            ref={formRef}
             open={true}
             onOpenChange={(open) => {
               if (!open) {
@@ -191,25 +189,26 @@ export function AdminVocabularyEditorPage() {
             <Button
               type="button"
               onClick={() => {
-                formRef.current?.submit()
+                allowNavigationRef.current = true
+
+                if (blocker.state === 'blocked') {
+                  blocker.proceed()
+                  return
+                }
+
+                if (pendingNavigationPath) {
+                  navigate(pendingNavigationPath)
+                } else {
+                  navigateToList()
+                }
               }}
               disabled={isSubmitting || isLoadingDetail}
             >
-              {ADMIN_VOCABULARY_CONTENT.editor.confirmLeaveSaveLabel}
+              {ADMIN_VOCABULARY_CONTENT.editor.confirmLeaveDiscardLabel}
             </Button>
             <Button
               type="button"
               variant="outline"
-              onClick={() => {
-                formRef.current?.submitDraft()
-              }}
-              disabled={isSubmitting || isLoadingDetail}
-            >
-              {ADMIN_VOCABULARY_CONTENT.editor.confirmLeaveSaveDraftLabel}
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
               onClick={() => {
                 if (blocker.state === 'blocked') {
                   blocker.reset()
@@ -218,7 +217,7 @@ export function AdminVocabularyEditorPage() {
                 setIsLeaveConfirmOpen(false)
               }}
             >
-              {ADMIN_VOCABULARY_CONTENT.editor.confirmLeaveCancelLabel}
+              {ADMIN_VOCABULARY_CONTENT.editor.confirmLeaveStayLabel}
             </Button>
           </div>
         </DialogContent>

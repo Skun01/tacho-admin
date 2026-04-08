@@ -16,7 +16,9 @@ export function useAdminVocabularyPageState() {
   const [keywordInput, setKeywordInput] = useState('')
   const [levelInput, setLevelInput] = useState<VocabularyLevel | undefined>(undefined)
   const [statusInput, setStatusInput] = useState<VocabularyStatus | undefined>(undefined)
+  const [wordTypeInput, setWordTypeInput] = useState<string | undefined>(undefined)
   const [createdByMeInput, setCreatedByMeInput] = useState(false)
+  const [hasAudioInput, setHasAudioInput] = useState<boolean | undefined>(undefined)
   const [query, setQuery] = useState<VocabularySearchQuery>({ page: 1, pageSize: PAGE_SIZE })
 
   const { data, isLoading, isFetching, isError, error } = useVocabularyAdminList(query)
@@ -38,7 +40,9 @@ export function useAdminVocabularyPageState() {
       q: keywordInput.trim() || undefined,
       level: levelInput,
       status: statusInput,
+      wordType: wordTypeInput,
       createdByMe: createdByMeInput,
+      hasAudio: hasAudioInput,
       page: 1,
       pageSize: PAGE_SIZE,
     })
@@ -48,7 +52,9 @@ export function useAdminVocabularyPageState() {
     setKeywordInput('')
     setLevelInput(undefined)
     setStatusInput(undefined)
+    setWordTypeInput(undefined)
     setCreatedByMeInput(false)
+    setHasAudioInput(undefined)
     setQuery({ page: 1, pageSize: PAGE_SIZE })
   }
 
@@ -72,7 +78,9 @@ export function useAdminVocabularyPageState() {
     keywordInput,
     levelInput,
     statusInput,
+    wordTypeInput,
     createdByMeInput,
+    hasAudioInput,
     isLoading,
     isFetching,
     isDeleting: deleteMutation.isPending,
@@ -83,7 +91,9 @@ export function useAdminVocabularyPageState() {
     setKeywordInput,
     setLevelInput,
     setStatusInput,
+    setWordTypeInput,
     setCreatedByMeInput,
+    setHasAudioInput,
     handleSearch,
     handleReset,
     handlePageChange,

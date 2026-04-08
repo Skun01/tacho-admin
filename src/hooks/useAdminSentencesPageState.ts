@@ -3,6 +3,7 @@ import { gooeyToast } from '@/components/ui/goey-toaster'
 import { ADMIN_COMMON_CONTENT, ADMIN_SENTENCE_CONTENT } from '@/constants/adminContent'
 import { useSentenceAdminList } from '@/hooks/useSentenceAdminList'
 import { useSentenceAdminMutations } from '@/hooks/useSentenceAdminMutations'
+import { resolveApiMediaUrl } from '@/lib/mediaUrl'
 import type { SentenceAdminItem, SentenceLevel, SentenceSearchQuery, SentenceUpsertPayload } from '@/types/sentenceAdmin'
 
 const PAGE_SIZE = 20
@@ -12,6 +13,8 @@ export function useAdminSentencesPageState() {
   const [editingItem, setEditingItem] = useState<SentenceAdminItem | null>(null)
   const [keywordInput, setKeywordInput] = useState('')
   const [levelInput, setLevelInput] = useState<SentenceLevel | undefined>(undefined)
+  const [createdByMeInput, setCreatedByMeInput] = useState(false)
+  const [hasAudioInput, setHasAudioInput] = useState<boolean | undefined>(undefined)
   const [query, setQuery] = useState<SentenceSearchQuery>({ page: 1, pageSize: PAGE_SIZE })
 
   const { data, isLoading, isFetching, isError, error } = useSentenceAdminList(query)
@@ -32,6 +35,8 @@ export function useAdminSentencesPageState() {
     setQuery({
       q: keywordInput.trim() || undefined,
       level: levelInput,
+      createdByMe: createdByMeInput,
+      hasAudio: hasAudioInput,
       page: 1,
       pageSize: PAGE_SIZE,
     })
@@ -40,6 +45,8 @@ export function useAdminSentencesPageState() {
   const handleReset = () => {
     setKeywordInput('')
     setLevelInput(undefined)
+    setCreatedByMeInput(false)
+    setHasAudioInput(undefined)
     setQuery({ page: 1, pageSize: PAGE_SIZE })
   }
 
@@ -93,10 +100,11 @@ export function useAdminSentencesPageState() {
   }
 
   const handlePlayAudio = async (audioUrl?: string | null) => {
-    if (!audioUrl) return
+    const resolvedAudioUrl = resolveApiMediaUrl(audioUrl)
+    if (!resolvedAudioUrl) return
 
     try {
-      const audio = new Audio(audioUrl)
+      const audio = new Audio(resolvedAudioUrl)
       await audio.play()
     } catch {
       gooeyToast.error(ADMIN_SENTENCE_CONTENT.form.playAudioFailedLabel)
@@ -108,6 +116,8 @@ export function useAdminSentencesPageState() {
     editingItem,
     keywordInput,
     levelInput,
+    createdByMeInput,
+    hasAudioInput,
     isLoading,
     isFetching,
     isDeleting: deleteMutation.isPending,
@@ -118,6 +128,8 @@ export function useAdminSentencesPageState() {
     totalPage,
     setKeywordInput,
     setLevelInput,
+    setCreatedByMeInput,
+    setHasAudioInput,
     handleSearch,
     handleReset,
     handlePageChange,

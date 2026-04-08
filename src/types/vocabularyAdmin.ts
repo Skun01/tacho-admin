@@ -27,6 +27,7 @@ export interface VocabularyAdminItem {
   reading: string | null
   wordType: string | null
   audioUrl?: string | null
+  speakerId: number | null
 }
 
 export interface VocabularyAdminDetail extends VocabularyAdminItem {
@@ -35,6 +36,7 @@ export interface VocabularyAdminDetail extends VocabularyAdminItem {
   synonyms: string[]
   antonyms: string[]
   relatedPhrases: string[]
+  sentences: VocabularySentenceUpsertInput[]
 }
 
 export interface VocabularyMeaningInput {
@@ -51,19 +53,30 @@ export interface VocabularyUpsertPayload {
   writing: string
   reading: string | null
   pitchPattern: number[] | null
-  audioUrl: string | null
+  speakerId?: number | null
   wordType: string | null
   meanings: VocabularyMeaningInput[]
   synonyms: string[]
   antonyms: string[]
   relatedPhrases: string[]
+  sentences?: VocabularySentenceUpsertInput[]
+}
+
+export interface VocabularySentenceUpsertInput {
+  id?: string
+  text: string
+  meaning: string
+  speakerId?: number | null
+  level: VocabularyLevel | null
 }
 
 export interface VocabularySearchQuery {
   q?: string
   level?: VocabularyLevel
   status?: VocabularyStatus
+  wordType?: string
   createdByMe?: boolean
+  hasAudio?: boolean
   page: number
   pageSize: number
 }

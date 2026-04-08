@@ -8,6 +8,8 @@ export const sentenceAdminService = {
       params: {
         q: query.q,
         level: query.level,
+        createdByMe: query.createdByMe,
+        hasAudio: query.hasAudio,
         page: query.page,
         pageSize: query.pageSize,
       },

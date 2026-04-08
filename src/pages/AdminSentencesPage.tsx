@@ -1,9 +1,9 @@
 import { Helmet } from 'react-helmet-async'
 import { PlusIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
-import { SentenceUpsertForm } from '@/components/content/SentenceUpsertForm'
-import { SentenceAdminFilters } from '@/components/content/admin/SentenceAdminFilters'
-import { SentenceAdminTable } from '@/components/content/admin/SentenceAdminTable'
+import { SentenceUpsertForm } from '@/components/sentence/SentenceUpsertForm'
+import { SentenceAdminFilters } from '@/components/sentence/SentenceAdminFilters'
+import { SentenceAdminTable } from '@/components/sentence/SentenceAdminTable'
 import { ADMIN_SENTENCE_CONTENT } from '@/constants/adminContent'
 import { useAdminSentencesPageState } from '@/hooks/useAdminSentencesPageState'
 
@@ -46,9 +46,13 @@ export function AdminSentencesPage() {
         <SentenceAdminFilters
           keywordInput={state.keywordInput}
           levelInput={state.levelInput}
+          createdByMeInput={state.createdByMeInput}
+          hasAudioInput={state.hasAudioInput}
           totalItems={state.totalItems}
           onKeywordInputChange={state.setKeywordInput}
           onLevelToggle={(level) => state.setLevelInput((prev) => (prev === level ? undefined : level))}
+          onCreatedByMeChange={state.setCreatedByMeInput}
+          onHasAudioChange={state.setHasAudioInput}
           onSearch={state.handleSearch}
           onReset={state.handleReset}
         />

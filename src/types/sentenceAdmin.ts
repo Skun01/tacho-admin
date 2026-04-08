@@ -6,6 +6,7 @@ export interface SentenceAdminItem {
   text: string
   meaning: string
   audioUrl: string | null
+  speakerId: number | null
   level: SentenceLevel | null
   createdAt: string
   updatedAt: string | null
@@ -14,6 +15,8 @@ export interface SentenceAdminItem {
 export interface SentenceSearchQuery {
   q?: string
   level?: SentenceLevel
+  createdByMe?: boolean
+  hasAudio?: boolean
   page: number
   pageSize: number
 }
@@ -21,6 +24,6 @@ export interface SentenceSearchQuery {
 export interface SentenceUpsertPayload {
   text: string
   meaning: string
-  audioUrl: string | null
+  speakerId?: number | null
   level: SentenceLevel | null
 }

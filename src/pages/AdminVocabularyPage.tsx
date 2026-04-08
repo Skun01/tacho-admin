@@ -2,8 +2,8 @@ import { Helmet } from 'react-helmet-async'
 import { PlusIcon } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
-import { VocabularyAdminFilters } from '@/components/content/admin/VocabularyAdminFilters'
-import { VocabularyAdminTable } from '@/components/content/admin/VocabularyAdminTable'
+import { VocabularyAdminFilters } from '@/components/vocabulary/VocabularyAdminFilters'
+import { VocabularyAdminTable } from '@/components/vocabulary/VocabularyAdminTable'
 import { ADMIN_VOCABULARY_CONTENT } from '@/constants/adminContent'
 import { useAdminVocabularyPageState } from '@/hooks/useAdminVocabularyPageState'
 
@@ -35,12 +35,16 @@ export function AdminVocabularyPage() {
           keywordInput={state.keywordInput}
           levelInput={state.levelInput}
           statusInput={state.statusInput}
+          wordTypeInput={state.wordTypeInput}
           createdByMeInput={state.createdByMeInput}
+          hasAudioInput={state.hasAudioInput}
           totalItems={state.totalItems}
           onKeywordInputChange={state.setKeywordInput}
           onLevelToggle={(level) => state.setLevelInput((prev) => (prev === level ? undefined : level))}
           onStatusToggle={(status) => state.setStatusInput((prev) => (prev === status ? undefined : status))}
+          onWordTypeToggle={(wordType) => state.setWordTypeInput((prev) => (prev === wordType ? undefined : wordType))}
           onCreatedByMeChange={state.setCreatedByMeInput}
+          onHasAudioChange={state.setHasAudioInput}
           onSearch={state.handleSearch}
           onReset={state.handleReset}
         />

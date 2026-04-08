@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { AdminTableSection } from '@/components/content/admin/AdminTableSection'
+import { AdminTableSection } from '@/components/shared/AdminTableSection'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { ADMIN_COMMON_CONTENT, ADMIN_VOCABULARY_CONTENT } from '@/constants/adminContent'
 import type { VocabularyAdminItem } from '@/types/vocabularyAdmin'
