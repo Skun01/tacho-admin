@@ -1,8 +1,10 @@
 export const VOCABULARY_LEVEL_OPTIONS = ['N5', 'N4', 'N3', 'N2', 'N1'] as const
 export const VOCABULARY_STATUS_OPTIONS = ['Draft', 'Published', 'Archived'] as const
+export const VOCABULARY_WORD_TYPE_OPTIONS = ['Native', 'SinoJapanese', 'Loanword'] as const
 
 export type VocabularyLevel = (typeof VOCABULARY_LEVEL_OPTIONS)[number]
 export type VocabularyStatus = (typeof VOCABULARY_STATUS_OPTIONS)[number]
+export type VocabularyWordType = (typeof VOCABULARY_WORD_TYPE_OPTIONS)[number]
 
 export const VOCABULARY_STATUS_LABELS: Record<VocabularyStatus, string> = {
   Draft: 'Bản nháp',
@@ -12,6 +14,20 @@ export const VOCABULARY_STATUS_LABELS: Record<VocabularyStatus, string> = {
 
 export function getVocabularyStatusLabel(status: VocabularyStatus) {
   return VOCABULARY_STATUS_LABELS[status]
+}
+
+export const VOCABULARY_WORD_TYPE_LABELS: Record<VocabularyWordType, string> = {
+  Native: 'Thuần Nhật',
+  SinoJapanese: 'Hán-Nhật',
+  Loanword: 'Ngoại lai',
+}
+
+function isVocabularyWordType(value: string): value is VocabularyWordType {
+  return (VOCABULARY_WORD_TYPE_OPTIONS as readonly string[]).includes(value)
+}
+
+export function getVocabularyWordTypeLabel(wordType: string) {
+  return isVocabularyWordType(wordType) ? VOCABULARY_WORD_TYPE_LABELS[wordType] : wordType
 }
 
 export interface VocabularyAdminItem {

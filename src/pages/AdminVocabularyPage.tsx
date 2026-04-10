@@ -57,6 +57,9 @@ export function AdminVocabularyPage() {
           currentPage={state.currentPage}
           totalPage={state.totalPage}
           onPageChange={state.handlePageChange}
+          onCreate={() => navigate('/admin/vocabulary/create')}
+          playingAudioUrl={state.playingAudioUrl}
+          onPlayAudio={state.handlePlayAudio}
           onOpenEdit={(item) => navigate(`/admin/vocabulary/${item.id}/edit`)}
           onDelete={state.handleDelete}
         />

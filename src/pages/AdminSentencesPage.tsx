@@ -65,6 +65,8 @@ export function AdminSentencesPage() {
           currentPage={state.currentPage}
           totalPage={state.totalPage}
           onPageChange={state.handlePageChange}
+          onCreate={state.handleOpenCreate}
+          playingAudioUrl={state.playingAudioUrl}
           onOpenEdit={state.handleOpenEdit}
           onDelete={state.handleDelete}
           onPlayAudio={state.handlePlayAudio}

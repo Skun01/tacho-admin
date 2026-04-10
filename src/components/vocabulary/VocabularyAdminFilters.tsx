@@ -11,7 +11,13 @@ import { ADMIN_VOCABULARY_CONTENT } from '@/constants/adminContent'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { cn } from '@/lib/utils'
 import type { VocabularyLevel, VocabularyStatus } from '@/types/vocabularyAdmin'
-import { getVocabularyStatusLabel, VOCABULARY_LEVEL_OPTIONS, VOCABULARY_STATUS_OPTIONS } from '@/types/vocabularyAdmin'
+import {
+  getVocabularyStatusLabel,
+  getVocabularyWordTypeLabel,
+  VOCABULARY_LEVEL_OPTIONS,
+  VOCABULARY_STATUS_OPTIONS,
+  VOCABULARY_WORD_TYPE_OPTIONS,
+} from '@/types/vocabularyAdmin'
 
 interface VocabularyAdminFiltersProps {
   keywordInput: string
@@ -106,7 +112,7 @@ export function VocabularyAdminFilters({
       <div className="space-y-2">
         <p className="text-sm font-medium">{ADMIN_VOCABULARY_CONTENT.wordTypeLabel}</p>
         <div className="flex flex-wrap gap-2">
-          {['Native', 'SinoJapanese', 'Loanword'].map((wordType) => (
+          {VOCABULARY_WORD_TYPE_OPTIONS.map((wordType) => (
             <Button
               key={wordType}
               type="button"
@@ -114,7 +120,7 @@ export function VocabularyAdminFilters({
               variant={wordTypeInput === wordType ? 'default' : 'outline'}
               onClick={() => onWordTypeToggle(wordType)}
             >
-              {wordType}
+              {getVocabularyWordTypeLabel(wordType)}
             </Button>
           ))}
         </div>
@@ -257,7 +263,7 @@ export function VocabularyAdminFilters({
             )}
             {wordTypeInput && (
               <Badge variant="outline">
-                {ADMIN_VOCABULARY_CONTENT.activeWordTypeLabel}: {wordTypeInput}
+                {ADMIN_VOCABULARY_CONTENT.activeWordTypeLabel}: {getVocabularyWordTypeLabel(wordTypeInput)}
               </Badge>
             )}
             {hasAudioInput !== undefined && (

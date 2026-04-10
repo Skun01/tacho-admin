@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { gooeyToast } from '@/components/ui/goey-toaster'
 import { ADMIN_COMMON_CONTENT, ADMIN_SENTENCE_CONTENT } from '@/constants/adminContent'
 import { useSentenceAdminList } from '@/hooks/useSentenceAdminList'
@@ -15,7 +15,9 @@ export function useAdminSentencesPageState() {
   const [levelInput, setLevelInput] = useState<SentenceLevel | undefined>(undefined)
   const [createdByMeInput, setCreatedByMeInput] = useState(false)
   const [hasAudioInput, setHasAudioInput] = useState<boolean | undefined>(undefined)
+  const [playingAudioUrl, setPlayingAudioUrl] = useState<string | null>(null)
   const [query, setQuery] = useState<SentenceSearchQuery>({ page: 1, pageSize: PAGE_SIZE })
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const { data, isLoading, isFetching, isError, error } = useSentenceAdminList(query)
   const { createMutation, updateMutation, deleteMutation, getApiErrorMessage } = useSentenceAdminMutations()
@@ -24,6 +26,15 @@ export function useAdminSentencesPageState() {
     if (!isError) return
     gooeyToast.error(getApiErrorMessage(error, ADMIN_COMMON_CONTENT.apiErrorFallback))
   }, [isError, error, getApiErrorMessage])
+
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+    }
+  }, [])
 
   const items = data?.data ?? []
   const meta = data?.metaData
@@ -103,10 +114,37 @@ export function useAdminSentencesPageState() {
     const resolvedAudioUrl = resolveApiMediaUrl(audioUrl)
     if (!resolvedAudioUrl) return
 
+    const isSameAudio = playingAudioUrl === resolvedAudioUrl && audioRef.current && !audioRef.current.paused
+    if (isSameAudio) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+      audioRef.current = null
+      setPlayingAudioUrl(null)
+      return
+    }
+
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+    }
+
+    const audio = new Audio(resolvedAudioUrl)
+    audioRef.current = audio
+    setPlayingAudioUrl(resolvedAudioUrl)
+    audio.onended = () => {
+      if (audioRef.current === audio) {
+        audioRef.current = null
+        setPlayingAudioUrl(null)
+      }
+    }
+
     try {
-      const audio = new Audio(resolvedAudioUrl)
       await audio.play()
     } catch {
+      if (audioRef.current === audio) {
+        audioRef.current = null
+        setPlayingAudioUrl(null)
+      }
       gooeyToast.error(ADMIN_SENTENCE_CONTENT.form.playAudioFailedLabel)
     }
   }
@@ -118,6 +156,7 @@ export function useAdminSentencesPageState() {
     levelInput,
     createdByMeInput,
     hasAudioInput,
+    playingAudioUrl,
     isLoading,
     isFetching,
     isDeleting: deleteMutation.isPending,
