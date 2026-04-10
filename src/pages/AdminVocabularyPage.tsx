@@ -1,8 +1,9 @@
 import { Helmet } from 'react-helmet-async'
-import { PlusIcon } from '@phosphor-icons/react'
+import { DownloadSimpleIcon, PlusIcon, UploadSimpleIcon } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { VocabularyAdminFilters } from '@/components/vocabulary/VocabularyAdminFilters'
+import { VocabularyImportDialog } from '@/components/vocabulary/VocabularyImportDialog'
 import { VocabularyAdminTable } from '@/components/vocabulary/VocabularyAdminTable'
 import { ADMIN_VOCABULARY_CONTENT } from '@/constants/adminContent'
 import { useAdminVocabularyPageState } from '@/hooks/useAdminVocabularyPageState'
@@ -25,11 +26,34 @@ export function AdminVocabularyPage() {
           <p className="text-sm" style={{ color: 'var(--on-surface-variant)' }}>
             {ADMIN_VOCABULARY_CONTENT.description}
           </p>
-          <Button type="button" onClick={() => navigate('/admin/vocabulary/create')} className="mt-2">
-            <PlusIcon size={16} />
-            {ADMIN_VOCABULARY_CONTENT.createLabel}
-          </Button>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Button type="button" variant="outline" onClick={state.handleDownloadTemplate}>
+              <DownloadSimpleIcon size={16} />
+              {ADMIN_VOCABULARY_CONTENT.actions.downloadTemplate}
+            </Button>
+            <Button type="button" variant="outline" onClick={state.handleExportJson}>
+              <DownloadSimpleIcon size={16} />
+              {ADMIN_VOCABULARY_CONTENT.actions.exportJson}
+            </Button>
+            <Button type="button" variant="outline" onClick={state.handleOpenImport}>
+              <UploadSimpleIcon size={16} />
+              {ADMIN_VOCABULARY_CONTENT.actions.importJson}
+            </Button>
+            <Button type="button" onClick={() => navigate('/admin/vocabulary/create')}>
+              <PlusIcon size={16} />
+              {ADMIN_VOCABULARY_CONTENT.createLabel}
+            </Button>
+          </div>
         </header>
+        <VocabularyImportDialog
+          open={state.isImportDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              state.handleCloseImport()
+            }
+          }}
+          onImported={state.handleCloseImport}
+        />
 
         <VocabularyAdminFilters
           keywordInput={state.keywordInput}

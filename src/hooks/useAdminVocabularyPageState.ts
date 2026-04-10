@@ -3,7 +3,9 @@ import { gooeyToast } from '@/components/ui/goey-toaster'
 import { ADMIN_COMMON_CONTENT, ADMIN_VOCABULARY_CONTENT } from '@/constants/adminContent'
 import { useVocabularyAdminList } from '@/hooks/useVocabularyAdminList'
 import { useVocabularyAdminMutations } from '@/hooks/useVocabularyAdminMutations'
+import { downloadBlobFile } from '@/lib/fileJson'
 import { resolveApiMediaUrl } from '@/lib/mediaUrl'
+import { vocabularyAdminService } from '@/services/vocabularyAdminService'
 import type {
   VocabularyAdminItem,
   VocabularyLevel,
@@ -14,6 +16,7 @@ import type {
 const PAGE_SIZE = 20
 
 export function useAdminVocabularyPageState() {
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [keywordInput, setKeywordInput] = useState('')
   const [levelInput, setLevelInput] = useState<VocabularyLevel | undefined>(undefined)
   const [statusInput, setStatusInput] = useState<VocabularyStatus | undefined>(undefined)
@@ -86,14 +89,43 @@ export function useAdminVocabularyPageState() {
     }
   }
 
+  const handleOpenImport = () => {
+    setIsImportDialogOpen(true)
+  }
+
+  const handleCloseImport = () => {
+    setIsImportDialogOpen(false)
+  }
+
+  const handleDownloadTemplate = async () => {
+    try {
+      const { data } = await vocabularyAdminService.getImportTemplate()
+      downloadBlobFile(data, 'vocabulary-import-template.json')
+      gooeyToast.success(ADMIN_VOCABULARY_CONTENT.toast.downloadTemplateSuccess)
+    } catch (error) {
+      gooeyToast.error(getApiErrorMessage(error, ADMIN_VOCABULARY_CONTENT.toast.crudErrorFallback))
+    }
+  }
+
+  const handleExportJson = async () => {
+    try {
+      const { data } = await vocabularyAdminService.exportJson(query)
+      downloadBlobFile(data, 'vocabulary-export.json')
+      gooeyToast.success(ADMIN_VOCABULARY_CONTENT.toast.exportSuccess)
+    } catch (error) {
+      gooeyToast.error(getApiErrorMessage(error, ADMIN_VOCABULARY_CONTENT.toast.crudErrorFallback))
+    }
+  }
+
   const handlePlayAudio = async (audioUrl?: string | null) => {
     const resolvedAudioUrl = resolveApiMediaUrl(audioUrl)
     if (!resolvedAudioUrl) return
 
-    const isSameAudio = playingAudioUrl === resolvedAudioUrl && audioRef.current && !audioRef.current.paused
+    const currentAudio = audioRef.current
+    const isSameAudio = playingAudioUrl === resolvedAudioUrl && currentAudio && !currentAudio.paused
     if (isSameAudio) {
-      audioRef.current.pause()
-      audioRef.current.currentTime = 0
+      currentAudio.pause()
+      currentAudio.currentTime = 0
       audioRef.current = null
       setPlayingAudioUrl(null)
       return
@@ -126,6 +158,7 @@ export function useAdminVocabularyPageState() {
   }
 
   return {
+    isImportDialogOpen,
     keywordInput,
     levelInput,
     statusInput,
@@ -149,6 +182,10 @@ export function useAdminVocabularyPageState() {
     handleSearch,
     handleReset,
     handlePageChange,
+    handleOpenImport,
+    handleCloseImport,
+    handleDownloadTemplate,
+    handleExportJson,
     handleDelete,
     handlePlayAudio,
   }

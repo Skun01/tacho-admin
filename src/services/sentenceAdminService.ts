@@ -1,6 +1,13 @@
 import api from '@/services/api'
 import type { ApiResponse } from '@/types/api'
-import type { SentenceAdminItem, SentenceSearchQuery, SentenceUpsertPayload } from '@/types/sentenceAdmin'
+import type {
+  SentenceAdminItem,
+  SentenceImportCommitResult,
+  SentenceImportPayload,
+  SentenceImportPreviewResult,
+  SentenceSearchQuery,
+  SentenceUpsertPayload,
+} from '@/types/sentenceAdmin'
 
 export const sentenceAdminService = {
   search(query: SentenceSearchQuery) {
@@ -30,5 +37,29 @@ export const sentenceAdminService = {
 
   remove(id: string) {
     return api.delete<ApiResponse<boolean>>(`/sentences/${id}`)
+  },
+
+  getImportTemplate() {
+    return api.get<Blob>('/sentences/import-template', { responseType: 'blob' })
+  },
+
+  exportJson(query: SentenceSearchQuery) {
+    return api.get<Blob>('/sentences/export', {
+      responseType: 'blob',
+      params: {
+        q: query.q,
+        level: query.level,
+        createdByMe: query.createdByMe,
+        hasAudio: query.hasAudio,
+      },
+    })
+  },
+
+  importPreview(payload: SentenceImportPayload) {
+    return api.post<ApiResponse<SentenceImportPreviewResult>>('/sentences/import/preview', payload)
+  },
+
+  importCommit(payload: SentenceImportPayload) {
+    return api.post<ApiResponse<SentenceImportCommitResult>>('/sentences/import/commit', payload)
   },
 }

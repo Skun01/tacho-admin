@@ -27,3 +27,47 @@ export interface SentenceUpsertPayload {
   speakerId?: number | null
   level: SentenceLevel | null
 }
+
+export interface SentenceImportItem {
+  rowNumber: number | null
+  text: string
+  meaning: string
+  speakerId: number
+  level: SentenceLevel | null
+}
+
+export interface SentenceImportPayload {
+  items: SentenceImportItem[]
+}
+
+export interface SentenceImportPreviewItem {
+  rowNumber: number | null
+  text: string
+  isValid: boolean
+  errors: string[]
+  warnings: string[]
+}
+
+export interface SentenceImportPreviewResult {
+  totalItems: number
+  validItems: number
+  invalidItems: number
+  items: SentenceImportPreviewItem[]
+}
+
+export interface SentenceImportCommitItem {
+  rowNumber: number | null
+  text: string
+  isSuccess: boolean
+  action: string
+  sentenceId?: string
+  errors: string[]
+}
+
+export interface SentenceImportCommitResult {
+  totalItems: number
+  successfulItems: number
+  failedItems: number
+  hasValidationErrors: boolean
+  items: SentenceImportCommitItem[]
+}

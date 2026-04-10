@@ -1,6 +1,14 @@
 import api from '@/services/api'
 import type { ApiResponse } from '@/types/api'
-import type { VocabularyAdminDetail, VocabularyAdminItem, VocabularySearchQuery, VocabularyUpsertPayload } from '@/types/vocabularyAdmin'
+import type {
+  VocabularyAdminDetail,
+  VocabularyAdminItem,
+  VocabularyImportCommitResult,
+  VocabularyImportPayload,
+  VocabularyImportPreviewResult,
+  VocabularySearchQuery,
+  VocabularyUpsertPayload,
+} from '@/types/vocabularyAdmin'
 
 export const vocabularyAdminService = {
   search(query: VocabularySearchQuery) {
@@ -32,5 +40,31 @@ export const vocabularyAdminService = {
 
   remove(id: string) {
     return api.delete<ApiResponse<boolean>>(`/vocabulary/${id}`)
+  },
+
+  getImportTemplate() {
+    return api.get<Blob>('/vocabulary/import-template', { responseType: 'blob' })
+  },
+
+  exportJson(query: VocabularySearchQuery) {
+    return api.get<Blob>('/vocabulary/export', {
+      responseType: 'blob',
+      params: {
+        q: query.q,
+        level: query.level,
+        status: query.status,
+        wordType: query.wordType,
+        createdByMe: query.createdByMe,
+        hasAudio: query.hasAudio,
+      },
+    })
+  },
+
+  importPreview(payload: VocabularyImportPayload) {
+    return api.post<ApiResponse<VocabularyImportPreviewResult>>('/vocabulary/import/preview', payload)
+  },
+
+  importCommit(payload: VocabularyImportPayload) {
+    return api.post<ApiResponse<VocabularyImportCommitResult>>('/vocabulary/import/commit', payload)
   },
 }

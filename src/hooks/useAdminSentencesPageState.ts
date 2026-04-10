@@ -3,7 +3,9 @@ import { gooeyToast } from '@/components/ui/goey-toaster'
 import { ADMIN_COMMON_CONTENT, ADMIN_SENTENCE_CONTENT } from '@/constants/adminContent'
 import { useSentenceAdminList } from '@/hooks/useSentenceAdminList'
 import { useSentenceAdminMutations } from '@/hooks/useSentenceAdminMutations'
+import { downloadBlobFile } from '@/lib/fileJson'
 import { resolveApiMediaUrl } from '@/lib/mediaUrl'
+import { sentenceAdminService } from '@/services/sentenceAdminService'
 import type { SentenceAdminItem, SentenceLevel, SentenceSearchQuery, SentenceUpsertPayload } from '@/types/sentenceAdmin'
 
 const PAGE_SIZE = 20
@@ -11,6 +13,7 @@ const PAGE_SIZE = 20
 export function useAdminSentencesPageState() {
   const [formMode, setFormMode] = useState<'create' | 'edit' | null>(null)
   const [editingItem, setEditingItem] = useState<SentenceAdminItem | null>(null)
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [keywordInput, setKeywordInput] = useState('')
   const [levelInput, setLevelInput] = useState<SentenceLevel | undefined>(undefined)
   const [createdByMeInput, setCreatedByMeInput] = useState(false)
@@ -70,6 +73,14 @@ export function useAdminSentencesPageState() {
     setFormMode('create')
   }
 
+  const handleOpenImport = () => {
+    setIsImportDialogOpen(true)
+  }
+
+  const handleCloseImport = () => {
+    setIsImportDialogOpen(false)
+  }
+
   const handleOpenEdit = (item: SentenceAdminItem) => {
     setEditingItem(item)
     setFormMode('edit')
@@ -114,10 +125,11 @@ export function useAdminSentencesPageState() {
     const resolvedAudioUrl = resolveApiMediaUrl(audioUrl)
     if (!resolvedAudioUrl) return
 
-    const isSameAudio = playingAudioUrl === resolvedAudioUrl && audioRef.current && !audioRef.current.paused
+    const currentAudio = audioRef.current
+    const isSameAudio = playingAudioUrl === resolvedAudioUrl && currentAudio && !currentAudio.paused
     if (isSameAudio) {
-      audioRef.current.pause()
-      audioRef.current.currentTime = 0
+      currentAudio.pause()
+      currentAudio.currentTime = 0
       audioRef.current = null
       setPlayingAudioUrl(null)
       return
@@ -149,9 +161,30 @@ export function useAdminSentencesPageState() {
     }
   }
 
+  const handleDownloadTemplate = async () => {
+    try {
+      const { data } = await sentenceAdminService.getImportTemplate()
+      downloadBlobFile(data, 'sentences-import-template.json')
+      gooeyToast.success(ADMIN_SENTENCE_CONTENT.toast.downloadTemplateSuccess)
+    } catch (error) {
+      gooeyToast.error(getApiErrorMessage(error, ADMIN_SENTENCE_CONTENT.toast.crudErrorFallback))
+    }
+  }
+
+  const handleExportJson = async () => {
+    try {
+      const { data } = await sentenceAdminService.exportJson(query)
+      downloadBlobFile(data, 'sentences-export.json')
+      gooeyToast.success(ADMIN_SENTENCE_CONTENT.toast.exportSuccess)
+    } catch (error) {
+      gooeyToast.error(getApiErrorMessage(error, ADMIN_SENTENCE_CONTENT.toast.crudErrorFallback))
+    }
+  }
+
   return {
     formMode,
     editingItem,
+    isImportDialogOpen,
     keywordInput,
     levelInput,
     createdByMeInput,
@@ -173,6 +206,10 @@ export function useAdminSentencesPageState() {
     handleReset,
     handlePageChange,
     handleOpenCreate,
+    handleOpenImport,
+    handleCloseImport,
+    handleDownloadTemplate,
+    handleExportJson,
     handleOpenEdit,
     handleCloseForm,
     handleSubmitForm,

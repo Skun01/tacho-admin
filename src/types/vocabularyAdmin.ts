@@ -96,3 +96,67 @@ export interface VocabularySearchQuery {
   page: number
   pageSize: number
 }
+
+export interface VocabularyImportSentenceItem {
+  text: string
+  meaning: string
+  speakerId?: number | null
+  level: VocabularyLevel | null
+}
+
+export interface VocabularyImportItem {
+  rowNumber: number | null
+  title: string
+  summary: string
+  level: VocabularyLevel | null
+  tags: string[]
+  status: VocabularyStatus | null
+  writing: string
+  reading: string | null
+  pitchPattern: number[] | null
+  speakerId?: number | null
+  wordType: string | null
+  meanings: VocabularyMeaningInput[]
+  synonyms: string[]
+  antonyms: string[]
+  relatedPhrases: string[]
+  sentences: VocabularyImportSentenceItem[]
+}
+
+export interface VocabularyImportPayload {
+  items: VocabularyImportItem[]
+}
+
+export interface VocabularyImportPreviewItem {
+  rowNumber: number | null
+  title: string
+  writing: string
+  isValid: boolean
+  errors: string[]
+  warnings: string[]
+}
+
+export interface VocabularyImportPreviewResult {
+  totalItems: number
+  validItems: number
+  invalidItems: number
+  items: VocabularyImportPreviewItem[]
+}
+
+export interface VocabularyImportCommitItem {
+  rowNumber: number | null
+  title: string
+  writing: string
+  isSuccess: boolean
+  action: string
+  cardId?: string
+  errors: string[]
+}
+
+export interface VocabularyImportCommitResult {
+  totalItems: number
+  successfulItems: number
+  failedItems: number
+  hasValidationErrors: boolean
+  items: VocabularyImportCommitItem[]
+}
