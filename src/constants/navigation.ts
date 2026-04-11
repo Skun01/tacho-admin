@@ -4,6 +4,7 @@ import {
   FolderNotchOpenIcon,
   BookOpenTextIcon,
   TextTIcon,
+  BracketsAngleIcon,
   CardsIcon,
   UsersIcon,
   GearIcon,
@@ -32,6 +33,7 @@ export const ADMIN_NAV_ITEMS: AdminNavEntry[] = [
     label: 'Quản lý nội dung',
     children: [
       { icon: BookOpenTextIcon, label: 'Từ vựng', href: '/admin/vocabulary' },
+      { icon: BracketsAngleIcon, label: 'Ngữ pháp', href: '/admin/grammar' },
       { icon: TextTIcon, label: 'Câu ví dụ', href: '/admin/sentences' },
     ],
   },
