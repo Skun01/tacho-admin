@@ -25,12 +25,22 @@ export const GRAMMAR_REGISTER_LABELS: Record<GrammarRegister, string> = {
   Casual: 'Thân mật',
 }
 
-function isGrammarRegister(value: string): value is GrammarRegister {
-  return (GRAMMAR_REGISTER_OPTIONS as readonly string[]).includes(value)
+export function normalizeGrammarRegister(register: string | null | undefined): GrammarRegister | null {
+  const normalizedInput = register?.trim().toLowerCase()
+
+  if (!normalizedInput) return null
+
+  for (const option of GRAMMAR_REGISTER_OPTIONS) {
+    if (option.toLowerCase() === normalizedInput) return option
+    if (GRAMMAR_REGISTER_LABELS[option].trim().toLowerCase() === normalizedInput) return option
+  }
+
+  return null
 }
 
 export function getGrammarRegisterLabel(register: string) {
-  return isGrammarRegister(register) ? GRAMMAR_REGISTER_LABELS[register] : register
+  const normalizedRegister = normalizeGrammarRegister(register)
+  return normalizedRegister ? GRAMMAR_REGISTER_LABELS[normalizedRegister] : register
 }
 
 export const GRAMMAR_RELATION_TYPE_LABELS: Record<GrammarRelationType, string> = {

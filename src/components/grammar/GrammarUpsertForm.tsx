@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { GrammarStructuresSection } from '@/components/grammar/GrammarStructuresSection'
 import { GrammarRelationsSection } from '@/components/grammar/GrammarRelationsSection'
@@ -17,13 +16,14 @@ import { GrammarSentencesSection } from '@/components/grammar/GrammarSentencesSe
 import { RichTextEditor } from '@/components/grammar/RichTextEditor'
 import { grammarUpsertSchema, type GrammarUpsertInput } from '@/lib/validations/grammarAdmin'
 import { voicevoxService } from '@/services/voicevoxService'
-import { ADMIN_COMMON_CONTENT, ADMIN_GRAMMAR_CONTENT } from '@/constants/adminContent'
+import { ADMIN_GRAMMAR_CONTENT } from '@/constants/adminContent'
 import {
   GRAMMAR_LEVEL_OPTIONS,
   GRAMMAR_REGISTER_LABELS,
   GRAMMAR_REGISTER_OPTIONS,
   GRAMMAR_STATUS_LABELS,
   GRAMMAR_STATUS_OPTIONS,
+  normalizeGrammarRegister,
 } from '@/types/grammarAdmin'
 import type { GrammarAdminDetail, GrammarUpsertPayload } from '@/types/grammarAdmin'
 
@@ -53,7 +53,23 @@ const DEFAULT_VALUES: GrammarUpsertInput = {
   resources: [],
   sentences: [],
 }
-const EMPTY_REGISTER_VALUE = '__empty_register__'
+
+function sanitizeStructureAnnotations(
+  structures: GrammarUpsertInput['structures'],
+): GrammarUpsertInput['structures'] {
+  return structures.map((structure) => {
+    if (!structure.annotations) return structure
+
+    const filteredAnnotations = Object.fromEntries(
+      Object.entries(structure.annotations).filter(([key]) => structure.pattern.includes(`(${key})`)),
+    )
+
+    return {
+      ...structure,
+      annotations: Object.keys(filteredAnnotations).length > 0 ? filteredAnnotations : null,
+    }
+  })
+}
 
 export function GrammarUpsertForm({
   open,
@@ -94,9 +110,7 @@ export function GrammarUpsertForm({
     if (mode === 'edit' && initialData) {
       const normalizedLevel = GRAMMAR_LEVEL_OPTIONS.find((level) => level === initialData.level) ?? null
       const normalizedStatus = GRAMMAR_STATUS_OPTIONS.find((status) => status === initialData.status) ?? 'Draft'
-      const rawRegister = initialData.register?.trim().toLowerCase()
-      const normalizedRegister =
-        GRAMMAR_REGISTER_OPTIONS.find((register) => register.toLowerCase() === rawRegister) ?? null
+      const normalizedRegister = normalizeGrammarRegister(initialData.register)
 
       form.reset({
         title: initialData.title,
@@ -168,6 +182,7 @@ export function GrammarUpsertForm({
   const handleSubmit = async (values: GrammarUpsertInput) => {
     const saveAsDraft = submitAsDraftRef.current
     submitAsDraftRef.current = false
+    const sanitizedStructures = sanitizeStructureAnnotations(values.structures)
 
     await onSubmit({
       title: values.title.trim(),
@@ -175,7 +190,7 @@ export function GrammarUpsertForm({
       level: values.level ?? null,
       status: saveAsDraft ? 'Draft' : (values.status ?? 'Draft'),
       tags: values.tags,
-      structures: values.structures.map((s) => ({
+      structures: sanitizedStructures.map((s) => ({
         pattern: s.pattern,
         annotations: s.annotations,
       })),
@@ -321,22 +336,19 @@ export function GrammarUpsertForm({
                       <FormItem>
                         <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.registerLabel}</FormLabel>
                         <FormControl>
-                          <Select
-                            value={field.value ?? EMPTY_REGISTER_VALUE}
-                            onValueChange={(value) => field.onChange(value === EMPTY_REGISTER_VALUE ? null : value)}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.registerPlaceholder} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value={EMPTY_REGISTER_VALUE}>{ADMIN_COMMON_CONTENT.emptyValueLabel}</SelectItem>
-                              {GRAMMAR_REGISTER_OPTIONS.map((reg) => (
-                                <SelectItem key={reg} value={reg}>
-                                  {GRAMMAR_REGISTER_LABELS[reg]}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <div className="flex flex-wrap gap-2">
+                            {GRAMMAR_REGISTER_OPTIONS.map((reg) => (
+                              <Button
+                                key={reg}
+                                type="button"
+                                size="sm"
+                                variant={field.value === reg ? 'default' : 'outline'}
+                                onClick={() => field.onChange(field.value === reg ? null : reg)}
+                              >
+                                {GRAMMAR_REGISTER_LABELS[reg]}
+                              </Button>
+                            ))}
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>

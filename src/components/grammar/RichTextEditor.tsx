@@ -1,9 +1,9 @@
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, type Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
 import {
   TextBolderIcon,
   TextItalicIcon,
@@ -35,6 +35,7 @@ interface RichTextEditorProps {
   placeholder?: string
   maxLength?: number
   disabled?: boolean
+  onEditorReady?: (editor: Editor | null) => void
 }
 
 /**
@@ -91,7 +92,13 @@ function htmlToCustomFormat(html: string): string {
   return text
 }
 
-export function RichTextEditor({ value, onChange, placeholder, disabled }: RichTextEditorProps) {
+export function RichTextEditor({ value, onChange, placeholder, disabled, onEditorReady }: RichTextEditorProps) {
+  const latestOnEditorReadyRef = useRef(onEditorReady)
+
+  useEffect(() => {
+    latestOnEditorReadyRef.current = onEditorReady
+  }, [onEditorReady])
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -132,6 +139,14 @@ export function RichTextEditor({ value, onChange, placeholder, disabled }: RichT
       editor.commands.setContent(customFormatToHtml(value ?? ''))
     }
   }, [value, editor])
+
+  useEffect(() => {
+    latestOnEditorReadyRef.current?.(editor)
+
+    return () => {
+      latestOnEditorReadyRef.current?.(null)
+    }
+  }, [editor])
 
   const setColor = useCallback(
     (hex: string) => {
