@@ -17,7 +17,7 @@ import { GrammarSentencesSection } from '@/components/grammar/GrammarSentencesSe
 import { RichTextEditor } from '@/components/grammar/RichTextEditor'
 import { grammarUpsertSchema, type GrammarUpsertInput } from '@/lib/validations/grammarAdmin'
 import { voicevoxService } from '@/services/voicevoxService'
-import { ADMIN_GRAMMAR_CONTENT } from '@/constants/adminContent'
+import { ADMIN_COMMON_CONTENT, ADMIN_GRAMMAR_CONTENT } from '@/constants/adminContent'
 import {
   GRAMMAR_LEVEL_OPTIONS,
   GRAMMAR_REGISTER_LABELS,
@@ -53,6 +53,7 @@ const DEFAULT_VALUES: GrammarUpsertInput = {
   resources: [],
   sentences: [],
 }
+const EMPTY_REGISTER_VALUE = '__empty_register__'
 
 export function GrammarUpsertForm({
   open,
@@ -91,11 +92,17 @@ export function GrammarUpsertForm({
   // Reset form when initialData changes
   useEffect(() => {
     if (mode === 'edit' && initialData) {
+      const normalizedLevel = GRAMMAR_LEVEL_OPTIONS.find((level) => level === initialData.level) ?? null
+      const normalizedStatus = GRAMMAR_STATUS_OPTIONS.find((status) => status === initialData.status) ?? 'Draft'
+      const rawRegister = initialData.register?.trim().toLowerCase()
+      const normalizedRegister =
+        GRAMMAR_REGISTER_OPTIONS.find((register) => register.toLowerCase() === rawRegister) ?? null
+
       form.reset({
         title: initialData.title,
         summary: initialData.summary,
-        level: (initialData.level as GrammarUpsertInput['level']) ?? null,
-        status: (initialData.status as GrammarUpsertInput['status']) ?? 'Draft',
+        level: normalizedLevel,
+        status: normalizedStatus,
         tags: initialData.tags ?? [],
         structures: initialData.structures?.map((s) => ({
           pattern: s.pattern,
@@ -103,7 +110,7 @@ export function GrammarUpsertForm({
         })) ?? [],
         explanation: initialData.explanation ?? null,
         caution: initialData.caution ?? null,
-        register: (initialData.register as GrammarUpsertInput['register']) ?? null,
+        register: normalizedRegister,
         alternateForms: initialData.alternateForms ?? [],
         relations: initialData.relations?.map((r) => ({
           relatedId: r.relatedId,
@@ -314,11 +321,15 @@ export function GrammarUpsertForm({
                       <FormItem>
                         <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.registerLabel}</FormLabel>
                         <FormControl>
-                          <Select value={field.value ?? ''} onValueChange={(value) => field.onChange(value || null)}>
+                          <Select
+                            value={field.value ?? EMPTY_REGISTER_VALUE}
+                            onValueChange={(value) => field.onChange(value === EMPTY_REGISTER_VALUE ? null : value)}
+                          >
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.registerPlaceholder} />
                             </SelectTrigger>
                             <SelectContent>
+                              <SelectItem value={EMPTY_REGISTER_VALUE}>{ADMIN_COMMON_CONTENT.emptyValueLabel}</SelectItem>
                               {GRAMMAR_REGISTER_OPTIONS.map((reg) => (
                                 <SelectItem key={reg} value={reg}>
                                   {GRAMMAR_REGISTER_LABELS[reg]}
@@ -465,10 +476,6 @@ export function GrammarUpsertForm({
                       </FormItem>
                     )}
                   />
-
-                  <p className="text-xs" style={{ color: 'var(--on-surface-variant)' }}>
-                    {ADMIN_GRAMMAR_CONTENT.form.richTextHint}
-                  </p>
                 </TabsContent>
 
                 {/* Tab: Relations + Resources */}

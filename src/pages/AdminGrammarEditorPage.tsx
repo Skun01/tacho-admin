@@ -21,12 +21,13 @@ export default function AdminGrammarEditorPage() {
 
   const [initialData, setInitialData] = useState<GrammarAdminDetail | null>(null)
   const [isDirty, setIsDirty] = useState(false)
-  const isMountedRef = useRef(true)
+  const allowNavigationRef = useRef(false)
 
   // React Router blocker for unsaved changes
   const blocker = useBlocker(
     useCallback(
       ({ currentLocation, nextLocation }: { currentLocation: { pathname: string }; nextLocation: { pathname: string } }) =>
+        !allowNavigationRef.current &&
         isDirty && currentLocation.pathname !== nextLocation.pathname,
       [isDirty],
     ),
@@ -46,22 +47,21 @@ export default function AdminGrammarEditorPage() {
   // Load detail for edit mode
   useEffect(() => {
     if (!id) return
+    let isActive = true
+
     fetchDetail(id)
       .then((data) => {
-        if (isMountedRef.current) {
-          setInitialData(data)
-        }
+        if (isActive) setInitialData(data)
       })
       .catch((error) => {
-        gooeyToast.error(getApiErrorMessage(error, ADMIN_GRAMMAR_CONTENT.editor.notFoundLabel))
+        if (isActive) {
+          gooeyToast.error(getApiErrorMessage(error, ADMIN_GRAMMAR_CONTENT.editor.notFoundLabel))
+        }
       })
-  }, [id, fetchDetail, getApiErrorMessage])
-
-  useEffect(() => {
     return () => {
-      isMountedRef.current = false
+      isActive = false
     }
-  }, [])
+  }, [id, fetchDetail, getApiErrorMessage])
 
   const handleSubmit = async (payload: GrammarUpsertPayload) => {
     try {
@@ -72,9 +72,17 @@ export default function AdminGrammarEditorPage() {
         await updateMutation.mutateAsync({ id: id!, payload })
         gooeyToast.success(ADMIN_GRAMMAR_CONTENT.toast.updateSuccess)
       }
+
+      allowNavigationRef.current = true
       setIsDirty(false)
+
+      if (blocker.state === 'blocked') {
+        blocker.proceed?.()
+        return
+      }
       navigate('/admin/grammar')
     } catch (error) {
+      allowNavigationRef.current = false
       gooeyToast.error(getApiErrorMessage(error, ADMIN_GRAMMAR_CONTENT.toast.crudErrorFallback))
     }
   }
@@ -143,13 +151,19 @@ export default function AdminGrammarEditorPage() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => blocker.proceed?.()}
+              onClick={() => {
+                allowNavigationRef.current = true
+                blocker.proceed?.()
+              }}
             >
               {ADMIN_GRAMMAR_CONTENT.editor.confirmLeaveDiscardLabel}
             </Button>
             <Button
               type="button"
-              onClick={() => blocker.reset?.()}
+              onClick={() => {
+                allowNavigationRef.current = false
+                blocker.reset?.()
+              }}
             >
               {ADMIN_GRAMMAR_CONTENT.editor.confirmLeaveStayLabel}
             </Button>

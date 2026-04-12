@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { Separator } from '@/components/ui/separator'
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form'
 import { RichTextEditor } from '@/components/grammar/RichTextEditor'
 import { ADMIN_GRAMMAR_CONTENT } from '@/constants/adminContent'
@@ -111,53 +113,69 @@ export function GrammarStructuresSection({ form, structureFieldArray }: GrammarS
                 const annotations = form.watch(`structures.${index}.annotations`)
                 if (!annotations || Object.keys(annotations).length === 0) return null
                 return (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="rounded-md border">
+                    <Accordion type="single" collapsible className="w-full">
                     {Object.entries(annotations).map(([key, value]) => (
-                      <Badge key={key} variant="secondary" className="gap-1.5 pr-1">
-                        <span className="font-mono text-xs">({key})</span>
-                        <span>{value}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-4 w-4"
-                          onClick={() => removeAnnotation(index, key)}
-                        >
-                          <XIcon size={10} />
-                        </Button>
-                      </Badge>
+                      <AccordionItem key={key} value={`${index}-${key}`} className="px-3">
+                        <AccordionTrigger className="py-2 hover:no-underline">
+                          <div className="flex min-w-0 items-center gap-2">
+                            <Badge variant="outline" className="font-mono text-xs">
+                              ({key})
+                            </Badge>
+                            <span className="line-clamp-1 text-sm">{value}</span>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pt-1">
+                          <Separator className="mb-2" />
+                          <div className="flex items-start justify-between gap-3">
+                            <p className="text-sm whitespace-pre-wrap">{value}</p>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              aria-label={ADMIN_GRAMMAR_CONTENT.form.removeAnnotationLabel}
+                              onClick={() => removeAnnotation(index, key)}
+                            >
+                              <XIcon size={12} />
+                            </Button>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
                     ))}
+                    </Accordion>
                   </div>
                 )
               })()}
 
               {/* Add annotation row */}
-              <div className="flex gap-2">
-                <Input
-                  value={annotationInputs[index]?.key ?? ''}
-                  onChange={(e) =>
-                    setAnnotationInputs((prev) => ({
-                      ...prev,
-                      [index]: { ...prev[index], key: e.target.value, value: prev[index]?.value ?? '' },
-                    }))
-                  }
-                  placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.annotationKeyPlaceholder}
-                  className="w-[80px]"
-                />
-                <Input
-                  value={annotationInputs[index]?.value ?? ''}
-                  onChange={(e) =>
-                    setAnnotationInputs((prev) => ({
-                      ...prev,
-                      [index]: { ...prev[index], value: e.target.value, key: prev[index]?.key ?? '' },
-                    }))
-                  }
-                  placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.annotationValuePlaceholder}
-                  className="flex-1"
-                />
-                <Button type="button" variant="outline" size="sm" onClick={() => addAnnotation(index)}>
-                  {ADMIN_GRAMMAR_CONTENT.form.addAnnotationLabel}
-                </Button>
+              <div className="rounded-md border p-3">
+                <div className="grid gap-2 md:grid-cols-[80px_1fr_auto]">
+                  <Input
+                    value={annotationInputs[index]?.key ?? ''}
+                    onChange={(e) =>
+                      setAnnotationInputs((prev) => ({
+                        ...prev,
+                        [index]: { ...prev[index], key: e.target.value, value: prev[index]?.value ?? '' },
+                      }))
+                    }
+                    placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.annotationKeyPlaceholder}
+                  />
+                  <Input
+                    value={annotationInputs[index]?.value ?? ''}
+                    onChange={(e) =>
+                      setAnnotationInputs((prev) => ({
+                        ...prev,
+                        [index]: { ...prev[index], value: e.target.value, key: prev[index]?.key ?? '' },
+                      }))
+                    }
+                    placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.annotationValuePlaceholder}
+                  />
+                  <Button type="button" variant="outline" size="sm" onClick={() => addAnnotation(index)}>
+                    <PlusIcon size={14} />
+                    {ADMIN_GRAMMAR_CONTENT.form.addAnnotationLabel}
+                  </Button>
+                </div>
               </div>
             </div>
           </CardContent>
