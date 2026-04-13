@@ -17,6 +17,7 @@ import { AdminVocabularyEditorPage } from './pages/AdminVocabularyEditorPage'
 import { AdminSentencesPage } from './pages/AdminSentencesPage'
 import AdminGrammarPage from './pages/AdminGrammarPage'
 import AdminGrammarEditorPage from './pages/AdminGrammarEditorPage'
+import AdminKanjiPage from './pages/AdminKanjiPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,6 +54,7 @@ const router = createBrowserRouter(
             <Route path="/admin/grammar" element={<AdminGrammarPage />} />
             <Route path="/admin/grammar/create" element={<AdminGrammarEditorPage />} />
             <Route path="/admin/grammar/:id/edit" element={<AdminGrammarEditorPage />} />
+            <Route path="/admin/kanji" element={<AdminKanjiPage />} />
             <Route path="/admin/sentences" element={<AdminSentencesPage />} />
           </Route>
         </Route>

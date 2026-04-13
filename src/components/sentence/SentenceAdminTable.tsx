@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import { PauseIcon, SpeakerHighIcon } from '@phosphor-icons/react'
+import { PauseIcon, PencilSimpleIcon, SpeakerHighIcon, TrashIcon } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { AdminTableSection } from '@/components/shared/AdminTableSection'
@@ -96,18 +96,19 @@ export function SentenceAdminTable({
                   {item.updatedAt ? format(new Date(item.updatedAt), 'dd/MM/yyyy HH:mm') : ADMIN_COMMON_CONTENT.notUpdatedLabel}
                 </TableCell>
                 <TableCell>
-                  <div className="flex gap-2">
-                    <Button type="button" variant="outline" size="sm" onClick={() => onOpenEdit(item)}>
-                      {ADMIN_SENTENCE_CONTENT.actions.edit}
+                  <div className="flex justify-end gap-1">
+                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => onOpenEdit(item)}>
+                      <PencilSimpleIcon size={16} />
                     </Button>
                     <Button
                       type="button"
-                      variant="destructive"
-                      size="sm"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
                       onClick={() => onDelete(item)}
                       disabled={isDeleting}
                     >
-                      {ADMIN_SENTENCE_CONTENT.actions.delete}
+                      <TrashIcon size={16} />
                     </Button>
                   </div>
                 </TableCell>
