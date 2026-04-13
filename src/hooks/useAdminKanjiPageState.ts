@@ -6,6 +6,7 @@ import { useKanjiAdminList } from '@/hooks/useKanjiAdminList'
 import { useKanjiAdminMutations } from '@/hooks/useKanjiAdminMutations'
 import { downloadBlobFile } from '@/lib/fileJson'
 import { kanjiAdminService } from '@/services/kanjiAdminService'
+import { resourceService } from '@/services/resourceService'
 import type {
   KanjiAdminDetail,
   KanjiAdminItem,
@@ -101,13 +102,24 @@ export function useAdminKanjiPageState() {
     setEditingItem(null)
   }
 
-  const handleSubmitForm = async (payload: KanjiUpsertPayload) => {
+  const handleSubmitForm = async (
+    payload: KanjiUpsertPayload,
+    options: { strokeOrderFile: File | null; removeStrokeOrder: boolean },
+  ) => {
     try {
+      let finalPayload = payload
+      if (options.strokeOrderFile) {
+        const { data } = await resourceService.uploadImage(options.strokeOrderFile)
+        finalPayload = { ...payload, strokeOrderUrl: data.data.fileUrl }
+      } else if (options.removeStrokeOrder) {
+        finalPayload = { ...payload, strokeOrderUrl: null }
+      }
+
       if (formMode === 'create') {
-        await createMutation.mutateAsync(payload)
+        await createMutation.mutateAsync(finalPayload)
         gooeyToast.success(ADMIN_KANJI_CONTENT.toast.createSuccess)
       } else if (formMode === 'edit' && editingItem) {
-        await updateMutation.mutateAsync({ id: editingItem.id, payload })
+        await updateMutation.mutateAsync({ id: editingItem.id, payload: finalPayload })
         gooeyToast.success(ADMIN_KANJI_CONTENT.toast.updateSuccess)
       }
       handleCloseForm()

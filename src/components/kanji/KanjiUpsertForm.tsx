@@ -22,7 +22,7 @@ interface KanjiUpsertFormProps {
   initialData: KanjiAdminDetail | null
   isSubmitting: boolean
   isLoadingDetail: boolean
-  onSubmit: (payload: KanjiUpsertPayload) => void
+  onSubmit: (payload: KanjiUpsertPayload, options: { strokeOrderFile: File | null; removeStrokeOrder: boolean }) => void
 }
 
 const EMPTY_DEFAULTS: KanjiUpsertInput = {
@@ -73,6 +73,7 @@ export function KanjiUpsertForm({
   const [onyomiInput, setOnyomiInput] = useState('')
   const [kunyomiInput, setKunyomiInput] = useState('')
   const [strokeOrderFile, setStrokeOrderFile] = useState<File | null>(null)
+  const [removeStrokeOrder, setRemoveStrokeOrder] = useState(false)
 
   const form = useForm<KanjiUpsertInput>({
     resolver: zodResolver(kanjiUpsertSchema),
@@ -83,11 +84,14 @@ export function KanjiUpsertForm({
   useEffect(() => {
     if (mode === 'edit' && initialData) {
       form.reset(mapDetailToForm(initialData))
+      setStrokeOrderFile(null)
+      setRemoveStrokeOrder(false)
       return
     }
 
     form.reset(EMPTY_DEFAULTS)
     setStrokeOrderFile(null)
+    setRemoveStrokeOrder(false)
     setTagInput('')
     setOnyomiInput('')
     setKunyomiInput('')
@@ -109,7 +113,7 @@ export function KanjiUpsertForm({
       meaningVi: data.meaningVi,
       radicals: data.radicals,
     }
-    onSubmit(payload)
+    onSubmit(payload, { strokeOrderFile, removeStrokeOrder })
   })
 
   // Multi-value input handler factory
@@ -418,17 +422,15 @@ export function KanjiUpsertForm({
                   onChange={(file) => {
                     setStrokeOrderFile(file)
                     if (file) {
-                      const tempUrl = URL.createObjectURL(file)
-                      form.setValue('strokeOrderUrl', tempUrl, { shouldDirty: true })
-                    } else {
-                      form.setValue('strokeOrderUrl', null, { shouldDirty: true })
+                      setRemoveStrokeOrder(false)
                     }
                   }}
                   onRemove={() => {
                     setStrokeOrderFile(null)
+                    setRemoveStrokeOrder(true)
                     form.setValue('strokeOrderUrl', null, { shouldDirty: true })
                   }}
-                  defaultPreview={initialData?.strokeOrderUrl}
+                  defaultPreview={removeStrokeOrder ? null : initialData?.strokeOrderUrl}
                 />
               </div>
 
