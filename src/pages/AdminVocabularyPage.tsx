@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async'
-import { DownloadSimpleIcon, PlusIcon, UploadSimpleIcon } from '@phosphor-icons/react'
+import { DownloadSimpleIcon, PlusIcon, UploadSimpleIcon, ExportIcon } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { VocabularyAdminFilters } from '@/components/vocabulary/VocabularyAdminFilters'
@@ -19,32 +19,34 @@ export function AdminVocabularyPage() {
       </Helmet>
 
       <section className="space-y-6">
-        <header className="space-y-2">
-          <h2 className="font-heading-vn text-2xl font-bold" style={{ color: 'var(--on-surface)' }}>
-            {ADMIN_VOCABULARY_CONTENT.heading}
-          </h2>
-          <p className="text-sm" style={{ color: 'var(--on-surface-variant)' }}>
-            {ADMIN_VOCABULARY_CONTENT.description}
-          </p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <Button type="button" variant="outline" onClick={state.handleDownloadTemplate}>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold" style={{ color: 'var(--on-surface)' }}>
+              {ADMIN_VOCABULARY_CONTENT.heading}
+            </h1>
+            <p className="text-sm" style={{ color: 'var(--on-surface-variant)' }}>
+              {ADMIN_VOCABULARY_CONTENT.description}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={state.handleDownloadTemplate}>
               <DownloadSimpleIcon size={16} />
               {ADMIN_VOCABULARY_CONTENT.actions.downloadTemplate}
             </Button>
-            <Button type="button" variant="outline" onClick={state.handleExportJson}>
-              <DownloadSimpleIcon size={16} />
+            <Button type="button" variant="outline" size="sm" onClick={state.handleExportJson}>
+              <ExportIcon size={16} />
               {ADMIN_VOCABULARY_CONTENT.actions.exportJson}
             </Button>
-            <Button type="button" variant="outline" onClick={state.handleOpenImport}>
+            <Button type="button" variant="outline" size="sm" onClick={state.handleOpenImport}>
               <UploadSimpleIcon size={16} />
               {ADMIN_VOCABULARY_CONTENT.actions.importJson}
             </Button>
-            <Button type="button" onClick={() => navigate('/admin/vocabulary/create')}>
+            <Button type="button" size="sm" onClick={() => navigate('/admin/vocabulary/create')}>
               <PlusIcon size={16} />
               {ADMIN_VOCABULARY_CONTENT.createLabel}
             </Button>
           </div>
-        </header>
+        </div>
         <VocabularyImportDialog
           open={state.isImportDialogOpen}
           onOpenChange={(open) => {

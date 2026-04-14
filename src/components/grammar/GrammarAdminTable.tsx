@@ -1,9 +1,9 @@
 import { format } from 'date-fns'
-import { PencilSimpleIcon, TrashIcon, BookOpenTextIcon, ArrowLeftIcon, ArrowRightIcon } from '@phosphor-icons/react'
+import { PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
+import { AdminTableSection } from '@/components/shared/AdminTableSection'
 import { ADMIN_COMMON_CONTENT, ADMIN_GRAMMAR_CONTENT } from '@/constants/adminContent'
 import { GRAMMAR_STATUS_LABELS, getGrammarRegisterLabel, type GrammarAdminItem } from '@/types/grammarAdmin'
 
@@ -42,35 +42,22 @@ export function GrammarAdminTable({
   onOpenEdit,
   onDelete,
 }: GrammarAdminTableProps) {
-  if (isLoading) {
-    return (
-      <div className="space-y-3">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-12 w-full" />
-        ))}
-      </div>
-    )
-  }
-
-  if (items.length === 0) {
-    return (
-      <div className="flex flex-col items-center gap-3 py-16">
-        <BookOpenTextIcon size={48} style={{ color: 'var(--on-surface-variant)' }} />
-        <h3 className="text-lg font-semibold" style={{ color: 'var(--on-surface)' }}>
-          {ADMIN_GRAMMAR_CONTENT.emptyTitle}
-        </h3>
-        <p className="text-sm" style={{ color: 'var(--on-surface-variant)' }}>
-          {ADMIN_GRAMMAR_CONTENT.emptyDescription}
-        </p>
-        <Button type="button" onClick={onCreate}>
-          {ADMIN_GRAMMAR_CONTENT.emptyActionLabel}
-        </Button>
-      </div>
-    )
-  }
-
   return (
-    <div className="space-y-4" style={{ opacity: isFetching ? 0.6 : 1, transition: 'opacity 200ms' }}>
+    <AdminTableSection
+      title={ADMIN_GRAMMAR_CONTENT.tableTitle}
+      isLoading={isLoading}
+      isFetching={isFetching}
+      hasItems={items.length > 0}
+      currentPage={currentPage}
+      totalPage={totalPage}
+      previousPageLabel={ADMIN_GRAMMAR_CONTENT.previousPageLabel}
+      nextPageLabel={ADMIN_GRAMMAR_CONTENT.nextPageLabel}
+      emptyTitle={ADMIN_GRAMMAR_CONTENT.emptyTitle}
+      emptyDescription={ADMIN_GRAMMAR_CONTENT.emptyDescription}
+      emptyActionLabel={ADMIN_GRAMMAR_CONTENT.emptyActionLabel}
+      onEmptyAction={onCreate}
+      onPageChange={onPageChange}
+    >
       <Table>
         <TableHeader>
           <TableRow>
@@ -159,36 +146,6 @@ export function GrammarAdminTable({
           ))}
         </TableBody>
       </Table>
-
-      {totalPage > 1 && (
-        <div className="flex items-center justify-between">
-          <span className="text-sm" style={{ color: 'var(--on-surface-variant)' }}>
-            {ADMIN_COMMON_CONTENT.pageInfoLabel(currentPage, totalPage)}
-          </span>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={currentPage <= 1}
-              onClick={() => onPageChange(currentPage - 1)}
-            >
-              <ArrowLeftIcon size={14} />
-              {ADMIN_GRAMMAR_CONTENT.previousPageLabel}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={currentPage >= totalPage}
-              onClick={() => onPageChange(currentPage + 1)}
-            >
-              {ADMIN_GRAMMAR_CONTENT.nextPageLabel}
-              <ArrowRightIcon size={14} />
-            </Button>
-          </div>
-        </div>
-      )}
-    </div>
+    </AdminTableSection>
   )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { gooeyToast } from '@/components/ui/goey-toaster'
 import { ADMIN_COMMON_CONTENT, ADMIN_KANJI_CONTENT } from '@/constants/adminContent'
 import { useKanjiAdminDetail } from '@/hooks/useKanjiAdminDetail'
@@ -28,6 +28,8 @@ export function useAdminKanjiPageState() {
   const [radicalInput, setRadicalInput] = useState('')
   const [createdByMeInput, setCreatedByMeInput] = useState(false)
   const [query, setQuery] = useState<KanjiSearchQuery>({ page: 1, pageSize: PAGE_SIZE })
+  const [isFormSubmitting, setIsFormSubmitting] = useState(false)
+  const submitLockRef = useRef(false)
 
   // Form state (modal)
   const [formMode, setFormMode] = useState<'create' | 'edit' | null>(null)
@@ -37,7 +39,7 @@ export function useAdminKanjiPageState() {
   const { createMutation, updateMutation, deleteMutation, getApiErrorMessage } = useKanjiAdminMutations()
   const { fetchDetail, isLoadingDetail } = useKanjiAdminDetail()
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
+  const isSubmitting = isFormSubmitting || createMutation.isPending || updateMutation.isPending
 
   useEffect(() => {
     if (!isError) return
@@ -106,6 +108,10 @@ export function useAdminKanjiPageState() {
     payload: KanjiUpsertPayload,
     options: { strokeOrderFile: File | null; removeStrokeOrder: boolean },
   ) => {
+    if (submitLockRef.current) return
+    submitLockRef.current = true
+    setIsFormSubmitting(true)
+
     try {
       let finalPayload = payload
       if (options.strokeOrderFile) {
@@ -125,6 +131,9 @@ export function useAdminKanjiPageState() {
       handleCloseForm()
     } catch (err) {
       gooeyToast.error(getApiErrorMessage(err, ADMIN_KANJI_CONTENT.toast.crudErrorFallback))
+    } finally {
+      submitLockRef.current = false
+      setIsFormSubmitting(false)
     }
   }
 
