@@ -17,6 +17,12 @@ export const DECK_ADMIN_STATUS_LABELS: Record<DeckStatus, string> = {
   Archived: 'Đã lưu trữ',
 }
 
+export const DECK_ADMIN_STATUS_DESCRIPTIONS: Record<DeckStatus, string> = {
+  Draft: 'Lưu nội dung để tiếp tục biên tập trước khi public.',
+  Published: 'Cho phép bộ thẻ xuất hiện theo rule hiển thị của hệ thống.',
+  Archived: 'Ẩn khỏi luồng hoạt động chính nhưng vẫn giữ dữ liệu quản trị.',
+}
+
 export const DECK_ADMIN_VISIBILITY_LABELS: Record<DeckVisibility, string> = {
   Public: 'Công khai',
   Private: 'Riêng tư',
@@ -107,6 +113,7 @@ export const ADMIN_DECK_CONTENT = {
     metadataTitleCreate: 'Tạo bộ thẻ',
     metadataTitleEdit: 'Thông tin bộ thẻ',
     formDescription: 'Điền thông tin hiển thị, trạng thái và loại bộ thẻ cho admin.',
+    openEditModalLabel: 'Chỉnh sửa thông tin',
     titleLabel: 'Tiêu đề bộ thẻ',
     titlePlaceholder: 'Ví dụ: JLPT N5 Core Vocabulary',
     descriptionLabel: 'Mô tả',
@@ -122,8 +129,13 @@ export const ADMIN_DECK_CONTENT = {
     publicVisibilityTitle: 'Công khai',
     publicVisibilityDescription: 'Có thể được hiển thị cho user khi bộ thẻ ở trạng thái phát hành.',
     statusLabel: 'Trạng thái',
+    statusDescription: 'Chọn trạng thái phát hành trực tiếp ngay trong form.',
     officialLabel: 'Bộ thẻ hệ thống',
     officialDescription: 'Bật tùy chọn này khi đây là bộ thẻ do hệ thống vận hành hoặc biên tập chính thức.',
+    officialYesTitle: 'Bộ thẻ hệ thống',
+    officialYesDescription: 'Dùng cho bộ thẻ chính thức do admin biên tập hoặc quản lý.',
+    officialNoTitle: 'Bộ thẻ thường',
+    officialNoDescription: 'Dùng cho bộ thẻ không đánh dấu là tài nguyên chính thức của hệ thống.',
     officialBadgeLabel: 'Hệ thống',
     regularBadgeLabel: 'Thường',
     saveCreateLabel: 'Tạo bộ thẻ',

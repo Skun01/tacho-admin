@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { format } from 'date-fns'
-import { ArrowLeftIcon, PlusIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, PencilSimpleIcon, PlusIcon } from '@phosphor-icons/react'
 import { useNavigate, useParams } from 'react-router'
 import { AdminDeckAddCardDialog } from '@/components/deck/AdminDeckAddCardDialog'
 import { AdminDeckConfirmDialog } from '@/components/deck/AdminDeckConfirmDialog'
@@ -107,6 +107,7 @@ export function AdminDeckEditorPage() {
   const [addCardFolder, setAddCardFolder] = useState<DeckFolderResponse | null>(null)
   const [deleteDeckConfirmOpen, setDeleteDeckConfirmOpen] = useState(false)
   const [deleteFolderTarget, setDeleteFolderTarget] = useState<DeckFolderResponse | null>(null)
+  const [deckFormDialogOpen, setDeckFormDialogOpen] = useState(isCreateMode)
 
   const deck = deckDetailQuery.data
   const sortedFolders = useMemo(
@@ -147,6 +148,7 @@ export function AdminDeckEditorPage() {
           typeId: values.typeId || null,
         })
         gooeyToast.success(ADMIN_DECK_CONTENT.toast.createSuccess)
+        setDeckFormDialogOpen(false)
         navigate(`/admin/decks/${created.id}/edit`, { replace: true })
         return
       }
@@ -164,6 +166,7 @@ export function AdminDeckEditorPage() {
         },
       })
       gooeyToast.success(ADMIN_DECK_CONTENT.toast.updateSuccess)
+      setDeckFormDialogOpen(false)
     } catch (error) {
       gooeyToast.error(getApiErrorMessage(error, ADMIN_DECK_CONTENT.toast.crudErrorFallback))
     }
@@ -347,18 +350,34 @@ export function AdminDeckEditorPage() {
           </div>
         </div>
 
-        <AdminDeckForm
-          title={isCreateMode ? ADMIN_DECK_CONTENT.editor.metadataTitleCreate : ADMIN_DECK_CONTENT.editor.metadataTitleEdit}
-          submitLabel={isCreateMode ? ADMIN_DECK_CONTENT.editor.saveCreateLabel : ADMIN_DECK_CONTENT.editor.saveUpdateLabel}
-          deckTypes={deckTypeQuery.data?.items ?? []}
-          initialValues={deck}
-          isPending={createMutation.isPending || updateMutation.isPending}
-          onCancel={() => navigate('/admin/decks')}
-          onSubmit={handleSubmitDeckForm}
-        />
-
         {!isCreateMode && deck && (
           <>
+            <Card>
+              <CardHeader className="gap-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <CardTitle className="text-xl">{deck.title}</CardTitle>
+                      <Button type="button" variant="ghost" size="icon-sm" onClick={() => setDeckFormDialogOpen(true)}>
+                        <PencilSimpleIcon size={16} />
+                      </Button>
+                    </div>
+                    {deck.description && (
+                      <p className="text-sm text-muted-foreground">{deck.description}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                  <span><span className="font-semibold text-foreground">{ADMIN_DECK_CONTENT.editor.typeLabel}: </span>{deck.type.name ?? ADMIN_DECK_CONTENT.editor.typeEmptyLabel}</span>
+                  <span><span className="font-semibold text-foreground">{ADMIN_DECK_CONTENT.editor.creatorLabel}: </span>{deck.createdBy.username}</span>
+                  <span><span className="font-semibold text-foreground">{ADMIN_DECK_CONTENT.editor.cardsLabel}: </span>{deck.cardsCount}</span>
+                  <span><span className="font-semibold text-foreground">{ADMIN_DECK_CONTENT.editor.foldersLabel}: </span>{deck.foldersCount}</span>
+                  <span><span className="font-semibold text-foreground">{ADMIN_DECK_CONTENT.editor.bookmarksLabel}: </span>{deck.bookmarkCount}</span>
+                </div>
+              </CardHeader>
+            </Card>
+
             <Card>
               <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -459,11 +478,12 @@ export function AdminDeckEditorPage() {
             </Card>
 
             <Dialog open={folderDialogOpen} onOpenChange={setFolderDialogOpen}>
-              <DialogContent>
+              <DialogContent className="max-w-xl p-0">
                 <AdminDeckFolderForm
                   title={editingFolder ? ADMIN_DECK_CONTENT.folderForm.editTitle : ADMIN_DECK_CONTENT.folderForm.createTitle}
                   initialValues={editingFolder ?? undefined}
                   isPending={createFolderMutation.isPending || updateFolderMutation.isPending}
+                  variant="modal"
                   onCancel={() => {
                     setFolderDialogOpen(false)
                     setEditingFolder(null)
@@ -488,6 +508,7 @@ export function AdminDeckEditorPage() {
               title={ADMIN_DECK_CONTENT.confirmDeleteTitle}
               description={ADMIN_DECK_CONTENT.confirmDeleteDescription}
               confirmLabel={ADMIN_DECK_CONTENT.confirmDeleteAction}
+              cancelLabel={ADMIN_DECK_CONTENT.confirmCancelLabel}
               isPending={deleteMutation.isPending}
               onOpenChange={setDeleteDeckConfirmOpen}
               onConfirm={handleDeleteDeck}
@@ -498,6 +519,7 @@ export function AdminDeckEditorPage() {
               title={ADMIN_DECK_CONTENT.folder.deleteLabel}
               description={ADMIN_DECK_CONTENT.confirmDeleteDescription}
               confirmLabel={ADMIN_DECK_CONTENT.folder.deleteLabel}
+              cancelLabel={ADMIN_DECK_CONTENT.confirmCancelLabel}
               isPending={deleteFolderMutation.isPending}
               onOpenChange={(open) => {
                 if (!open) setDeleteFolderTarget(null)
@@ -506,6 +528,34 @@ export function AdminDeckEditorPage() {
             />
           </>
         )}
+
+        <Dialog
+          open={deckFormDialogOpen}
+          onOpenChange={(open) => {
+            setDeckFormDialogOpen(open)
+            if (!open && isCreateMode) {
+              navigate('/admin/decks')
+            }
+          }}
+        >
+          <DialogContent className="max-w-2xl p-0">
+            <AdminDeckForm
+              title={isCreateMode ? ADMIN_DECK_CONTENT.editor.metadataTitleCreate : ADMIN_DECK_CONTENT.editor.metadataTitleEdit}
+              submitLabel={isCreateMode ? ADMIN_DECK_CONTENT.editor.saveCreateLabel : ADMIN_DECK_CONTENT.editor.saveUpdateLabel}
+              deckTypes={deckTypeQuery.data?.items ?? []}
+              initialValues={deck}
+              isPending={createMutation.isPending || updateMutation.isPending}
+              variant="modal"
+              onCancel={() => {
+                setDeckFormDialogOpen(false)
+                if (isCreateMode) {
+                  navigate('/admin/decks')
+                }
+              }}
+              onSubmit={handleSubmitDeckForm}
+            />
+          </DialogContent>
+        </Dialog>
       </section>
     </>
   )
