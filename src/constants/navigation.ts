@@ -39,7 +39,7 @@ export const ADMIN_NAV_ITEMS: AdminNavEntry[] = [
       { icon: TextTIcon, label: 'Câu ví dụ', href: '/admin/sentences' },
     ],
   },
-  { icon: CardsIcon, label: 'Bộ thẻ', href: '/decks' },
+  { icon: CardsIcon, label: 'Bộ thẻ', href: '/admin/decks' },
   { icon: UsersIcon, label: 'Người dùng', href: '/users' },
   { icon: GearIcon, label: 'Cài đặt', href: '/settings' },
 ]

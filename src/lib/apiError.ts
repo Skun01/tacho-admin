@@ -1,5 +1,6 @@
 interface ApiErrorData {
-  code?: string | null
+  code?: string | number | null
+  message?: string | null
 }
 
 const API_ERROR_MESSAGE_BY_CODE: Record<string, string> = {
@@ -10,15 +11,29 @@ const API_ERROR_MESSAGE_BY_CODE: Record<string, string> = {
   CONFLICT: 'Dữ liệu bị xung đột. Vui lòng tải lại và thử lại.',
 }
 
-export function getSafeApiErrorMessage(error: unknown, fallback: string) {
+export function getSafeApiErrorMessage(
+  error: unknown,
+  fallback: string,
+  messageByCode?: Record<string, string>,
+) {
   const typed = error as {
     apiData?: ApiErrorData
     response?: { data?: ApiErrorData }
   }
 
+  const businessMessage = typed?.apiData?.message ?? typed?.response?.data?.message
+  if (businessMessage && messageByCode?.[businessMessage]) {
+    return messageByCode[businessMessage]
+  }
+
   const code = typed?.apiData?.code ?? typed?.response?.data?.code
-  if (code && API_ERROR_MESSAGE_BY_CODE[code]) {
-    return API_ERROR_MESSAGE_BY_CODE[code]
+  const normalizedCode = typeof code === 'number' ? String(code) : code
+  if (normalizedCode && messageByCode?.[normalizedCode]) {
+    return messageByCode[normalizedCode]
+  }
+
+  if (normalizedCode && API_ERROR_MESSAGE_BY_CODE[normalizedCode]) {
+    return API_ERROR_MESSAGE_BY_CODE[normalizedCode]
   }
 
   return fallback

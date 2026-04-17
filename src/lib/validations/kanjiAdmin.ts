@@ -14,7 +14,7 @@ export const kanjiUpsertSchema = z.object({
   tags: z.array(z.string().trim().min(1, 'Tag không được để trống')).max(20, 'Tối đa 20 tag'),
   kanji: z.string().trim().min(1, 'Chữ Hán tự là bắt buộc').max(20, 'Chữ Hán tự tối đa 20 ký tự'),
   strokeCount: z
-    .number({ invalid_type_error: 'Số nét phải là số nguyên dương' })
+    .number('Số nét phải là số nguyên dương')
     .int('Số nét phải là số nguyên')
     .positive('Số nét phải lớn hơn 0'),
   strokeOrderUrl: z.string().max(2000, 'URL thứ tự nét tối đa 2000 ký tự').nullable(),

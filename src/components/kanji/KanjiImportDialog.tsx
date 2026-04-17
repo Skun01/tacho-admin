@@ -151,7 +151,7 @@ export function KanjiImportDialog({ open, onOpenChange, onImported }: KanjiImpor
                             {C.statusValidLabel}
                           </Badge>
                         ) : (
-                          <Badge variant="destructive" className="gap-1">
+                          <Badge variant="secondary" className="gap-1 border border-destructive/20 bg-destructive/10 text-destructive">
                             <XCircleIcon size={14} />
                             {C.statusInvalidLabel}
                           </Badge>

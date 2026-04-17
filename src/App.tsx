@@ -18,6 +18,9 @@ import { AdminSentencesPage } from './pages/AdminSentencesPage'
 import AdminGrammarPage from './pages/AdminGrammarPage'
 import AdminGrammarEditorPage from './pages/AdminGrammarEditorPage'
 import AdminKanjiPage from './pages/AdminKanjiPage'
+import { AdminDecksPage } from './pages/AdminDecksPage'
+import { AdminDeckEditorPage } from './pages/AdminDeckEditorPage'
+import { AdminDeckTypesPage } from './pages/AdminDeckTypesPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,6 +59,10 @@ const router = createBrowserRouter(
             <Route path="/admin/grammar/:id/edit" element={<AdminGrammarEditorPage />} />
             <Route path="/admin/kanji" element={<AdminKanjiPage />} />
             <Route path="/admin/sentences" element={<AdminSentencesPage />} />
+            <Route path="/admin/decks" element={<AdminDecksPage />} />
+            <Route path="/admin/decks/create" element={<AdminDeckEditorPage />} />
+            <Route path="/admin/decks/:id/edit" element={<AdminDeckEditorPage />} />
+            <Route path="/admin/deck-types" element={<AdminDeckTypesPage />} />
           </Route>
         </Route>
       </Route>
