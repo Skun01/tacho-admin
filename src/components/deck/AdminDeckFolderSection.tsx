@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import {
   CaretDownIcon,
   CaretUpIcon,
+  DotsSixVerticalIcon,
   PencilSimpleIcon,
   PlusIcon,
   TrashIcon,
@@ -15,24 +16,44 @@ interface AdminDeckFolderSectionProps {
   folder: DeckFolderResponse
   searchQuery?: string
   isPending?: boolean
+  draggable?: boolean
+  isDragOver?: boolean
+  onDragStart?: () => void
+  onDragOver?: (event: React.DragEvent<HTMLElement>) => void
+  onDrop?: () => void
+  onDragEnd?: () => void
   onEdit: (folder: DeckFolderResponse) => void
   onDelete: (folder: DeckFolderResponse) => void
   onAddCard: (folder: DeckFolderResponse) => void
   onRemoveCard: (folder: DeckFolderResponse, cardId: string) => void
-  onMoveFolder: (folder: DeckFolderResponse, direction: 'up' | 'down') => void
-  onMoveCard: (folder: DeckFolderResponse, cardId: string, direction: 'up' | 'down') => void
+  onDragCardStart?: (cardId: string) => void
+  onDragCardOver?: (cardId: string) => void
+  onDropCard?: (cardId: string) => void
+  onDragCardEnd?: () => void
+  draggedCardId?: string | null
+  dragOverCardId?: string | null
 }
 
 export function AdminDeckFolderSection({
   folder,
   searchQuery = '',
   isPending = false,
+  draggable = false,
+  isDragOver = false,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
   onEdit,
   onDelete,
   onAddCard,
   onRemoveCard,
-  onMoveFolder,
-  onMoveCard,
+  onDragCardStart,
+  onDragCardOver,
+  onDropCard,
+  onDragCardEnd,
+  draggedCardId = null,
+  dragOverCardId = null,
 }: AdminDeckFolderSectionProps) {
   const [expanded, setExpanded] = useState(true)
   const sortedCards = useMemo(() => [...folder.cards].sort((left, right) => left.position - right.position), [folder.cards])
@@ -50,11 +71,26 @@ export function AdminDeckFolderSection({
   }, [normalizedQuery, sortedCards])
 
   return (
-    <section className="space-y-3 rounded-2xl border bg-card p-5 shadow-sm">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <section
+      draggable={draggable}
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      onDragEnd={onDragEnd}
+      className={`flex flex-col gap-3 ${isDragOver ? 'scale-[1.01]' : ''}`}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-4 rounded-3xl border border-border/70 bg-card p-5 shadow-[0_2px_12px_0_rgba(29,28,19,0.07)] dark:bg-surface-container-high dark:shadow-[0_10px_24px_0_rgba(0,0,0,0.24)]">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-lg font-semibold">{folder.title}</h3>
+            <span title={ADMIN_DECK_CONTENT.folder.moveUpLabel}>
+              <DotsSixVerticalIcon
+                size={16}
+                className={`hidden text-muted-foreground/35 lg:block ${
+                  draggable ? 'cursor-grab active:cursor-grabbing' : ''
+                }`}
+              />
+            </span>
+            <h3 className="text-lg font-bold text-foreground">{folder.title}</h3>
             <Badge variant="outline">{ADMIN_DECK_CONTENT.folder.cardsCountLabel(folder.cardsCount)}</Badge>
           </div>
           <p className="text-sm text-muted-foreground">
@@ -63,67 +99,78 @@ export function AdminDeckFolderSection({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button type="button" variant="outline" size="sm" onClick={() => onMoveFolder(folder, 'up')} disabled={isPending}>
-            {ADMIN_DECK_CONTENT.folder.moveUpLabel}
-          </Button>
-          <Button type="button" variant="outline" size="sm" onClick={() => onMoveFolder(folder, 'down')} disabled={isPending}>
-            {ADMIN_DECK_CONTENT.folder.moveDownLabel}
-          </Button>
-          <Button type="button" variant="outline" size="sm" onClick={() => onAddCard(folder)} disabled={isPending}>
-            <PlusIcon size={14} />
-            {ADMIN_DECK_CONTENT.folder.addCardLabel}
-          </Button>
           <Button type="button" variant="ghost" size="icon-sm" onClick={() => setExpanded((prev) => !prev)}>
             {expanded ? <CaretUpIcon size={16} /> : <CaretDownIcon size={16} />}
           </Button>
-          <Button type="button" variant="ghost" size="icon-sm" onClick={() => onEdit(folder)} disabled={isPending}>
-            <PencilSimpleIcon size={16} />
+          <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={() => onAddCard(folder)} disabled={isPending}>
+            <PlusIcon size={14} />
+            {ADMIN_DECK_CONTENT.folder.addCardLabel}
           </Button>
-          <Button type="button" variant="ghost" size="icon-sm" onClick={() => onDelete(folder)} disabled={isPending}>
-            <TrashIcon size={16} />
-          </Button>
+          <div className="flex items-center gap-1 rounded-full border border-border/70 bg-surface-container-high px-1.5 py-1 dark:bg-surface-container-highest">
+            <Button type="button" variant="ghost" size="icon-xs" onClick={() => onEdit(folder)} disabled={isPending} title={ADMIN_DECK_CONTENT.folder.editLabel}>
+              <PencilSimpleIcon size={12} />
+            </Button>
+            <Button type="button" variant="ghost" size="icon-xs" onClick={() => onDelete(folder)} disabled={isPending} title={ADMIN_DECK_CONTENT.folder.deleteLabel} className="text-muted-foreground hover:bg-rose-50 hover:text-rose-600">
+              <TrashIcon size={12} />
+            </Button>
+          </div>
         </div>
       </div>
 
       {expanded && (
         <div className="space-y-2">
           {visibleCards.length === 0 ? (
-            <div className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
+            <div className="rounded-2xl border border-border/70 bg-card px-4 py-8 text-center text-sm text-muted-foreground shadow-[0_1px_6px_0_rgba(29,28,19,0.06)] dark:bg-surface-container-high dark:shadow-[0_8px_20px_0_rgba(0,0,0,0.22)]">
               {ADMIN_DECK_CONTENT.folder.emptyCardsLabel}
             </div>
           ) : (
-            visibleCards.map((item, index) => (
-              <div key={item.cardId} className="flex items-center gap-3 rounded-xl border bg-background px-4 py-3">
+            visibleCards.map((item) => (
+              <div
+                key={item.cardId}
+                draggable={!normalizedQuery && Boolean(onDragCardStart) && !isPending}
+                onDragStart={() => {
+                  if (!normalizedQuery && onDragCardStart && !isPending) {
+                    onDragCardStart(item.cardId)
+                  }
+                }}
+                onDragOver={(event) => {
+                  if (!normalizedQuery && onDragCardOver && !isPending) {
+                    event.preventDefault()
+                    onDragCardOver(item.cardId)
+                  }
+                }}
+                onDrop={() => {
+                  if (!normalizedQuery && onDropCard && !isPending) {
+                    onDropCard(item.cardId)
+                  }
+                }}
+                onDragEnd={() => {
+                  if (!normalizedQuery && onDragCardEnd && !isPending) {
+                    onDragCardEnd()
+                  }
+                }}
+                className={`flex items-center gap-3 rounded-2xl border border-border/70 bg-card px-4 py-3 shadow-[0_1px_6px_0_rgba(29,28,19,0.06)] dark:bg-surface-container-high ${
+                  dragOverCardId === item.cardId && draggedCardId !== item.cardId ? 'scale-[1.01]' : ''
+                }`}
+              >
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
+                    {!normalizedQuery && (
+                      <DotsSixVerticalIcon
+                        size={14}
+                        className="text-muted-foreground/40"
+                      />
+                    )}
                     <Badge variant="outline">{DECK_ADMIN_CARD_TYPE_LABELS[item.card.cardType]}</Badge>
-                    {item.card.level && <Badge variant="secondary">{item.card.level}</Badge>}
-                    <span className="truncate font-medium">{item.card.title}</span>
+                    {item.card.level && <Badge variant="outline">{item.card.level}</Badge>}
+                    <span className="truncate font-medium text-foreground">{item.card.title}</span>
                   </div>
                   {item.card.summary && (
-                    <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">{item.card.summary}</p>
+                    <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{item.card.summary}</p>
                   )}
                 </div>
 
                 <div className="flex shrink-0 items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onMoveCard(folder, item.cardId, 'up')}
-                    disabled={isPending || index === 0}
-                  >
-                    {ADMIN_DECK_CONTENT.editor.moveUpLabel}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onMoveCard(folder, item.cardId, 'down')}
-                    disabled={isPending || index === visibleCards.length - 1}
-                  >
-                    {ADMIN_DECK_CONTENT.editor.moveDownLabel}
-                  </Button>
                   <Button type="button" variant="ghost" size="sm" onClick={() => onRemoveCard(folder, item.cardId)} disabled={isPending}>
                     {ADMIN_DECK_CONTENT.folder.removeCardLabel}
                   </Button>

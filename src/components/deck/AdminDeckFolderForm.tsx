@@ -85,7 +85,7 @@ export function AdminDeckFolderForm({
                 <FormControl>
                   <Textarea
                     {...field}
-                    rows={isModal ? 3 : 4}
+                    rows={isModal ? 3 : undefined}
                     placeholder={ADMIN_DECK_CONTENT.folderForm.descriptionPlaceholder}
                     className={isModal ? 'min-h-0 resize-none rounded-xl border-0 bg-surface-container-low px-4 py-2.5 shadow-none focus-visible:bg-surface-container focus-visible:ring-0' : 'rounded-2xl bg-background'}
                   />
