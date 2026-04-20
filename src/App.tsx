@@ -21,6 +21,8 @@ import AdminKanjiPage from './pages/AdminKanjiPage'
 import { AdminDecksPage } from './pages/AdminDecksPage'
 import { AdminDeckEditorPage } from './pages/AdminDeckEditorPage'
 import { AdminDeckTypesPage } from './pages/AdminDeckTypesPage'
+import { AdminLearningIssuesPage } from './pages/AdminLearningIssuesPage'
+import { AdminDeckCoveragePage } from './pages/AdminDeckCoveragePage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,6 +65,8 @@ const router = createBrowserRouter(
             <Route path="/admin/decks/create" element={<AdminDeckEditorPage />} />
             <Route path="/admin/decks/:id/edit" element={<AdminDeckEditorPage />} />
             <Route path="/admin/deck-types" element={<AdminDeckTypesPage />} />
+            <Route path="/admin/learning/issues" element={<AdminLearningIssuesPage />} />
+            <Route path="/admin/decks/:id/coverage" element={<AdminDeckCoveragePage />} />
           </Route>
         </Route>
       </Route>

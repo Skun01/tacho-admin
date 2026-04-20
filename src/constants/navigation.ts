@@ -10,6 +10,8 @@ import {
   UsersIcon,
   GearIcon,
   ArrowSquareOutIcon,
+  GraduationCapIcon,
+  WarningCircleIcon,
 } from '@phosphor-icons/react'
 
 export interface NavItem {
@@ -40,6 +42,14 @@ export const ADMIN_NAV_ITEMS: AdminNavEntry[] = [
     ],
   },
   { icon: CardsIcon, label: 'Bộ thẻ', href: '/admin/decks' },
+  {
+    icon: GraduationCapIcon,
+    label: 'Học tập',
+    children: [
+      { icon: HouseSimpleIcon, label: 'Tổng quan', href: '/dashboard' },
+      { icon: WarningCircleIcon, label: 'Vấn đề nội dung', href: '/admin/learning/issues' },
+    ],
+  },
   { icon: UsersIcon, label: 'Người dùng', href: '/users' },
   { icon: GearIcon, label: 'Cài đặt', href: '/settings' },
 ]
