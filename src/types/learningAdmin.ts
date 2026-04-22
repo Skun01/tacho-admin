@@ -49,6 +49,16 @@ export const LEARNING_ISSUE_TYPE_LABELS: Record<LearningIssueType, string> = {
   UnsupportedCardTypeForMode: 'Loại thẻ không hỗ trợ mode',
 }
 
+export const MULTIPLE_CHOICE_QUESTION_TYPE_LABELS: Record<MultipleChoiceQuestionType, string> = {
+  TitleToSummary: 'Từ tiêu đề sang tóm tắt',
+  SummaryToTitle: 'Từ tóm tắt sang tiêu đề',
+}
+
+export const FLASHCARD_CONTENT_TYPE_LABELS: Record<FlashcardContentType, string> = {
+  Title: 'Tiêu đề',
+  Summary: 'Tóm tắt',
+}
+
 // ────────────────────────────────────────────────
 // 15.3 / 15.4  Card config
 // ────────────────────────────────────────────────

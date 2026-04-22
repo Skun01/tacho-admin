@@ -1,21 +1,39 @@
-import { useCallback, useEffect, useState } from 'react'
-import { SpinnerGapIcon, PlusIcon, EyeIcon } from '@phosphor-icons/react'
+import { useCallback, useState } from 'react'
+import { CheckCircleIcon, EyeIcon, InfoIcon, PlusIcon, SpinnerGapIcon, WarningDiamondIcon } from '@phosphor-icons/react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
-import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import { gooeyToast } from '@/components/ui/goey-toaster'
 import { ADMIN_LEARNING_CONTENT } from '@/constants/adminLearning'
 import { useLearningCardConfig } from '@/hooks/useLearningAdminQueries'
 import { useLearningAdminMutations } from '@/hooks/useLearningAdminMutations'
-import { IssuesBadge } from '@/components/learning/IssuesBadge'
 import { ReadinessBadges } from '@/components/learning/ReadinessBadges'
 import { SentenceConfigRow } from '@/components/learning/SentenceConfigRow'
 import { SentencePickerDialog } from '@/components/learning/SentencePickerDialog'
 import { CardPreviewDialog } from '@/components/learning/CardPreviewDialog'
+import { CARD_TYPE_LABELS, LEARNING_ISSUE_TYPE_LABELS } from '@/types/learningAdmin'
 import type {
   CardConfigSentenceInput,
+  LearningAdminCardConfigResponse,
   LearningAdminCardSentenceConfigResponse,
 } from '@/types/learningAdmin'
 
@@ -29,25 +47,69 @@ interface CardConfigDrawerProps {
 
 export function CardConfigDrawer({ cardId, open, onOpenChange }: CardConfigDrawerProps) {
   const { data, isLoading } = useLearningCardConfig(cardId ?? '', open && Boolean(cardId))
-  const { updateCardConfigMutation, attachSentenceMutation, getApiErrorMessage } = useLearningAdminMutations()
 
-  const [summary, setSummary] = useState('')
-  const [sentences, setSentences] = useState<LearningAdminCardSentenceConfigResponse[]>([])
+  return (
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent
+          className="
+            max-w-[calc(100vw-1rem)] h-[calc(100vh-1rem)] max-h-[calc(100vh-1rem)] p-0 gap-0 flex flex-col overflow-hidden
+            sm:max-w-[980px] sm:h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-2rem)]
+            sm:left-auto sm:right-4 sm:top-1/2 sm:translate-x-0 sm:-translate-y-1/2
+          "
+          style={{ backgroundColor: 'var(--surface)' }}
+        >
+          <DialogHeader className="border-b px-6 py-4 pr-12">
+            <DialogTitle>{C.drawerTitle}</DialogTitle>
+            <DialogDescription>
+              {data ? C.detailDescription(data.title, CARD_TYPE_LABELS[data.cardType]) : C.drawerDescription}
+            </DialogDescription>
+          </DialogHeader>
+
+          <ScrollArea className="min-h-0 flex-1">
+            <div className="px-6 py-4">
+            {isLoading && (
+              <div className="space-y-4">
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-24 w-full" />
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+              </div>
+            )}
+
+            {!isLoading && data && cardId && (
+              <CardConfigBody
+                key={data.cardId}
+                cardId={cardId}
+                data={data}
+                onClose={() => onOpenChange(false)}
+              />
+            )}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+    </>
+  )
+}
+
+interface CardConfigBodyProps {
+  cardId: string
+  data: LearningAdminCardConfigResponse
+  onClose: () => void
+}
+
+function CardConfigBody({ cardId, data, onClose }: CardConfigBodyProps) {
+  const { updateCardConfigMutation, attachSentenceMutation, getApiErrorMessage } = useLearningAdminMutations()
+  const isSaving = updateCardConfigMutation.isPending
+  const [summary, setSummary] = useState(data.summary)
+  const [sentences, setSentences] = useState<LearningAdminCardSentenceConfigResponse[]>(data.sentences)
   const [pickerOpen, setPickerOpen] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
 
-  // Sync from server
-  useEffect(() => {
-    if (!data) return
-    setSummary(data.summary)
-    setSentences(data.sentences)
-  }, [data])
-
   const handleSentenceFieldChange = useCallback(
     (idx: number, field: keyof LearningAdminCardSentenceConfigResponse, value: unknown) => {
-      setSentences((prev) =>
-        prev.map((s, i) => (i === idx ? { ...s, [field]: value } : s)),
-      )
+      setSentences((prev) => prev.map((sentence, i) => (i === idx ? { ...sentence, [field]: value } : sentence)))
     },
     [],
   )
@@ -57,7 +119,6 @@ export function CardConfigDrawer({ cardId, open, onOpenChange }: CardConfigDrawe
   }, [])
 
   const handleAttachSentence = async (sentenceId: string) => {
-    if (!cardId) return
     const nextPosition = sentences.length + 1
     try {
       const result = await attachSentenceMutation.mutateAsync({
@@ -74,13 +135,12 @@ export function CardConfigDrawer({ cardId, open, onOpenChange }: CardConfigDrawe
   }
 
   const handleSave = async () => {
-    if (!cardId) return
-    const sentenceInputs: CardConfigSentenceInput[] = sentences.map((s, idx) => ({
-      sentenceId: s.sentenceId,
+    const sentenceInputs: CardConfigSentenceInput[] = sentences.map((sentence, idx) => ({
+      sentenceId: sentence.sentenceId,
       position: idx + 1,
-      blankWord: s.blankWord || null,
-      hint: s.hint || null,
-      answerList: s.answerList,
+      blankWord: sentence.blankWord || null,
+      hint: sentence.hint || null,
+      answerList: sentence.answerList,
     }))
 
     try {
@@ -89,7 +149,7 @@ export function CardConfigDrawer({ cardId, open, onOpenChange }: CardConfigDrawe
         payload: { summary, sentences: sentenceInputs },
       })
       gooeyToast.success(ADMIN_LEARNING_CONTENT.toast.configSaveSuccess)
-      onOpenChange(false)
+      onClose()
     } catch (error) {
       gooeyToast.error(
         getApiErrorMessage(error, ADMIN_LEARNING_CONTENT.toast.configSaveError, ADMIN_LEARNING_CONTENT.errorCodes),
@@ -97,129 +157,162 @@ export function CardConfigDrawer({ cardId, open, onOpenChange }: CardConfigDrawe
     }
   }
 
-  const isSaving = updateCardConfigMutation.isPending
-
   return (
     <>
-      <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent className="fixed right-0 top-0 bottom-0 w-full max-w-xl flex flex-col rounded-none border-l" style={{ backgroundColor: 'var(--surface)' }}>
-          <DrawerHeader className="border-b px-6 py-4">
-            <DrawerTitle>{C.drawerTitle}</DrawerTitle>
-            <DrawerDescription>{data ? `${data.title} (${data.cardType})` : C.drawerDescription}</DrawerDescription>
-          </DrawerHeader>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <section className="space-y-6">
+          <Card>
+            <CardHeader className="gap-3 pb-4">
+              <CardTitle className="text-base">{C.summaryLabel}</CardTitle>
+              <CardDescription>{data.title}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-1.5">
+              <Textarea
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
+                placeholder={C.summaryPlaceholder}
+                rows={4}
+              />
+            </CardContent>
+          </Card>
 
-          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
-            {isLoading && (
-              <div className="space-y-4">
-                <Skeleton className="h-8 w-full" />
-                <Skeleton className="h-24 w-full" />
-                <Skeleton className="h-20 w-full" />
-                <Skeleton className="h-20 w-full" />
+          <Card>
+            <CardHeader className="gap-3 pb-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <CardTitle className="text-base">{C.sentencesTitle}</CardTitle>
+                  <CardDescription>{C.sentencesCountLabel(sentences.length)}</CardDescription>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={() => setPreviewOpen(true)}>
+                    <EyeIcon />
+                    {C.previewLabel}
+                  </Button>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
+                    <PlusIcon />
+                    {C.addSentenceLabel}
+                  </Button>
+                </div>
               </div>
-            )}
-
-            {!isLoading && data && (
-              <>
-                {/* Readiness + Issues */}
-                <div className="flex items-center gap-4">
-                  <div className="space-y-1">
-                    <Label className="text-xs">{C.readinessTitle}</Label>
-                    <ReadinessBadges modes={data.availableModes} />
-                  </div>
-                  <IssuesBadge issues={data.issues} />
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {sentences.length === 0 && (
+                <div
+                  className="rounded-lg border border-dashed px-4 py-8 text-center text-sm"
+                  style={{ color: 'var(--on-surface-variant)' }}
+                >
+                  {C.sentencesEmptyLabel}
                 </div>
+              )}
 
-                {/* Summary */}
-                <div className="space-y-1.5">
-                  <Label>{C.summaryLabel}</Label>
-                  <Textarea
-                    value={summary}
-                    onChange={(e) => setSummary(e.target.value)}
-                    placeholder={C.summaryPlaceholder}
-                    rows={3}
-                  />
-                </div>
+              {sentences.map((sentence, idx) => (
+                <SentenceConfigRow
+                  key={sentence.sentenceId}
+                  sentence={sentence}
+                  onBlankWordChange={(value) => handleSentenceFieldChange(idx, 'blankWord', value)}
+                  onHintChange={(value) => handleSentenceFieldChange(idx, 'hint', value)}
+                  onAnswerListChange={(value) => handleSentenceFieldChange(idx, 'answerList', value)}
+                  onRemove={() => handleRemoveSentence(idx)}
+                />
+              ))}
+            </CardContent>
+          </Card>
+        </section>
 
-                {/* Sentences */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label>{C.sentencesTitle}</Label>
-                    <div className="flex gap-2">
-                      <Button type="button" variant="outline" size="sm" onClick={() => setPreviewOpen(true)}>
-                        <EyeIcon size={14} className="mr-1" />
-                        {C.previewLabel}
-                      </Button>
-                      <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
-                        <PlusIcon size={14} className="mr-1" />
-                        {C.addSentenceLabel}
-                      </Button>
-                    </div>
+        <aside className="space-y-6">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">{C.readinessTitle}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ReadinessBadges modes={data.availableModes} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="gap-3 pb-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <WarningDiamondIcon className="text-destructive" />
+                    <CardTitle className="text-base">{C.issuesTitle}</CardTitle>
                   </div>
-
-                  {sentences.length === 0 && (
-                    <p className="py-4 text-center text-sm" style={{ color: 'var(--on-surface-variant)' }}>
-                      {C.sentencesEmptyLabel}
-                    </p>
+                  {data.issues.length > 0 && (
+                    <Badge className="bg-destructive text-destructive-foreground">{C.issueCountLabel(data.issues.length)}</Badge>
                   )}
-
-                  {sentences.map((s, idx) => (
-                    <SentenceConfigRow
-                      key={s.sentenceId}
-                      sentence={s}
-                      onBlankWordChange={(v) => handleSentenceFieldChange(idx, 'blankWord', v)}
-                      onHintChange={(v) => handleSentenceFieldChange(idx, 'hint', v)}
-                      onAnswerListChange={(v) => handleSentenceFieldChange(idx, 'answerList', v)}
-                      onRemove={() => handleRemoveSentence(idx)}
-                    />
-                  ))}
                 </div>
+              <CardDescription>{C.issuesSectionDescription}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {data.issues.length === 0 && (
+                <Alert>
+                  <CheckCircleIcon className="text-emerald-600" />
+                  <AlertTitle>{C.issuesTitle}</AlertTitle>
+                  <AlertDescription>{C.noIssuesLabel}</AlertDescription>
+                </Alert>
+              )}
 
-                {/* Issues detail */}
-                {data.issues.length > 0 && (
-                  <div className="space-y-2">
-                    <Label>{C.issuesTitle}</Label>
-                    <div className="space-y-1.5">
-                      {data.issues.map((issue, i) => (
-                        <div key={i} className="rounded-md px-3 py-2 text-xs" style={{ backgroundColor: 'var(--error-container, rgba(255,0,0,0.06))', color: 'var(--on-error-container, #c00)' }}>
-                          <span className="font-medium">{issue.type}</span>: {issue.message}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+              {data.issues.map((issue, i) => (
+                <Alert
+                  key={`${issue.type}-${issue.sentenceId ?? 'global'}-${i}`}
+                  variant="destructive"
+                  className="space-y-2 border-destructive/30 bg-[var(--error-container,rgba(255,0,0,0.06))] text-[var(--on-error-container,#7f1d1d)] [&>svg]:text-[var(--on-error-container,#7f1d1d)]"
+                >
+                  <WarningDiamondIcon />
+                  <AlertTitle className="line-clamp-none flex flex-wrap items-center gap-2 text-[var(--on-error-container,#7f1d1d)]">
+                    <Badge className="bg-destructive text-destructive-foreground">{LEARNING_ISSUE_TYPE_LABELS[issue.type]}</Badge>
+                    {issue.sentenceId && <Badge variant="outline">{C.issueSentenceIdLabel(issue.sentenceId)}</Badge>}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 text-[var(--on-error-container,#7f1d1d)] hover:bg-black/10"
+                          aria-label={C.issuesTitle}
+                        >
+                          <InfoIcon />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent align="end">
+                        <PopoverHeader>
+                          <PopoverTitle>{LEARNING_ISSUE_TYPE_LABELS[issue.type]}</PopoverTitle>
+                          <PopoverDescription>{issue.message}</PopoverDescription>
+                        </PopoverHeader>
+                      </PopoverContent>
+                    </Popover>
+                  </AlertTitle>
+                  <AlertDescription className="text-[var(--on-error-container,#7f1d1d)]/90">{issue.message}</AlertDescription>
+                </Alert>
+              ))}
+            </CardContent>
+          </Card>
+        </aside>
+      </div>
 
-          {/* Footer actions */}
-          <div className="flex items-center justify-end gap-3 border-t px-6 py-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
-              {C.cancelLabel}
-            </Button>
-            <Button type="button" onClick={handleSave} disabled={isSaving || isLoading}>
-              {isSaving && <SpinnerGapIcon size={16} className="mr-1 animate-spin" />}
-              {C.saveConfigLabel}
-            </Button>
-          </div>
-        </DrawerContent>
-      </Drawer>
+      <div
+        className="sticky bottom-0 mt-6 flex items-center justify-end gap-3 border-t px-0 py-4"
+        style={{ backgroundColor: 'var(--surface)' }}
+      >
+        <Button type="button" variant="outline" onClick={onClose} disabled={isSaving}>
+          {C.cancelLabel}
+        </Button>
+        <Button type="button" onClick={handleSave} disabled={isSaving}>
+          {isSaving && <SpinnerGapIcon className="animate-spin" />}
+          {C.saveConfigLabel}
+        </Button>
+      </div>
 
-      {/* Sub-dialogs */}
-      {cardId && (
-        <>
-          <SentencePickerDialog
-            open={pickerOpen}
-            onOpenChange={setPickerOpen}
-            excludeIds={sentences.map((s) => s.sentenceId)}
-            onSelect={handleAttachSentence}
-          />
-          <CardPreviewDialog
-            cardId={cardId}
-            open={previewOpen}
-            onOpenChange={setPreviewOpen}
-          />
-        </>
-      )}
+      <SentencePickerDialog
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        excludeIds={sentences.map((sentence) => sentence.sentenceId)}
+        onSelect={handleAttachSentence}
+      />
+      <CardPreviewDialog
+        cardId={cardId}
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+      />
     </>
   )
 }

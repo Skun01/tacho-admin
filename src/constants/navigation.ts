@@ -46,7 +46,6 @@ export const ADMIN_NAV_ITEMS: AdminNavEntry[] = [
     icon: GraduationCapIcon,
     label: 'Học tập',
     children: [
-      { icon: HouseSimpleIcon, label: 'Tổng quan', href: '/dashboard' },
       { icon: WarningCircleIcon, label: 'Vấn đề nội dung', href: '/admin/learning/issues' },
     ],
   },
