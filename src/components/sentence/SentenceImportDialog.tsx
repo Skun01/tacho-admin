@@ -93,13 +93,13 @@ export function SentenceImportDialog({ open, onOpenChange, onImported }: Sentenc
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[960px]">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[85vh] flex-col overflow-hidden sm:max-w-[960px]">
+        <DialogHeader className="shrink-0">
           <DialogTitle>{ADMIN_SENTENCE_CONTENT.importDialog.title}</DialogTitle>
           <DialogDescription>{ADMIN_SENTENCE_CONTENT.importDialog.description}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
           <div className="space-y-2">
             <p className="text-sm font-medium">{ADMIN_SENTENCE_CONTENT.importDialog.fileLabel}</p>
             <input

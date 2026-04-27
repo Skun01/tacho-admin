@@ -12,6 +12,7 @@ import {
   ArrowSquareOutIcon,
   GraduationCapIcon,
   WarningCircleIcon,
+  MicrophoneIcon,
 } from '@phosphor-icons/react'
 
 export interface NavItem {
@@ -41,6 +42,7 @@ export const ADMIN_NAV_ITEMS: AdminNavEntry[] = [
       { icon: TextTIcon, label: 'Câu ví dụ', href: '/admin/sentences' },
     ],
   },
+  { icon: MicrophoneIcon, label: 'Shadowing', href: '/admin/shadowing' },
   { icon: CardsIcon, label: 'Bộ thẻ', href: '/admin/decks' },
   {
     icon: GraduationCapIcon,

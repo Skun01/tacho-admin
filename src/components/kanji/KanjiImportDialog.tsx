@@ -73,13 +73,13 @@ export function KanjiImportDialog({ open, onOpenChange, onImported }: KanjiImpor
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[720px] max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[85vh] flex-col overflow-hidden sm:max-w-[720px]">
+        <DialogHeader className="shrink-0">
           <DialogTitle>{C.title}</DialogTitle>
           <DialogDescription>{C.description}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
           {/* File input */}
           <div className="space-y-2">
             <label className="text-sm font-medium">{C.fileLabel}</label>

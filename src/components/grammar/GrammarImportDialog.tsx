@@ -86,13 +86,13 @@ export function GrammarImportDialog({ open, onOpenChange, onImported }: GrammarI
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[85vh] flex-col overflow-hidden sm:max-w-[700px]">
+        <DialogHeader className="shrink-0">
           <DialogTitle>{ADMIN_GRAMMAR_CONTENT.importDialog.title}</DialogTitle>
           <DialogDescription>{ADMIN_GRAMMAR_CONTENT.importDialog.description}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
           {/* File input */}
           <div className="space-y-2">
             <label className="text-sm font-medium">{ADMIN_GRAMMAR_CONTENT.importDialog.fileLabel}</label>

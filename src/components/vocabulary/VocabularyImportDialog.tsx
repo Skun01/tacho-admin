@@ -93,13 +93,13 @@ export function VocabularyImportDialog({ open, onOpenChange, onImported }: Vocab
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[1080px]">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[85vh] flex-col overflow-hidden sm:max-w-[1080px]">
+        <DialogHeader className="shrink-0">
           <DialogTitle>{ADMIN_VOCABULARY_CONTENT.importDialog.title}</DialogTitle>
           <DialogDescription>{ADMIN_VOCABULARY_CONTENT.importDialog.description}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
           <div className="space-y-2">
             <p className="text-sm font-medium">{ADMIN_VOCABULARY_CONTENT.importDialog.fileLabel}</p>
             <input

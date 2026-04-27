@@ -23,6 +23,8 @@ import { AdminDeckEditorPage } from './pages/AdminDeckEditorPage'
 import { AdminDeckTypesPage } from './pages/AdminDeckTypesPage'
 import { AdminLearningIssuesPage } from './pages/AdminLearningIssuesPage'
 import { AdminDeckCoveragePage } from './pages/AdminDeckCoveragePage'
+import { AdminShadowingPage } from './pages/AdminShadowingPage'
+import { AdminShadowingTopicPage } from './pages/AdminShadowingTopicPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -67,6 +69,8 @@ const router = createBrowserRouter(
             <Route path="/admin/deck-types" element={<AdminDeckTypesPage />} />
             <Route path="/admin/learning/issues" element={<AdminLearningIssuesPage />} />
             <Route path="/admin/decks/:id/coverage" element={<AdminDeckCoveragePage />} />
+            <Route path="/admin/shadowing" element={<AdminShadowingPage />} />
+            <Route path="/admin/shadowing/:id" element={<AdminShadowingTopicPage />} />
           </Route>
         </Route>
       </Route>
