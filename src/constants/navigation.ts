@@ -13,6 +13,9 @@ import {
   GraduationCapIcon,
   WarningCircleIcon,
   MicrophoneIcon,
+  ExamIcon,
+  RobotIcon,
+  ClipboardTextIcon,
 } from '@phosphor-icons/react'
 
 export interface NavItem {
@@ -43,6 +46,14 @@ export const ADMIN_NAV_ITEMS: AdminNavEntry[] = [
     ],
   },
   { icon: MicrophoneIcon, label: 'Shadowing', href: '/admin/shadowing' },
+  {
+    icon: ClipboardTextIcon,
+    label: 'JLPT',
+    children: [
+      { icon: ExamIcon, label: 'Đề thi', href: '/admin/jlpt/exams' },
+      { icon: RobotIcon, label: 'Câu hỏi AI', href: '/admin/jlpt/ai-questions' },
+    ],
+  },
   { icon: CardsIcon, label: 'Bộ thẻ', href: '/admin/decks' },
   {
     icon: GraduationCapIcon,
