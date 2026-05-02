@@ -1,8 +1,9 @@
 import { Helmet } from 'react-helmet-async'
-import { DownloadSimpleIcon, PlusIcon, UploadSimpleIcon, ExportIcon } from '@phosphor-icons/react'
+import { DownloadSimpleIcon, ExportIcon, PlusIcon, UploadSimpleIcon } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { VocabularyAdminFilters } from '@/components/vocabulary/VocabularyAdminFilters'
+import { VocabularyConfirmDialog } from '@/components/vocabulary/VocabularyConfirmDialog'
 import { VocabularyImportDialog } from '@/components/vocabulary/VocabularyImportDialog'
 import { VocabularyAdminTable } from '@/components/vocabulary/VocabularyAdminTable'
 import { ADMIN_VOCABULARY_CONTENT } from '@/constants/adminContent'
@@ -87,9 +88,19 @@ export function AdminVocabularyPage() {
           playingAudioUrl={state.playingAudioUrl}
           onPlayAudio={state.handlePlayAudio}
           onOpenEdit={(item) => navigate(`/admin/vocabulary/${item.id}/edit`)}
-          onDelete={state.handleDelete}
+          onDelete={(item) => state.setPendingDeleteItem(item)}
         />
       </section>
+
+      <VocabularyConfirmDialog
+        open={Boolean(state.pendingDeleteItem)}
+        itemTitle={state.pendingDeleteItem?.title}
+        isPending={state.isDeleting}
+        onOpenChange={(open) => {
+          if (!open) state.setPendingDeleteItem(null)
+        }}
+        onConfirm={state.handleConfirmDelete}
+      />
     </>
   )
 }

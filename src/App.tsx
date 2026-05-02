@@ -28,6 +28,7 @@ import { AdminShadowingTopicPage } from './pages/AdminShadowingTopicPage'
 import { AdminJlptExamsPage } from './pages/AdminJlptExamsPage'
 import { AdminJlptExamDetailPage } from './pages/AdminJlptExamDetailPage'
 import { AdminJlptAiQuestionsPage } from './pages/AdminJlptAiQuestionsPage'
+import { AdminUsersPage } from './pages/AdminUsersPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -77,6 +78,7 @@ const router = createBrowserRouter(
             <Route path="/admin/jlpt/exams" element={<AdminJlptExamsPage />} />
             <Route path="/admin/jlpt/exams/:id" element={<AdminJlptExamDetailPage />} />
             <Route path="/admin/jlpt/ai-questions" element={<AdminJlptAiQuestionsPage />} />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
           </Route>
         </Route>
       </Route>

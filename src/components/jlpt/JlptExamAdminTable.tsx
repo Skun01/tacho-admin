@@ -1,12 +1,10 @@
-import { DotsThreeOutlineVerticalIcon, PencilSimpleIcon } from '@phosphor-icons/react'
+import {
+  ExportIcon,
+  PencilSimpleIcon,
+  TrashIcon,
+} from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { AdminTableSection } from '@/components/shared/AdminTableSection'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import {
@@ -26,6 +24,7 @@ interface JlptExamAdminTableProps {
   onCreate: () => void
   onOpenDetail: (item: ExamListItemResponse) => void
   onDelete: (item: ExamListItemResponse) => void
+  onExportExam: (item: ExamListItemResponse) => void
 }
 
 export function JlptExamAdminTable({
@@ -38,6 +37,7 @@ export function JlptExamAdminTable({
   onCreate,
   onOpenDetail,
   onDelete,
+  onExportExam,
 }: JlptExamAdminTableProps) {
   return (
     <AdminTableSection
@@ -84,41 +84,49 @@ export function JlptExamAdminTable({
               <TableCell>{item.creatorName}</TableCell>
               <TableCell>
                 <div className="flex justify-end gap-1">
+                  {item.status !== 'Published' && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      title={JLPT_EXAM_CONTENT.actions.edit}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        onOpenDetail(item)
+                      }}
+                    >
+                      <PencilSimpleIcon size={16} />
+                    </Button>
+                  )}
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8"
+                    title={JLPT_EXAM_CONTENT.actions.exportJson}
                     onClick={(event) => {
                       event.stopPropagation()
-                      onOpenDetail(item)
+                      onExportExam(item)
                     }}
                   >
-                    <PencilSimpleIcon size={16} />
+                    <ExportIcon size={16} />
                   </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={(event) => event.stopPropagation()}
-                      >
-                        <DotsThreeOutlineVerticalIcon size={16} />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onOpenDetail(item)}>
-                        {JLPT_EXAM_CONTENT.actions.openDetail}
-                      </DropdownMenuItem>
-                      {item.status === 'Draft' && (
-                        <DropdownMenuItem variant="destructive" onClick={() => onDelete(item)}>
-                          {JLPT_EXAM_CONTENT.actions.delete}
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  {item.status === 'Draft' && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-red-500"
+                      title={JLPT_EXAM_CONTENT.actions.delete}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        onDelete(item)
+                      }}
+                    >
+                      <TrashIcon size={16} />
+                    </Button>
+                  )}
                 </div>
               </TableCell>
             </TableRow>

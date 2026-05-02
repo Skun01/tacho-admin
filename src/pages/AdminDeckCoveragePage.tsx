@@ -24,7 +24,7 @@ export function AdminDeckCoveragePage() {
   return (
     <>
       <Helmet>
-        <title>{C_COVERAGE.pageTitle}</title>
+        <title>{C_COVERAGE.pageTitle} | Tacho Admin</title>
       </Helmet>
 
       <div className="space-y-6">

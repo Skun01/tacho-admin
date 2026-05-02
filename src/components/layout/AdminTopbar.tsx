@@ -1,13 +1,14 @@
 import { ListIcon } from '@phosphor-icons/react'
+import { useLocation } from 'react-router'
 import { useSidebarStore } from '@/stores/sidebarStore'
+import { ADMIN_NAV_BREADCRUMB_MAP } from '@/constants/navigation'
 
-interface AdminTopbarProps {
-  title?: string
-}
-
-export function AdminTopbar({ title }: AdminTopbarProps) {
+export function AdminTopbar() {
   const toggle = useSidebarStore((s) => s.toggle)
-  const isCollapsed = useSidebarStore((s) => s.isCollapsed)
+  const location = useLocation()
+  const segments = location.pathname.split('/').filter(Boolean)
+  // e.g. /admin/vocabulary → ['admin', 'vocabulary']
+  const crumb = ADMIN_NAV_BREADCRUMB_MAP[segments.join('/')] ?? null
 
   return (
     <header
@@ -24,26 +25,20 @@ export function AdminTopbar({ title }: AdminTopbarProps) {
         <ListIcon size={20} />
       </button>
 
-      {/* Page title */}
-      {title && (
-        <h1
-          className="font-heading-vn text-base font-semibold"
-          style={{ color: 'var(--on-surface)' }}
-        >
-          {title}
-        </h1>
-      )}
-
       {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Right slot — placeholder cho breadcrumb/search sau */}
-      <div
-        className="hidden md:flex items-center text-xs"
-        style={{ color: 'var(--on-surface-variant)' }}
-      >
-        {isCollapsed ? null : null}
-      </div>
+      {/* Breadcrumb — inferred from current route */}
+      {crumb && (
+        <nav aria-label="breadcrumb">
+          <span
+            className="text-xs font-medium"
+            style={{ color: 'var(--on-surface-variant)' }}
+          >
+            {crumb}
+          </span>
+        </nav>
+      )}
     </header>
   )
 }

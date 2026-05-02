@@ -1,5 +1,5 @@
 export const ADMIN_SENTENCE_CONTENT = {
-	pageTitle: 'Quản lý câu ví dụ',
+	pageTitle: 'Quản lý câu ví dụ | Tacho Admin',
 	heading: 'Quản lý câu ví dụ',
 	description: 'Tra cứu, tạo mới, chỉnh sửa và xóa dữ liệu câu ví dụ từ backend.',
 	searchPlaceholder: 'Tìm theo nội dung hoặc nghĩa...',
@@ -115,7 +115,7 @@ export const ADMIN_SENTENCE_CONTENT = {
 } as const
 
 export const ADMIN_VOCABULARY_CONTENT = {
-	pageTitle: 'Quản lý từ vựng',
+	pageTitle: 'Quản lý từ vựng | Tacho Admin',
 	heading: 'Quản lý từ vựng',
 	description: 'Theo dõi danh sách thẻ từ vựng và kiểm tra trạng thái dữ liệu từ backend.',
 	searchPlaceholder: 'Tìm theo từ vựng hoặc cách đọc...',
@@ -172,8 +172,8 @@ export const ADMIN_VOCABULARY_CONTENT = {
 		importJson: 'Import JSON',
 	},
 	editor: {
-		createPageTitle: 'Tạo từ vựng mới',
-		editPageTitle: 'Chỉnh sửa từ vựng',
+		createPageTitle: 'Tạo từ vựng mới | Tacho Admin',
+		editPageTitle: 'Chỉnh sửa từ vựng | Tacho Admin',
 		createDescription: 'Nhập đầy đủ thông tin để tạo một thẻ từ vựng mới.',
 		editDescription: 'Cập nhật nội dung từ vựng và lưu thay đổi.',
 		notFoundLabel: 'Không tìm thấy dữ liệu từ vựng.',
@@ -323,7 +323,7 @@ export const ADMIN_VOCABULARY_CONTENT = {
 } as const
 
 export const ADMIN_GRAMMAR_CONTENT = {
-	pageTitle: 'Quản lý ngữ pháp',
+	pageTitle: 'Quản lý ngữ pháp | Tacho Admin',
 	heading: 'Quản lý ngữ pháp',
 	description: 'Theo dõi danh sách thẻ ngữ pháp và kiểm tra trạng thái dữ liệu từ backend.',
 	searchPlaceholder: 'Tìm theo tiêu đề hoặc tóm tắt ngữ pháp...',
@@ -376,8 +376,8 @@ export const ADMIN_GRAMMAR_CONTENT = {
 		importJson: 'Import JSON',
 	},
 	editor: {
-		createPageTitle: 'Tạo ngữ pháp mới',
-		editPageTitle: 'Chỉnh sửa ngữ pháp',
+		createPageTitle: 'Tạo ngữ pháp mới | Tacho Admin',
+		editPageTitle: 'Chỉnh sửa ngữ pháp | Tacho Admin',
 		createDescription: 'Nhập đầy đủ thông tin để tạo một thẻ ngữ pháp mới.',
 		editDescription: 'Cập nhật nội dung ngữ pháp và lưu thay đổi.',
 		notFoundLabel: 'Không tìm thấy dữ liệu ngữ pháp.',
@@ -525,7 +525,7 @@ export const ADMIN_GRAMMAR_CONTENT = {
 } as const
 
 export const ADMIN_KANJI_CONTENT = {
-	pageTitle: 'Quản lý Hán tự',
+	pageTitle: 'Quản lý Hán tự | Tacho Admin',
 	heading: 'Quản lý Hán tự',
 	description: 'Theo dõi danh sách thẻ Hán tự và kiểm tra trạng thái dữ liệu từ backend.',
 	searchPlaceholder: 'Tìm theo Hán tự, nghĩa, hoặc âm Hán Việt...',
@@ -584,8 +584,8 @@ export const ADMIN_KANJI_CONTENT = {
 		importJson: 'Import JSON',
 	},
 	editor: {
-		createPageTitle: 'Tạo Hán tự mới',
-		editPageTitle: 'Chỉnh sửa Hán tự',
+		createPageTitle: 'Tạo Hán tự mới | Tacho Admin',
+		editPageTitle: 'Chỉnh sửa Hán tự | Tacho Admin',
 		createDescription: 'Nhập đầy đủ thông tin để tạo một thẻ Hán tự mới.',
 		editDescription: 'Cập nhật nội dung Hán tự và lưu thay đổi.',
 		notFoundLabel: 'Không tìm thấy dữ liệu Hán tự.',
@@ -720,5 +720,18 @@ export const ADMIN_COMMON_CONTENT = {
 		Kanji_ImportKanjiAlreadyExists_400: 'Hán tự đã tồn tại trong hệ thống.',
 		Kanji_ImportRadicalsRequired_400: 'Thiếu danh sách bộ thủ.',
 		Kanji_ImportDuplicateRadicalInItem_400: 'Bộ thủ trùng lặp trong cùng item.',
+		Exam_ImportInvalidPayload_400: 'Dữ liệu import không hợp lệ.',
+		Exam_ImportBatchHasErrors_400: 'Import bị chặn vì preview có lỗi validation.',
+		Exam_ImportFieldRequired_400: 'Thiếu trường bắt buộc.',
+		Exam_ImportFieldTooLong_400: 'Giá trị vượt quá độ dài cho phép.',
+		Exam_ImportFieldInvalid_400: 'Giá trị enum/score/duration/order không hợp lệ.',
+		Exam_ImportSectionsRequired_400: 'Danh sách sections trống.',
+		Exam_ImportGroupsRequired_400: 'Section thiếu danh sách questionGroups.',
+		Exam_ImportQuestionsRequired_400: 'QuestionGroup thiếu danh sách questions.',
+		Exam_ImportOptionsInvalidCount_400: 'Question phải có từ 2 đến 4 đáp án.',
+		Exam_ImportCorrectOptionInvalid_400: 'Question phải có đúng 1 đáp án đúng.',
+		Exam_ImportDuplicateOptionLabel_400: 'Nhãn đáp án bị trùng trong cùng question.',
+		Exam_ImportDuplicateOrderIndex_400: 'orderIndex bị trùng trong danh sách siblings.',
+		Exam_ImportPassScoreInvalid_400: 'passScore phải >= 0 và <= maxScore.',
 	},
 } as const

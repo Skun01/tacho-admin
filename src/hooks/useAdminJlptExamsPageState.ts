@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { gooeyToast } from '@/components/ui/goey-toaster'
+import { downloadBlobFile } from '@/lib/fileJson'
 import { JLPT_EXAM_CONTENT } from '@/constants/jlptAdmin'
 import { useJlptAdminMutations } from '@/hooks/useJlptAdminMutations'
 import { useJlptExamSearch } from '@/hooks/useJlptAdminQueries'
@@ -15,6 +16,7 @@ export function useAdminJlptExamsPageState() {
   const [statusInput, setStatusInput] = useState<PublishStatus | undefined>(undefined)
   const [currentPage, setCurrentPage] = useState(1)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
 
   const params = useMemo(
     () => ({
@@ -69,6 +71,47 @@ export function useAdminJlptExamsPageState() {
     setIsCreateDialogOpen(false)
   }, [])
 
+  const handleOpenImport = useCallback(() => {
+    setIsImportDialogOpen(true)
+  }, [])
+
+  const handleCloseImport = useCallback(() => {
+    setIsImportDialogOpen(false)
+  }, [])
+
+  const handleDownloadTemplate = useCallback(async () => {
+    try {
+      const { examAdminService } = await import('@/services/examAdminService')
+      const { data } = await examAdminService.getImportTemplate()
+      downloadBlobFile(data as Blob, 'exam-import-template.json')
+      gooeyToast.success(JLPT_EXAM_CONTENT.exportExam.success)
+    } catch (error) {
+      gooeyToast.error(getApiErrorMessage(error, JLPT_EXAM_CONTENT.exportExam.failedFallback))
+    }
+  }, [getApiErrorMessage])
+
+  const handleDownloadImportGuide = useCallback(async () => {
+    try {
+      const { examAdminService } = await import('@/services/examAdminService')
+      const { data } = await examAdminService.getImportGuide()
+      downloadBlobFile(data as Blob, 'exam-import-guide.json')
+      gooeyToast.success(JLPT_EXAM_CONTENT.exportExam.success)
+    } catch (error) {
+      gooeyToast.error(getApiErrorMessage(error, JLPT_EXAM_CONTENT.exportExam.failedFallback))
+    }
+  }, [getApiErrorMessage])
+
+  const handleExportExam = useCallback(async (examId: string) => {
+    try {
+      const { examAdminService } = await import('@/services/examAdminService')
+      const { data } = await examAdminService.exportExam(examId)
+      downloadBlobFile(data as Blob, `exam-${examId}.json`)
+      gooeyToast.success(JLPT_EXAM_CONTENT.exportExam.success)
+    } catch (error) {
+      gooeyToast.error(getApiErrorMessage(error, JLPT_EXAM_CONTENT.exportExam.failedFallback))
+    }
+  }, [getApiErrorMessage])
+
   return {
     keywordInput,
     setKeywordInput,
@@ -84,12 +127,18 @@ export function useAdminJlptExamsPageState() {
     isFetching: searchQuery.isFetching,
     isDeleting: deleteExamMutation.isPending,
     isCreateDialogOpen,
+    isImportDialogOpen,
     handleSearch,
     handleReset,
     handlePageChange,
     handleDelete,
     handleOpenCreate,
     handleCloseCreate,
+    handleOpenImport,
+    handleCloseImport,
+    handleDownloadTemplate,
+    handleDownloadImportGuide,
+    handleExportExam,
     navigate,
   }
 }

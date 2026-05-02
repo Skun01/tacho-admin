@@ -1,6 +1,7 @@
-import { PlusIcon } from '@phosphor-icons/react'
+import { DownloadSimpleIcon, PlusIcon, UploadSimpleIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { ExamImportDialog } from '@/components/jlpt/ExamImportDialog'
 import { JlptExamAdminFilters } from '@/components/jlpt/JlptExamAdminFilters'
 import { JlptExamAdminTable } from '@/components/jlpt/JlptExamAdminTable'
 import { JlptConfirmDialog } from '@/components/jlpt/JlptConfirmDialog'
@@ -49,10 +50,24 @@ export function AdminJlptExamsPage() {
               {JLPT_EXAM_CONTENT.description}
             </p>
           </div>
-          <Button type="button" size="sm" onClick={state.handleOpenCreate}>
-            <PlusIcon size={16} />
-            {JLPT_EXAM_CONTENT.createLabel}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={state.handleDownloadTemplate}>
+              <DownloadSimpleIcon size={16} />
+              {JLPT_EXAM_CONTENT.actions.downloadTemplate}
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={state.handleDownloadImportGuide}>
+              <DownloadSimpleIcon size={16} />
+              {JLPT_EXAM_CONTENT.actions.importGuide}
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={state.handleOpenImport}>
+              <UploadSimpleIcon size={16} />
+              {JLPT_EXAM_CONTENT.actions.importExam}
+            </Button>
+            <Button type="button" size="sm" onClick={state.handleOpenCreate}>
+              <PlusIcon size={16} />
+              {JLPT_EXAM_CONTENT.createLabel}
+            </Button>
+          </div>
         </div>
 
         <JlptExamFormDialog
@@ -63,6 +78,14 @@ export function AdminJlptExamsPage() {
           }}
           isPending={createExamMutation.isPending}
           onSubmit={handleCreateExam}
+        />
+
+        <ExamImportDialog
+          open={state.isImportDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) state.handleCloseImport()
+          }}
+          onImported={state.handleCloseImport}
         />
 
         <JlptExamAdminFilters
@@ -87,6 +110,7 @@ export function AdminJlptExamsPage() {
           onCreate={state.handleOpenCreate}
           onOpenDetail={(item) => state.navigate(`/admin/jlpt/exams/${item.id}`)}
           onDelete={(item) => setPendingDeleteExamId(item.id)}
+          onExportExam={(item) => state.handleExportExam(item.id)}
         />
 
         <JlptConfirmDialog

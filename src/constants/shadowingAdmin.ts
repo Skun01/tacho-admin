@@ -48,7 +48,7 @@ export const SHADOWING_LEVEL_LABELS: Record<ShadowingLevel, string> = {
 // ── Page Content ─────────────────────────────────────────────────────────────
 
 export const SHADOWING_ADMIN_CONTENT = {
-  pageTitle: 'Quản lý Shadowing',
+  pageTitle: 'Quản lý Shadowing | Tacho Admin',
   heading: 'Quản lý chủ đề luyện phát âm',
   description: 'Tạo và quản lý các chủ đề luyện phát âm tiếng Nhật, thêm câu vào chủ đề, xem analytics.',
   searchPlaceholder: 'Tìm theo tiêu đề hoặc mô tả chủ đề...',

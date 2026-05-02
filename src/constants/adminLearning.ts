@@ -10,6 +10,21 @@ export const ADMIN_LEARNING_CONTENT = {
 		dueCardsNowLabel: 'Thẻ cần ôn',
 		averageAccuracyLabel: 'Độ chính xác TB',
 		accuracySuffix: '%',
+		// ── Dashboard stats section ───────────────────────────────────
+		statsSectionTitle: 'Số liệu nội dung',
+		vocabularyLabel: 'Từ vựng',
+		grammarLabel: 'Ngữ pháp',
+		kanjiLabel: 'Hán tự',
+		decksLabel: 'Bộ thẻ',
+		// ── Quick actions section ────────────────────────────────────
+		quickActionsTitle: 'Thao tác nhanh',
+		quickAddVocabulary: 'Thêm từ vựng',
+		quickAddGrammar: 'Thêm ngữ pháp',
+		quickAddKanji: 'Thêm Hán tự',
+		quickManageDecks: 'Quản lý bộ thẻ',
+		quickViewJlptExams: 'Đề thi JLPT',
+		quickViewShadowing: 'Shadowing',
+		quickViewIssues: 'Vấn đề nội dung',
 	},
 	issues: {
 		pageTitle: 'Vấn đề nội dung học tập | Tacho Admin',

@@ -45,10 +45,10 @@ type DialogTarget =
   | { type: 'createSection' }
   | { type: 'editSection'; section: ExamSectionResponse }
   | { type: 'deleteSection'; sectionId: string }
-  | { type: 'createGroup'; sectionId: string }
-  | { type: 'editGroup'; sectionId: string; group: QuestionGroupResponse }
+  | { type: 'createGroup'; sectionId: string; sectionType: SectionType }
+  | { type: 'editGroup'; sectionId: string; sectionType: SectionType; group: QuestionGroupResponse }
   | { type: 'deleteGroup'; sectionId: string; groupId: string }
-  | { type: 'createQuestion'; groupId: string }
+  | { type: 'createQuestion'; groupId: string; sectionType: SectionType; level: JlptLevel }
   | { type: 'editQuestion'; groupId: string; question: QuestionGroupQuestionResponse }
   | { type: 'deleteQuestion'; questionId: string }
   | { type: 'publish' }
@@ -228,7 +228,7 @@ export function AdminJlptExamDetailPage() {
   return (
     <>
       <Helmet>
-        <title>{exam.title} | {JLPT_EXAM_CONTENT.detailPageTitle}</title>
+        <title>{exam.title} | {JLPT_EXAM_CONTENT.detailPageTitle} | Tacho Admin</title>
       </Helmet>
 
       <section className="space-y-6">
@@ -284,12 +284,12 @@ export function AdminJlptExamDetailPage() {
                 isPublished={isPublished}
                 onEdit={() => setDialog({ type: 'editSection', section })}
                 onDelete={() => setDialog({ type: 'deleteSection', sectionId: section.id })}
-                onCreateGroup={() => setDialog({ type: 'createGroup', sectionId: section.id })}
-                onEditGroup={(group) => setDialog({ type: 'editGroup', sectionId: section.id, group })}
+                onCreateGroup={() => setDialog({ type: 'createGroup', sectionId: section.id, sectionType: section.sectionType })}
+                onEditGroup={(group) => setDialog({ type: 'editGroup', sectionId: section.id, sectionType: section.sectionType, group })}
                 onDeleteGroup={(groupId) => setDialog({ type: 'deleteGroup', sectionId: section.id, groupId })}
                 onGenerateAudio={handleGenerateAudio}
                 isGeneratingAudio={generateGroupAudioMutation.isPending}
-                onCreateQuestion={(groupId) => setDialog({ type: 'createQuestion', groupId })}
+                onCreateQuestion={(groupId) => setDialog({ type: 'createQuestion', groupId, sectionType: section.sectionType, level: exam.level })}
                 onEditQuestion={(groupId, question) => setDialog({ type: 'editQuestion', groupId, question })}
                 onDeleteQuestion={(questionId) => setDialog({ type: 'deleteQuestion', questionId })}
               />
@@ -364,6 +364,7 @@ export function AdminJlptExamDetailPage() {
           onOpenChange={(o) => { if (!o) closeDialog() }}
           isPending={createGroupMutation.isPending}
           nextOrderIndex={0}
+          sectionType={dialog.sectionType}
           onSubmit={(payload) => handleCreateGroup(dialog.sectionId, payload)}
         />
       )}
@@ -375,6 +376,7 @@ export function AdminJlptExamDetailPage() {
           onOpenChange={(o) => { if (!o) closeDialog() }}
           isPending={updateGroupMutation.isPending}
           group={dialog.group}
+          sectionType={dialog.sectionType}
           onSubmit={(payload) => handleUpdateGroup(dialog.sectionId, dialog.group.id, payload)}
         />
       )}
@@ -397,6 +399,8 @@ export function AdminJlptExamDetailPage() {
           onOpenChange={(o) => { if (!o) closeDialog() }}
           isPending={createQuestionMutation.isPending}
           nextOrderIndex={0}
+          sectionType={dialog.sectionType}
+          level={dialog.level}
           onSubmit={(values) => handleCreateQuestion(dialog.groupId, values)}
         />
       )}

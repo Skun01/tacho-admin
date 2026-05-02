@@ -70,11 +70,19 @@ export const AI_QUESTION_STATUS_LABELS: Record<AiQuestionStatus, string> = {
 }
 
 export const CHOUKAI_MONDAI_TYPE_LABELS: Record<ChoukaiMondaiType, string> = {
-  Mondai1: 'Dạng 1',
-  Mondai2: 'Dạng 2',
-  Mondai3: 'Dạng 3',
-  Mondai4: 'Dạng 4',
-  Mondai5: 'Dạng 5',
+  Mondai1: 'Mondai 1 — Hiểu vấn đề (課題理解)',
+  Mondai2: 'Mondai 2 — Hiểu trọng điểm (ポイント理解)',
+  Mondai3: 'Mondai 3 — Hiểu khái quát (概要理解)',
+  Mondai4: 'Mondai 4 — Đáp ứng nhanh (即時応答)',
+  Mondai5: 'Mondai 5 — Hiểu tổng hợp (統合理解)',
+}
+
+export const CHOUKAI_MONDAI_TYPE_DESCRIPTIONS: Record<ChoukaiMondaiType, string> = {
+  Mondai1: 'Nghe hội thoại và chọn hành động/việc cần làm tiếp theo.',
+  Mondai2: 'Nghe hội thoại và chọn lý do/trọng điểm chính.',
+  Mondai3: 'Nghe đoạn nói và chọn ý chính/chủ đề tổng quát.',
+  Mondai4: 'Nghe câu ngắn và chọn đáp án hồi đáp phù hợp.',
+  Mondai5: 'Nghe đoạn dài, so sánh nhiều thông tin và chọn đáp án.',
 }
 
 // ── Exam Page Content ────────────────────────────────────────────────────────
@@ -118,6 +126,9 @@ export const JLPT_EXAM_CONTENT = {
     delete: 'Xóa',
     publish: 'Phát hành',
     openDetail: 'Quản lý chi tiết',
+    downloadTemplate: 'Tải template',
+    importGuide: 'Hướng dẫn import',
+    exportJson: 'Xuất JSON',
   },
 
   // ── Exam Form Dialog ───────────────────────────────────────────────────────
@@ -187,15 +198,20 @@ export const JLPT_EXAM_CONTENT = {
   createGroupDescription: 'Tạo nhóm câu hỏi mới cho section này.',
   editGroupTitle: 'Chỉnh sửa nhóm câu hỏi',
   editGroupDescription: 'Cập nhật thông tin nhóm câu hỏi.',
-  instructionFieldLabel: 'Hướng dẫn',
-  instructionFieldPlaceholder: 'VD: Chọn đáp án đúng nhất.',
-  passageTextFieldLabel: 'Đoạn văn (Dokkai)',
-  passageTextFieldPlaceholder: 'Đoạn văn đọc hiểu...',
-  audioScriptFieldLabel: 'Script âm thanh (Choukai)',
-  audioScriptFieldPlaceholder: 'Nhập script để sinh audio TTS...',
-  mondaiTypeFieldLabel: 'Dạng bài nghe',
-  mondaiTypeFieldPlaceholder: 'Chọn dạng bài',
-  mondaiTypeNoneLabel: 'Không áp dụng',
+  instructionFieldLabel: 'Hướng dẫn cho thí sinh',
+  instructionFieldPlaceholder: 'VD: Chọn đáp án đúng nhất cho mỗi câu hỏi sau.',
+  instructionFieldHint: 'Câu hướng dẫn hiển thị trên đầu nhóm câu hỏi (giống như đề bài Mondai trong đề thật).',
+  passageTextFieldLabel: 'Đoạn văn đọc hiểu',
+  passageTextFieldPlaceholder: 'Dán đoạn văn tiếng Nhật mà thí sinh phải đọc...',
+  passageTextFieldHint: 'Chỉ điền cho section Đọc hiểu (Dokkai). Để trống nếu không phải bài đọc hiểu.',
+  audioScriptFieldLabel: 'Kịch bản âm thanh (script)',
+  audioScriptFieldPlaceholder: 'Dán nội dung tiếng Nhật mà thí sinh sẽ nghe (lời thoại / đoạn nói)...',
+  audioScriptFieldHint: 'Chỉ điền cho section Nghe hiểu (Choukai). Sau khi lưu, có thể nhấn "Sinh audio TTS" để hệ thống tự tạo file nghe.',
+  mondaiTypeFieldLabel: 'Dạng bài nghe (Mondai)',
+  mondaiTypeFieldPlaceholder: 'Chọn dạng bài tương ứng với đề JLPT',
+  mondaiTypeFieldHint: 'Chỉ áp dụng cho Choukai. Các dạng tương ứng với cấu trúc đề JLPT thật (Mondai 1–5).',
+  mondaiTypeNoneLabel: 'Không áp dụng (chỉ Choukai)',
+  orderIndexFieldHint: 'Số càng nhỏ thì nhóm xuất hiện càng sớm. Bắt đầu từ 0.',
   createGroupConfirmLabel: 'Thêm nhóm',
   groupCreatedSuccess: 'Đã thêm nhóm câu hỏi thành công.',
   groupUpdatedSuccess: 'Đã cập nhật nhóm câu hỏi thành công.',
@@ -213,9 +229,16 @@ export const JLPT_EXAM_CONTENT = {
   // ── Question ───────────────────────────────────────────────────────────────
   questionsHeading: 'Câu hỏi',
   addQuestionLabel: 'Thêm câu hỏi',
+  addQuestionFromAiLabel: 'Chọn từ câu hỏi AI',
   noQuestions: 'Chưa có câu hỏi nào trong nhóm này.',
   createQuestionTitle: 'Thêm câu hỏi',
-  createQuestionDescription: 'Tạo câu hỏi mới cho nhóm này.',
+  createQuestionDescription: 'Tạo câu hỏi mới cho nhóm này. Bạn có thể nhập tay hoặc nạp sẵn từ câu hỏi AI đã duyệt.',
+  createQuestionFromAiHint: 'Mẹo: bạn có thể bấm "Chọn từ câu hỏi AI" để chèn dữ liệu sẵn, sau đó tinh chỉnh.',
+  pickAiQuestionTitle: 'Chọn câu hỏi AI đã duyệt',
+  pickAiQuestionDescription: 'Chọn một câu hỏi AI đã được duyệt để đưa vào nhóm. Nội dung sẽ được nạp sẵn vào form, bạn vẫn có thể chỉnh sửa trước khi lưu.',
+  pickAiQuestionConfirmLabel: 'Dùng câu hỏi này',
+  pickAiQuestionEmpty: 'Chưa có câu hỏi AI nào ở trạng thái Đã duyệt cho cấp độ / loại section này.',
+  pickAiQuestionInvalidData: 'Câu hỏi AI không có dữ liệu hợp lệ.',
   editQuestionTitle: 'Chỉnh sửa câu hỏi',
   editQuestionDescription: 'Cập nhật nội dung câu hỏi.',
   questionTextFieldLabel: 'Nội dung câu hỏi',
@@ -240,6 +263,37 @@ export const JLPT_EXAM_CONTENT = {
   deleteQuestionFailedFallback: 'Không thể xóa câu hỏi. Vui lòng thử lại.',
   deleteQuestionConfirmTitle: 'Xác nhận xóa câu hỏi',
   deleteQuestionConfirmMessage: 'Bạn có chắc chắn muốn xóa câu hỏi này?',
+
+  // ── Import / Export ──────────────────────────────────────────────────────────
+  importDialog: {
+    title: 'Import đề thi từ JSON',
+    description: 'Tải template, chọn file JSON và xem trước trước khi tạo đề thi.',
+    downloadTemplateLabel: 'Tải template',
+    importGuideLabel: 'Hướng dẫn import',
+    fileLabel: 'Tệp JSON import',
+    fileHint: 'Chỉ chấp nhận file .json. Tải template để biết định dạng đúng.',
+    selectedFileLabel: 'File đã chọn',
+    previewButtonLabel: 'Xem trước',
+    commitButtonLabel: 'Tạo đề thi',
+    closeButtonLabel: 'Đóng',
+    hasInvalidBlockLabel: 'Dữ liệu có lỗi, không thể tạo đề thi.',
+    emptyPreviewLabel: 'Chọn file JSON để xem trước.',
+    summaryTitle: 'Kết quả kiểm tra',
+    resultTitle: 'Chi tiết validation',
+    statusValidLabel: 'Hợp lệ',
+    statusInvalidLabel: 'Không hợp lệ',
+    errorCountLabel: 'lỗi',
+    warningCountLabel: 'cảnh báo',
+    commitSuccess: 'Đã tạo đề thi thành công.',
+    commitFailedFallback: 'Không thể tạo đề thi từ import. Vui lòng thử lại.',
+    previewFailedFallback: 'Không thể kiểm tra file. Vui lòng thử lại.',
+    importInvalidJson: 'File JSON không hợp lệ.',
+    importReadFailed: 'Không thể đọc file.',
+  },
+  exportExam: {
+    success: 'Đã tải file export thành công.',
+    failedFallback: 'Không thể tải file export. Vui lòng thử lại.',
+  },
 }
 
 // ── AI Question Page Content ─────────────────────────────────────────────────

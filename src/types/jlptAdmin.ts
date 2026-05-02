@@ -309,3 +309,86 @@ export interface AiQuestionListResult {
   items: AiGeneratedQuestionResponse[]
   meta: PaginatedMeta | null
 }
+
+// ── Exam Import / Export Types ────────────────────────────────────────────────
+
+export interface ExamQuestionOptionPayload {
+  label: OptionLabel
+  text?: string | null
+  imageUrl?: string | null
+  optionType: OptionType
+  isCorrect: boolean
+}
+
+export interface ExamQuestionPayload {
+  questionText: string
+  imageUrl?: string | null
+  imageCaption?: string | null
+  explanation?: string | null
+  score: number
+  orderIndex: number
+  options: ExamQuestionOptionPayload[]
+}
+
+export interface ExamQuestionGroupPayload {
+  passageText?: string | null
+  audioUrl?: string | null
+  audioScript?: string | null
+  instruction: string
+  orderIndex: number
+  mondaiType?: ChoukaiMondaiType | null
+  questions: ExamQuestionPayload[]
+}
+
+export interface ExamSectionPayload {
+  sectionType: SectionType
+  orderIndex: number
+  durationMinutes: number
+  maxScore: number
+  passScore: number
+  questionGroups: ExamQuestionGroupPayload[]
+}
+
+export interface ImportExamGuide {
+  jsonNamingConvention: string
+  allowedValues: Record<string, string[]>
+  fieldNotes: Record<string, string>
+}
+
+export interface ImportExamRequest {
+  title: string
+  level: JlptLevel
+  totalDurationMinutes: number
+  sections: ExamSectionPayload[]
+  guide?: ImportExamGuide
+}
+
+export interface ExamImportPreviewResult {
+  isValid: boolean
+  errorCount: number
+  warningCount: number
+  item: {
+    title: string
+    level: JlptLevel
+    sectionsCount: number
+    questionGroupsCount: number
+    questionsCount: number
+    optionsCount: number
+    isValid: boolean
+    errors: string[]
+    warnings: string[]
+  }
+}
+
+export interface ExamImportCommitResult {
+  isSuccess: boolean
+  hasValidationErrors: boolean
+  action: string
+  title: string
+  examId: string | null
+  sectionsCount: number
+  questionGroupsCount: number
+  questionsCount: number
+  optionsCount: number
+  errors: string[]
+}

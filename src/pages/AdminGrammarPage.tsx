@@ -28,7 +28,7 @@ export default function AdminGrammarPage() {
   return (
     <>
       <Helmet>
-        <title>{ADMIN_GRAMMAR_CONTENT.pageTitle}</title>
+        <title>{ADMIN_GRAMMAR_CONTENT.pageTitle} | Tacho Admin</title>
       </Helmet>
 
       <div className="space-y-6">

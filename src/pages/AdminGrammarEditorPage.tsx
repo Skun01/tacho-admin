@@ -95,7 +95,7 @@ export default function AdminGrammarEditorPage() {
         <title>
           {mode === 'create'
             ? ADMIN_GRAMMAR_CONTENT.editor.createPageTitle
-            : ADMIN_GRAMMAR_CONTENT.editor.editPageTitle}
+            : ADMIN_GRAMMAR_CONTENT.editor.editPageTitle} | Tacho Admin
         </title>
       </Helmet>
 

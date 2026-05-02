@@ -24,6 +24,7 @@ export function useAdminVocabularyPageState() {
   const [createdByMeInput, setCreatedByMeInput] = useState(false)
   const [hasAudioInput, setHasAudioInput] = useState<boolean | undefined>(undefined)
   const [playingAudioUrl, setPlayingAudioUrl] = useState<string | null>(null)
+  const [pendingDeleteItem, setPendingDeleteItem] = useState<VocabularyAdminItem | null>(null)
   const [query, setQuery] = useState<VocabularySearchQuery>({ page: 1, pageSize: PAGE_SIZE })
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
@@ -78,15 +79,18 @@ export function useAdminVocabularyPageState() {
   }
 
   const handleDelete = async (item: VocabularyAdminItem) => {
-    const shouldDelete = window.confirm(ADMIN_VOCABULARY_CONTENT.actions.confirmDelete)
-    if (!shouldDelete) return
-
     try {
       await deleteMutation.mutateAsync(item.id)
       gooeyToast.success(ADMIN_VOCABULARY_CONTENT.toast.deleteSuccess)
     } catch (deleteError) {
       gooeyToast.error(getApiErrorMessage(deleteError, ADMIN_VOCABULARY_CONTENT.toast.crudErrorFallback))
     }
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!pendingDeleteItem) return
+    await handleDelete(pendingDeleteItem)
+    setPendingDeleteItem(null)
   }
 
   const handleOpenImport = () => {
@@ -169,6 +173,8 @@ export function useAdminVocabularyPageState() {
     isLoading,
     isFetching,
     isDeleting: deleteMutation.isPending,
+    pendingDeleteItem,
+    setPendingDeleteItem,
     items,
     totalItems,
     currentPage,
@@ -187,6 +193,7 @@ export function useAdminVocabularyPageState() {
     handleDownloadTemplate,
     handleExportJson,
     handleDelete,
+    handleConfirmDelete,
     handlePlayAudio,
   }
 }

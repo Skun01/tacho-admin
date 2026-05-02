@@ -62,7 +62,7 @@ export const ADMIN_NAV_ITEMS: AdminNavEntry[] = [
       { icon: WarningCircleIcon, label: 'Vấn đề nội dung', href: '/admin/learning/issues' },
     ],
   },
-  { icon: UsersIcon, label: 'Người dùng', href: '/users' },
+  { icon: UsersIcon, label: 'Người dùng', href: '/admin/users' },
   { icon: GearIcon, label: 'Cài đặt', href: '/settings' },
 ]
 
@@ -71,4 +71,29 @@ export const ADMIN_NAV_EXTERNAL: NavItem = {
   label: 'Mở Web App',
   href: import.meta.env.VITE_WEBAPP_URL ?? 'http://localhost:5173',
   external: true,
+}
+
+/** Maps route segments (joined with '/') to human-readable breadcrumb labels. */
+export const ADMIN_NAV_BREADCRUMB_MAP: Record<string, string> = {
+  dashboard: 'Bảng điều khiển',
+  'admin/vocabulary': 'Từ vựng',
+  'admin/vocabulary/create': 'Tạo từ vựng',
+  'admin/vocabulary/:id/edit': 'Sửa từ vựng',
+  'admin/grammar': 'Ngữ pháp',
+  'admin/grammar/create': 'Tạo ngữ pháp',
+  'admin/grammar/:id/edit': 'Sửa ngữ pháp',
+  'admin/kanji': 'Hán tự',
+  'admin/sentences': 'Câu ví dụ',
+  'admin/decks': 'Bộ thẻ',
+  'admin/decks/create': 'Tạo bộ thẻ',
+  'admin/decks/:id/edit': 'Sửa bộ thẻ',
+  'admin/deck-types': 'Loại bộ thẻ',
+  'admin/learning/issues': 'Vấn đề nội dung',
+  'admin/decks/:id/coverage': 'Phạm vi bộ thẻ',
+  'admin/shadowing': 'Shadowing',
+  'admin/shadowing/:id': 'Chủ đề Shadowing',
+  'admin/jlpt/exams': 'Đề thi JLPT',
+  'admin/jlpt/exams/:id': 'Chi tiết đề thi',
+  'admin/jlpt/ai-questions': 'Câu hỏi AI',
+  'admin/users': 'Người dùng',
 }

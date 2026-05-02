@@ -124,7 +124,7 @@ export function AdminVocabularyEditorPage() {
   return (
     <>
       <Helmet>
-        <title>{pageTitle} | Tacho Admin</title>
+        <title>{pageTitle}</title>
       </Helmet>
 
       <section className="space-y-6">

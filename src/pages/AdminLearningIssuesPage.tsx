@@ -40,7 +40,7 @@ export function AdminLearningIssuesPage() {
   return (
     <>
       <Helmet>
-        <title>{C.pageTitle}</title>
+        <title>{C.pageTitle} | Tacho Admin</title>
       </Helmet>
 
       <div className="space-y-6">

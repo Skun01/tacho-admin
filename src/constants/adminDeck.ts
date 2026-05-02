@@ -35,7 +35,7 @@ export const DECK_ADMIN_CARD_TYPE_LABELS: Record<DeckCardType, string> = {
 }
 
 export const ADMIN_DECK_CONTENT = {
-  pageTitle: 'Quản lý bộ thẻ',
+  pageTitle: 'Quản lý bộ thẻ | Tacho Admin',
   heading: 'Quản lý bộ thẻ',
   description: 'Kiểm soát danh sách bộ thẻ, trạng thái phát hành, thư mục và thẻ học trong từng bộ.',
   searchPlaceholder: 'Tìm theo tiêu đề hoặc mô tả bộ thẻ...',
@@ -100,8 +100,8 @@ export const ADMIN_DECK_CONTENT = {
     searchPublishedOnlyHint: 'Hiện chỉ tìm được các thẻ đã phát hành để thêm vào bộ thẻ.',
   },
   editor: {
-    createPageTitle: 'Tạo bộ thẻ mới',
-    editPageTitle: 'Chỉnh sửa bộ thẻ',
+    createPageTitle: 'Tạo bộ thẻ mới | Tacho Admin',
+    editPageTitle: 'Chỉnh sửa bộ thẻ | Tacho Admin',
     createDescription: 'Tạo metadata trước, sau đó chuyển sang màn hình chỉnh sửa để quản lý thư mục và thẻ.',
     editDescription: 'Cập nhật metadata, quản lý thư mục, thêm thẻ và đổi trạng thái phát hành.',
     backToListLabel: 'Quay lại danh sách bộ thẻ',
@@ -190,7 +190,7 @@ export const ADMIN_DECK_CONTENT = {
     allCardTypesLabel: 'Tất cả',
   },
   deckTypePage: {
-    pageTitle: 'Quản lý loại bộ thẻ',
+    pageTitle: 'Quản lý loại bộ thẻ | Tacho Admin',
     heading: 'Quản lý loại bộ thẻ',
     description: 'Tạo, đổi tên và xóa loại bộ thẻ dùng cho toàn bộ hệ thống.',
     searchPlaceholder: 'Tìm theo tên loại bộ thẻ...',
