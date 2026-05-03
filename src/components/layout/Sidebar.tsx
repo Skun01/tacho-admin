@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import { ArrowLineLeftIcon, ArrowLineRightIcon, XIcon } from '@phosphor-icons/react'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { SidebarNavItem } from './SidebarNavItem'
 import { SidebarNavGroup } from './SidebarNavGroup'
 import { SidebarUserFooter } from './SidebarUserFooter'
@@ -82,36 +83,38 @@ export function Sidebar() {
         </div>
 
         {/*Nav items*/}
-        <nav className="flex-1 px-2 space-y-1 overflow-y-auto">
-          {ADMIN_NAV_ITEMS.map((item) => (
-            'children' in item ? (
-              <SidebarNavGroup
-                key={item.label}
-                item={item}
-                isCollapsed={isCollapsed}
-                onClick={close}
-              />
-            ) : (
-              <SidebarNavItem
-                key={item.href}
-                item={item}
-                isCollapsed={isCollapsed}
-                onClick={close}
-              />
-            )
-          ))}
+        <ScrollArea className="flex-1 min-h-0 px-2">
+          <nav className="space-y-1 pb-2">
+            {ADMIN_NAV_ITEMS.map((item) => (
+              'children' in item ? (
+                <SidebarNavGroup
+                  key={item.label}
+                  item={item}
+                  isCollapsed={isCollapsed}
+                  onClick={close}
+                />
+              ) : (
+                <SidebarNavItem
+                  key={item.href}
+                  item={item}
+                  isCollapsed={isCollapsed}
+                  onClick={close}
+                />
+              )
+            ))}
 
-          {/* Tonal separator trước external link */}
-          <div className="my-2 h-px mx-3" style={{ backgroundColor: 'var(--sidebar-separator)' }} />
+            {/* Tonal separator trước external link */}
+            <div className="my-2 h-px mx-3" style={{ backgroundColor: 'var(--sidebar-separator)' }} />
 
-          <SidebarNavItem
-            item={ADMIN_NAV_EXTERNAL}
-            isCollapsed={isCollapsed}
-          />
-        </nav>
+            <SidebarNavItem
+              item={ADMIN_NAV_EXTERNAL}
+              isCollapsed={isCollapsed}
+            />
+          </nav>
+        </ScrollArea>
 
         {/*User footer*/}
-        <div className="mt-auto px-2 pb-6">
+        <div className="mt-auto shrink-0 px-2 pb-6">
           <SidebarUserFooter isCollapsed={isCollapsed} />
         </div>
       </aside>

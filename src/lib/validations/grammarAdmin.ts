@@ -23,7 +23,6 @@ const grammarSentenceSchema = z.object({
   id: z.string().optional(),
   text: z.string().trim().min(1, 'Câu ví dụ là bắt buộc').max(1000, 'Câu ví dụ tối đa 1000 ký tự'),
   meaning: z.string().trim().min(1, 'Nghĩa câu ví dụ là bắt buộc').max(1000, 'Nghĩa câu ví dụ tối đa 1000 ký tự'),
-  speakerId: z.number().int().positive().nullable().optional(),
   level: z.enum(GRAMMAR_LEVEL_OPTIONS).nullable(),
 })
 

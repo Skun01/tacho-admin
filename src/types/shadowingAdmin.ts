@@ -124,7 +124,6 @@ export interface AvailableSentenceResponse {
   text: string
   meaning: string
   audioUrl: string | null
-  speakerId: number | null
   level: ShadowingLevel | null
   isAttached: boolean
   attachedPosition: number | null

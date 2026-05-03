@@ -1,9 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { XIcon } from '@phosphor-icons/react'
-import { gooeyToast } from '@/components/ui/goey-toaster'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,7 +14,6 @@ import { VocabularyReadingAudioPanel } from '@/components/vocabulary/VocabularyR
 import { VocabularyMeaningsSection } from '@/components/vocabulary/VocabularyMeaningsSection'
 import { VocabularyRelationsSection } from '@/components/vocabulary/VocabularyRelationsSection'
 import { VocabularySentencesSection } from '@/components/vocabulary/VocabularySentencesSection'
-import { voicevoxService } from '@/services/voicevoxService'
 import { sentenceAdminService } from '@/services/sentenceAdminService'
 import type { VocabularyAdminDetail, VocabularyUpsertPayload } from '@/types/vocabularyAdmin'
 import { VOCABULARY_LEVEL_OPTIONS, VOCABULARY_STATUS_LABELS, VOCABULARY_STATUS_OPTIONS } from '@/types/vocabularyAdmin'
@@ -88,9 +85,6 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
   const meaningFieldArray = useFieldArray({ control: form.control, name: 'meanings' })
   const sentenceFieldArray = useFieldArray({ control: form.control, name: 'sentences' })
 
-  const [speakerId, setSpeakerId] = useState<number | null>(null)
-  const [previewAudioUrl, setPreviewAudioUrl] = useState<string | null>(null)
-  const [isPreviewingAudio, setIsPreviewingAudio] = useState(false)
   const [definitionInputByMeaningId, setDefinitionInputByMeaningId] = useState<Record<string, string>>({})
   const [tagInput, setTagInput] = useState('')
   const [synonymInput, setSynonymInput] = useState('')
@@ -98,20 +92,10 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
   const [relatedPhraseInput, setRelatedPhraseInput] = useState('')
   const [pitchPattern, setPitchPattern] = useState<number[]>([])
   const [libraryKeyword, setLibraryKeyword] = useState('')
-  const [libraryItems, setLibraryItems] = useState<Array<{ id: string; text: string; meaning: string; level: string | null; speakerId: number | null }>>([])
+  const [libraryItems, setLibraryItems] = useState<Array<{ id: string; text: string; meaning: string; level: string | null }>>([])
   const [isLoadingLibrary, setIsLoadingLibrary] = useState(false)
   const submitAsDraftRef = useRef(false)
 
-  const { data: speakerResponse, isLoading: isLoadingSpeakers } = useQuery({
-    queryKey: ['admin', 'voicevox', 'speakers'],
-    queryFn: async () => {
-      const { data } = await voicevoxService.getSpeakers()
-      return data.data
-    },
-    staleTime: 5 * 60 * 1000,
-  })
-
-  const speakers = speakerResponse ?? []
   const watchedReading = useWatch({ control: form.control, name: 'reading' })
   const readingChars = useMemo(() => Array.from((watchedReading ?? '').trim()), [watchedReading])
   const pitchChart = useMemo(() => {
@@ -165,12 +149,9 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
             id: sentence.id,
             text: sentence.text,
             meaning: sentence.meaning,
-            speakerId: sentence.speakerId ?? null,
             level: sentence.level,
           })) ?? [],
       })
-      setSpeakerId(initialData.speakerId ?? null)
-      setPreviewAudioUrl(initialData.audioUrl ?? null)
       setDefinitionInputByMeaningId({})
       setTagInput('')
       setSynonymInput('')
@@ -183,8 +164,6 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
     }
 
     form.reset(DEFAULT_VALUES)
-    setSpeakerId(null)
-    setPreviewAudioUrl(null)
     setDefinitionInputByMeaningId({})
     setTagInput('')
     setSynonymInput('')
@@ -258,30 +237,6 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
     form.setValue(path, existing.filter((item) => item !== value), { shouldValidate: true, shouldDirty: true, shouldTouch: true })
   }
 
-  const handlePreviewAudio = async () => {
-    if (!speakerId) {
-      gooeyToast.warning(ADMIN_VOCABULARY_CONTENT.form.speakerRequiredLabel)
-      return
-    }
-
-    try {
-      setIsPreviewingAudio(true)
-      const reading = form.getValues('reading').trim()
-      const title = form.getValues('title').trim()
-      const { data } = await voicevoxService.preview({
-        speakerId,
-        text: reading || title || undefined,
-      })
-
-      setPreviewAudioUrl(data.data.audioUrl)
-      gooeyToast.success(ADMIN_VOCABULARY_CONTENT.form.previewAudioSuccessLabel)
-    } catch {
-      gooeyToast.error(ADMIN_VOCABULARY_CONTENT.form.previewAudioFailedLabel)
-    } finally {
-      setIsPreviewingAudio(false)
-    }
-  }
-
   const handleSearchSentenceLibrary = async () => {
     const keyword = libraryKeyword.trim()
     if (!keyword) {
@@ -303,17 +258,16 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
           text: item.text,
           meaning: item.meaning,
           level: item.level,
-          speakerId: item.speakerId,
         })),
       )
     } catch {
-      gooeyToast.error(ADMIN_VOCABULARY_CONTENT.form.searchSentenceLibraryFailedLabel)
+      // silent fail - toast handled by caller if needed
     } finally {
       setIsLoadingLibrary(false)
     }
   }
 
-  const addSentenceFromLibrary = (item: { id: string; text: string; meaning: string; level: string | null; speakerId: number | null }) => {
+  const addSentenceFromLibrary = (item: { id: string; text: string; meaning: string; level: string | null }) => {
     const existing = form.getValues('sentences') ?? []
     if (existing.some((sentence) => sentence.id === item.id)) {
       return
@@ -324,7 +278,6 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
       text: item.text,
       meaning: item.meaning,
       level: (item.level as VocabularyUpsertInput['level']) ?? null,
-      speakerId: item.speakerId,
     })
   }
 
@@ -333,7 +286,6 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
       text: '',
       meaning: '',
       level: null,
-      speakerId,
     })
   }
 
@@ -349,11 +301,6 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
     const saveAsDraft = submitAsDraftRef.current
     submitAsDraftRef.current = false
 
-    if (!speakerId) {
-      gooeyToast.warning(ADMIN_VOCABULARY_CONTENT.form.speakerRequiredLabel)
-      return
-    }
-
     await onSubmit({
       title: values.title.trim(),
       summary: values.summary.trim(),
@@ -364,7 +311,6 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
       wordType: values.wordType.trim() || null,
       tags: values.tags,
       pitchPattern: pitchPattern.length > 0 ? pitchPattern : null,
-      speakerId,
       meanings: values.meanings.map((meaning) => ({
         partOfSpeech: meaning.partOfSpeech.trim(),
         definitions: meaning.definitions,
@@ -376,7 +322,6 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
         id: sentence.id,
         text: sentence.text.trim(),
         meaning: sentence.meaning.trim(),
-        speakerId: sentence.speakerId ?? speakerId,
         level: sentence.level,
       })),
     })
@@ -455,15 +400,7 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
               <div className="grid gap-4 md:grid-cols-2">
                 <VocabularyReadingAudioPanel
                   control={form.control}
-                  speakerId={speakerId}
-                  onSpeakerChange={setSpeakerId}
-                  speakers={speakers}
-                  isSubmitting={isSubmitting}
-                  isLoadingSpeakers={isLoadingSpeakers}
-                  isPreviewingAudio={isPreviewingAudio}
-                  previewAudioUrl={previewAudioUrl}
-                  onPreviewAudio={handlePreviewAudio}
-                  onClearPreviewAudio={() => setPreviewAudioUrl(null)}
+                  audioUrl={initialData?.audioUrl ?? null}
                 />
 
                 <VocabularyPitchPanel
@@ -631,7 +568,6 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
               <VocabularySentencesSection
                 form={form}
                 sentenceFieldArray={sentenceFieldArray}
-                speakers={speakers}
                 libraryKeyword={libraryKeyword}
                 onLibraryKeywordChange={setLibraryKeyword}
                 libraryItems={libraryItems}

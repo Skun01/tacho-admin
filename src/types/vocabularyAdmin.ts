@@ -43,7 +43,6 @@ export interface VocabularyAdminItem {
   reading: string | null
   wordType: string | null
   audioUrl?: string | null
-  speakerId: number | null
 }
 
 export interface VocabularyAdminDetail extends VocabularyAdminItem {
@@ -69,7 +68,6 @@ export interface VocabularyUpsertPayload {
   writing: string
   reading: string | null
   pitchPattern: number[] | null
-  speakerId?: number | null
   wordType: string | null
   meanings: VocabularyMeaningInput[]
   synonyms: string[]
@@ -82,7 +80,6 @@ export interface VocabularySentenceUpsertInput {
   id?: string
   text: string
   meaning: string
-  speakerId?: number | null
   level: VocabularyLevel | null
 }
 
@@ -100,7 +97,6 @@ export interface VocabularySearchQuery {
 export interface VocabularyImportSentenceItem {
   text: string
   meaning: string
-  speakerId?: number | null
   level: VocabularyLevel | null
 }
 
@@ -114,7 +110,6 @@ export interface VocabularyImportItem {
   writing: string
   reading: string | null
   pitchPattern: number[] | null
-  speakerId?: number | null
   wordType: string | null
   meanings: VocabularyMeaningInput[]
   synonyms: string[]

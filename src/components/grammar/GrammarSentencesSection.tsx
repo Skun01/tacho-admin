@@ -6,27 +6,30 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { gooeyToast } from '@/components/ui/goey-toaster'
 import { ADMIN_GRAMMAR_CONTENT } from '@/constants/adminContent'
 import { GRAMMAR_LEVEL_OPTIONS } from '@/types/grammarAdmin'
 import { sentenceAdminService } from '@/services/sentenceAdminService'
 import type { GrammarUpsertInput } from '@/lib/validations/grammarAdmin'
-import type { VoicevoxSpeakerOption } from '@/types/voicevox'
 
 interface GrammarSentencesSectionProps {
   form: UseFormReturn<GrammarUpsertInput>
   sentenceFieldArray: UseFieldArrayReturn<GrammarUpsertInput, 'sentences'>
-  speakers: VoicevoxSpeakerOption[]
+}
+
+interface LibrarySentenceItem {
+  id: string
+  text: string
+  meaning: string
+  level: string | null
 }
 
 export function GrammarSentencesSection({
   form,
   sentenceFieldArray,
-  speakers,
 }: GrammarSentencesSectionProps) {
   const [libraryKeyword, setLibraryKeyword] = useState('')
-  const [libraryItems, setLibraryItems] = useState<Array<{ id: string; text: string; meaning: string; level: string | null; speakerId: number | null }>>([])
+  const [libraryItems, setLibraryItems] = useState<LibrarySentenceItem[]>([])
   const [isLoadingLibrary, setIsLoadingLibrary] = useState(false)
 
   const handleSearchSentenceLibrary = async () => {
@@ -49,7 +52,6 @@ export function GrammarSentencesSection({
           text: item.text,
           meaning: item.meaning,
           level: item.level,
-          speakerId: item.speakerId,
         })),
       )
     } catch {
@@ -59,7 +61,7 @@ export function GrammarSentencesSection({
     }
   }
 
-  const addSentenceFromLibrary = (item: { id: string; text: string; meaning: string; level: string | null; speakerId: number | null }) => {
+  const addSentenceFromLibrary = (item: LibrarySentenceItem) => {
     const existing = form.getValues('sentences') ?? []
     if (existing.some((sentence) => sentence.id === item.id)) return
 
@@ -68,7 +70,6 @@ export function GrammarSentencesSection({
       text: item.text,
       meaning: item.meaning,
       level: (item.level as GrammarUpsertInput['sentences'][number]['level']) ?? null,
-      speakerId: item.speakerId,
     })
   }
 
@@ -77,7 +78,6 @@ export function GrammarSentencesSection({
       text: '',
       meaning: '',
       level: null,
-      speakerId: null,
     })
   }
 
@@ -206,58 +206,29 @@ export function GrammarSentencesSection({
               )}
             />
 
-            <div className="grid gap-3 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name={`sentences.${index}.level`}
-                render={({ field: levelField }) => (
-                  <FormItem>
-                    <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.sentenceLevelLabel}</FormLabel>
-                    <div className="flex flex-wrap gap-1.5">
-                      {GRAMMAR_LEVEL_OPTIONS.map((level) => (
-                        <Button
-                          key={level}
-                          type="button"
-                          size="sm"
-                          variant={levelField.value === level ? 'default' : 'outline'}
-                          onClick={() => levelField.onChange(levelField.value === level ? null : level)}
-                          className="h-7 text-xs"
-                        >
-                          {level}
-                        </Button>
-                      ))}
-                    </div>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name={`sentences.${index}.speakerId`}
-                render={({ field: speakerField }) => (
-                  <FormItem>
-                    <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.sentenceSpeakerLabel}</FormLabel>
-                    <FormControl>
-                      <Select
-                        value={speakerField.value?.toString() ?? ''}
-                        onValueChange={(val) => speakerField.onChange(val ? Number(val) : null)}
+            <FormField
+              control={form.control}
+              name={`sentences.${index}.level`}
+              render={({ field: levelField }) => (
+                <FormItem>
+                  <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.sentenceLevelLabel}</FormLabel>
+                  <div className="flex flex-wrap gap-1.5">
+                    {GRAMMAR_LEVEL_OPTIONS.map((level) => (
+                      <Button
+                        key={level}
+                        type="button"
+                        size="sm"
+                        variant={levelField.value === level ? 'default' : 'outline'}
+                        onClick={() => levelField.onChange(levelField.value === level ? null : level)}
+                        className="h-7 text-xs"
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.sentenceSpeakerPlaceholder} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {speakers.map((speaker) => (
-                            <SelectItem key={speaker.speakerId} value={speaker.speakerId.toString()}>
-                              {speaker.characterName} ({speaker.styleName})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
+                        {level}
+                      </Button>
+                    ))}
+                  </div>
+                </FormItem>
+              )}
+            />
 
             {form.watch(`sentences.${index}.id`) && (
               <Badge variant="secondary" className="text-[10px]">

@@ -89,7 +89,6 @@ export interface GrammarSentenceUpsertInput {
   id?: string
   text: string
   meaning: string
-  speakerId?: number | null
   level: GrammarLevel | null
 }
 
@@ -135,7 +134,6 @@ export interface GrammarSearchQuery {
 export interface GrammarImportSentenceItem {
   text: string
   meaning: string
-  speakerId?: number | null
   level: GrammarLevel | null
 }
 

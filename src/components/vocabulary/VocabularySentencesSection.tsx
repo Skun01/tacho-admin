@@ -1,10 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ADMIN_VOCABULARY_CONTENT } from '@/constants/adminContent'
 import { VOCABULARY_LEVEL_OPTIONS } from '@/types/vocabularyAdmin'
-import type { VoicevoxSpeakerOption } from '@/types/voicevox'
 import type { UseFieldArrayReturn, UseFormReturn } from 'react-hook-form'
 import type { VocabularyUpsertInput } from '@/lib/validations/vocabularyAdmin'
 
@@ -13,13 +11,11 @@ interface LibrarySentenceItem {
   text: string
   meaning: string
   level: string | null
-  speakerId: number | null
 }
 
 interface VocabularySentencesSectionProps {
   form: UseFormReturn<VocabularyUpsertInput>
   sentenceFieldArray: UseFieldArrayReturn<VocabularyUpsertInput, 'sentences', 'id'>
-  speakers: VoicevoxSpeakerOption[]
   libraryKeyword: string
   onLibraryKeywordChange: (value: string) => void
   libraryItems: LibrarySentenceItem[]
@@ -32,7 +28,6 @@ interface VocabularySentencesSectionProps {
 export function VocabularySentencesSection({
   form,
   sentenceFieldArray,
-  speakers,
   libraryKeyword,
   onLibraryKeywordChange,
   libraryItems,
@@ -129,57 +124,28 @@ export function VocabularySentencesSection({
                 )}
               />
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name={`sentences.${index}.level`}
-                  render={({ field: sentenceField }) => (
-                    <FormItem>
-                      <FormLabel>{ADMIN_VOCABULARY_CONTENT.form.fields.sentenceLevelLabel}</FormLabel>
-                      <div className="flex flex-wrap gap-2">
-                        {VOCABULARY_LEVEL_OPTIONS.map((level) => (
-                          <Button
-                            key={level}
-                            type="button"
-                            size="sm"
-                            variant={sentenceField.value === level ? 'default' : 'outline'}
-                            onClick={() => sentenceField.onChange(sentenceField.value === level ? null : level)}
-                          >
-                            {level}
-                          </Button>
-                        ))}
-                      </div>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name={`sentences.${index}.speakerId`}
-                  render={({ field: sentenceField }) => (
-                    <FormItem>
-                      <FormLabel>{ADMIN_VOCABULARY_CONTENT.form.fields.sentenceSpeakerLabel}</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={sentenceField.value !== null && sentenceField.value !== undefined ? String(sentenceField.value) : ''}
-                          onValueChange={(value) => sentenceField.onChange(value ? Number(value) : null)}
+              <FormField
+                control={form.control}
+                name={`sentences.${index}.level`}
+                render={({ field: sentenceField }) => (
+                  <FormItem>
+                    <FormLabel>{ADMIN_VOCABULARY_CONTENT.form.fields.sentenceLevelLabel}</FormLabel>
+                    <div className="flex flex-wrap gap-2">
+                      {VOCABULARY_LEVEL_OPTIONS.map((level) => (
+                        <Button
+                          key={level}
+                          type="button"
+                          size="sm"
+                          variant={sentenceField.value === level ? 'default' : 'outline'}
+                          onClick={() => sentenceField.onChange(sentenceField.value === level ? null : level)}
                         >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder={ADMIN_VOCABULARY_CONTENT.form.fields.sentenceSpeakerPlaceholder} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {speakers.map((speaker) => (
-                              <SelectItem key={speaker.speakerId} value={String(speaker.speakerId)}>
-                                {speaker.characterName} - {speaker.styleName}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
+                          {level}
+                        </Button>
+                      ))}
+                    </div>
+                  </FormItem>
+                )}
+              />
             </div>
           ))}
         </div>

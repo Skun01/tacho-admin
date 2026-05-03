@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { XIcon } from '@phosphor-icons/react'
@@ -15,7 +14,6 @@ import { GrammarResourcesSection } from '@/components/grammar/GrammarResourcesSe
 import { GrammarSentencesSection } from '@/components/grammar/GrammarSentencesSection'
 import { RichTextEditor } from '@/components/grammar/RichTextEditor'
 import { grammarUpsertSchema, type GrammarUpsertInput } from '@/lib/validations/grammarAdmin'
-import { voicevoxService } from '@/services/voicevoxService'
 import { ADMIN_GRAMMAR_CONTENT } from '@/constants/adminContent'
 import {
   GRAMMAR_LEVEL_OPTIONS,
@@ -95,16 +93,6 @@ export function GrammarUpsertForm({
   const [alternateFormInput, setAlternateFormInput] = useState('')
   const submitAsDraftRef = useRef(false)
 
-  const { data: speakerResponse } = useQuery({
-    queryKey: ['admin', 'voicevox', 'speakers'],
-    queryFn: async () => {
-      const { data } = await voicevoxService.getSpeakers()
-      return data.data
-    },
-    staleTime: 5 * 60 * 1000,
-  })
-  const speakers = speakerResponse ?? []
-
   // Reset form when initialData changes
   useEffect(() => {
     if (mode === 'edit' && initialData) {
@@ -141,7 +129,6 @@ export function GrammarUpsertForm({
           id: s.id,
           text: s.text,
           meaning: s.meaning,
-          speakerId: s.speakerId ?? null,
           level: s.level,
         })) ?? [],
       })
@@ -211,7 +198,6 @@ export function GrammarUpsertForm({
         id: s.id,
         text: s.text.trim(),
         meaning: s.meaning.trim(),
-        speakerId: s.speakerId ?? null,
         level: s.level,
       })),
     })
@@ -506,7 +492,6 @@ export function GrammarUpsertForm({
                   <GrammarSentencesSection
                     form={form}
                     sentenceFieldArray={sentenceFieldArray}
-                    speakers={speakers}
                   />
                 </TabsContent>
               </Tabs>
