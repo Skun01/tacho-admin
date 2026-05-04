@@ -1,8 +1,9 @@
 import { Helmet } from 'react-helmet-async'
 import { ADMIN_LEARNING_CONTENT } from '@/constants/adminLearning'
+import { DashboardUserSummary } from '@/components/learning/DashboardUserSummary'
+import { DashboardContentSummary } from '@/components/learning/DashboardContentSummary'
+import { DashboardLearningActivity } from '@/components/learning/DashboardLearningActivity'
 import { DashboardQuickActions } from '@/components/learning/DashboardQuickActions'
-import { DashboardStatsCards } from '@/components/learning/DashboardStatsCards'
-import { LearningOverviewCards } from '@/components/learning/LearningOverviewCards'
 
 const C = ADMIN_LEARNING_CONTENT.overview
 
@@ -13,8 +14,8 @@ export function DashboardPage() {
         <title>{C.pageTitle} | Tacho Admin</title>
       </Helmet>
 
-      <div className="space-y-6">
-        <div>
+      <div className="space-y-8">
+        <header>
           <h2
             className="font-heading-vn text-2xl font-bold"
             style={{ color: 'var(--on-surface)' }}
@@ -24,23 +25,14 @@ export function DashboardPage() {
           <p className="mt-1 text-sm" style={{ color: 'var(--on-surface-variant)' }}>
             {C.description}
           </p>
-        </div>
+        </header>
 
-        <LearningOverviewCards />
+        <DashboardUserSummary />
 
-        {/* Số liệu nội dung */}
-        <section aria-labelledby="stats-section-title">
-          <h3
-            id="stats-section-title"
-            className="mb-3 text-sm font-semibold uppercase tracking-wider"
-            style={{ color: 'var(--on-surface-variant)' }}
-          >
-            {C.statsSectionTitle}
-          </h3>
-          <DashboardStatsCards />
-        </section>
+        <DashboardContentSummary />
 
-        {/* Thao tác nhanh */}
+        <DashboardLearningActivity />
+
         <DashboardQuickActions />
       </div>
     </>

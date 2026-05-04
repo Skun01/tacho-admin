@@ -127,6 +127,7 @@ export const JLPT_EXAM_CONTENT = {
     publish: 'Phát hành',
     openDetail: 'Quản lý chi tiết',
     downloadTemplate: 'Tải template',
+    importExam: 'Import đề thi',
     importGuide: 'Hướng dẫn import',
     exportJson: 'Xuất JSON',
   },

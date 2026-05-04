@@ -1,21 +1,28 @@
 export const ADMIN_LEARNING_CONTENT = {
 	overview: {
-		pageTitle: 'Tổng quan học tập | Tacho Admin',
-		heading: 'Tổng quan học tập',
-		description: 'Số liệu tổng hợp hoạt động học tập trong ngày.',
-		activeUsersTodayLabel: 'Người dùng hôm nay',
-		sessionsTodayLabel: 'Phiên học hôm nay',
-		completedSessionsTodayLabel: 'Phiên hoàn thành',
-		submissionsTodayLabel: 'Lượt nộp bài',
-		dueCardsNowLabel: 'Thẻ cần ôn',
-		averageAccuracyLabel: 'Độ chính xác TB',
-		accuracySuffix: '%',
-		// ── Dashboard stats section ───────────────────────────────────
-		statsSectionTitle: 'Số liệu nội dung',
+		pageTitle: 'Bảng điều khiển',
+		heading: 'Bảng điều khiển',
+		description: 'Tổng quan hoạt động hệ thống và nội dung học tập.',
+		// ── User summary section ─────────────────────────────────────
+		userSectionTitle: 'Người dùng',
+		totalUsersLabel: 'Tổng người dùng',
+		newUsersTodayLabel: 'Mới hôm nay',
+		newUsersThisWeekLabel: 'Mới tuần này',
+		activeUsersTodayLabel: 'Đang hoạt động',
+		// ── Content summary section ──────────────────────────────────
+		contentSectionTitle: 'Nội dung',
 		vocabularyLabel: 'Từ vựng',
 		grammarLabel: 'Ngữ pháp',
 		kanjiLabel: 'Hán tự',
 		decksLabel: 'Bộ thẻ',
+		// ── Learning activity section ────────────────────────────────
+		activitySectionTitle: 'Hoạt động học tập hôm nay',
+		sessionsTodayLabel: 'Phiên học',
+		completedSessionsTodayLabel: 'Hoàn thành',
+		submissionsTodayLabel: 'Lượt nộp bài',
+		dueCardsNowLabel: 'Thẻ cần ôn',
+		averageAccuracyLabel: 'Độ chính xác TB',
+		accuracySuffix: '%',
 		// ── Quick actions section ────────────────────────────────────
 		quickActionsTitle: 'Thao tác nhanh',
 		quickAddVocabulary: 'Thêm từ vựng',
