@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { format } from 'date-fns'
 import { PencilSimpleIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react'
 import { AdminDeckConfirmDialog } from '@/components/deck/AdminDeckConfirmDialog'

@@ -1,5 +1,5 @@
 import { Outlet, Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router'
-import { HelmetProvider } from 'react-helmet-async'
+import { HelmetProvider } from '@dr.pogodin/react-helmet'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { GooeyToaster } from './components/ui/goey-toaster'
 import { AppInit } from './components/auth/AppInit'

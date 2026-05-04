@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { ADMIN_LEARNING_CONTENT } from '@/constants/adminLearning'
 import { DashboardUserSummary } from '@/components/learning/DashboardUserSummary'
 import { DashboardContentSummary } from '@/components/learning/DashboardContentSummary'

@@ -1,6 +1,6 @@
 import { ChartBarIcon, InfoIcon, ListIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { useNavigate, useParams } from 'react-router'
 import { ShadowingAddSentenceDialog } from '@/components/shadowing/ShadowingAddSentenceDialog'
 import { ShadowingConfirmDialog } from '@/components/shadowing/ShadowingConfirmDialog'

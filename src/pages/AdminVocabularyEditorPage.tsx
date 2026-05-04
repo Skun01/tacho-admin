@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowLeftIcon } from '@phosphor-icons/react'
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { useBlocker, useNavigate, useParams } from 'react-router'
 import { gooeyToast } from '@/components/ui/goey-toaster'
 import { VocabularyUpsertForm } from '@/components/vocabulary/VocabularyUpsertForm'

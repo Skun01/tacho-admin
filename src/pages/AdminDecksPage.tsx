@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { PlusIcon, SquaresFourIcon } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router'
 import { AdminDeckConfirmDialog } from '@/components/deck/AdminDeckConfirmDialog'

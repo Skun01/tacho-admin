@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { BrandLogo } from '@/components/auth/BrandLogo'
 import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm'
 import { AUTH_RESET_PASSWORD_COPY } from '@/constants/auth'

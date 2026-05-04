@@ -1,6 +1,6 @@
 import { PlusIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { ShadowingAdminFilters } from '@/components/shadowing/ShadowingAdminFilters'
 import { ShadowingAdminTable } from '@/components/shadowing/ShadowingAdminTable'
 import { ShadowingConfirmDialog } from '@/components/shadowing/ShadowingConfirmDialog'

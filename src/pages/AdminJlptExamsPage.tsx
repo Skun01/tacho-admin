@@ -1,6 +1,6 @@
 import { DownloadSimpleIcon, PlusIcon, UploadSimpleIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { ExamImportDialog } from '@/components/jlpt/ExamImportDialog'
 import { JlptExamAdminFilters } from '@/components/jlpt/JlptExamAdminFilters'
 import { JlptExamAdminTable } from '@/components/jlpt/JlptExamAdminTable'

@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { DownloadSimpleIcon, ExportIcon, PlusIcon, UploadSimpleIcon } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'

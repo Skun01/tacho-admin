@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams, useBlocker } from 'react-router'
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { ArrowLeftIcon } from '@phosphor-icons/react'
 import { gooeyToast } from '@/components/ui/goey-toaster'
 import { Button } from '@/components/ui/button'

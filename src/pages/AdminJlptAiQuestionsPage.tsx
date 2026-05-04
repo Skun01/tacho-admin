@@ -1,6 +1,6 @@
 import { SparkleIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { JlptAiGenerateDialog } from '@/components/jlpt/JlptAiGenerateDialog'
 import { JlptAiQuestionAdminFilters } from '@/components/jlpt/JlptAiQuestionAdminFilters'
 import { JlptAiQuestionAdminTable } from '@/components/jlpt/JlptAiQuestionAdminTable'

@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { UpdateProfileForm } from '@/components/auth/UpdateProfileForm'
 import { ChangePasswordForm } from '@/components/auth/ChangePasswordForm'

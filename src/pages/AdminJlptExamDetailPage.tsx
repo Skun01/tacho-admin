@@ -7,7 +7,7 @@ import {
   TrashIcon,
 } from '@phosphor-icons/react'
 import { useState } from 'react'
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { useNavigate, useParams } from 'react-router'
 import { JlptConfirmDialog } from '@/components/jlpt/JlptConfirmDialog'
 import { JlptExamFormDialog } from '@/components/jlpt/JlptExamFormDialog'

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router'
 import { DownloadSimpleIcon, PlusIcon, UploadSimpleIcon, ExportIcon } from '@phosphor-icons/react'
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { Button } from '@/components/ui/button'
 import { GrammarAdminFilters } from '@/components/grammar/GrammarAdminFilters'
 import { GrammarAdminTable } from '@/components/grammar/GrammarAdminTable'

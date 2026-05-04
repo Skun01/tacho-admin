@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { DownloadSimpleIcon, PlusIcon, UploadSimpleIcon, ExportIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { SentenceUpsertForm } from '@/components/sentence/SentenceUpsertForm'

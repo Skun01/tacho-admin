@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { AdminUserFilters } from '@/components/user/AdminUserFilters'
 import { AdminUserTable } from '@/components/user/AdminUserTable'
 import { UserDetailDrawer } from '@/components/user/UserDetailDrawer'

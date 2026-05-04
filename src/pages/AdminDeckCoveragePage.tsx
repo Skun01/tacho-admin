@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async'
+import { Helmet } from '@dr.pogodin/react-helmet'
 import { useParams, Link } from 'react-router'
 import { ArrowLeftIcon, WarningCircleIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
