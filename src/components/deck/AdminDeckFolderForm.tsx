@@ -68,7 +68,7 @@ export function AdminDeckFolderForm({
                   <Input
                     {...field}
                     placeholder={ADMIN_DECK_CONTENT.folderForm.titlePlaceholder}
-                    className={isModal ? 'h-10 rounded-xl border-0 bg-surface-container-low px-4 shadow-none focus-visible:bg-surface-container focus-visible:ring-0' : 'h-11 rounded-2xl bg-background'}
+                    className={isModal ? 'h-10 rounded-xl border-border/60 bg-background px-4 shadow-none focus-visible:border-primary/40 focus-visible:ring-0' : 'h-11 rounded-2xl border-border/60 bg-background'}
                   />
                 </FormControl>
                 <FormMessage />
@@ -87,7 +87,7 @@ export function AdminDeckFolderForm({
                     {...field}
                     rows={isModal ? 3 : undefined}
                     placeholder={ADMIN_DECK_CONTENT.folderForm.descriptionPlaceholder}
-                    className={isModal ? 'min-h-0 resize-none rounded-xl border-0 bg-surface-container-low px-4 py-2.5 shadow-none focus-visible:bg-surface-container focus-visible:ring-0' : 'rounded-2xl bg-background'}
+                    className={isModal ? 'min-h-0 resize-none rounded-xl border-border/60 bg-background px-4 py-2.5 shadow-none focus-visible:border-primary/40 focus-visible:ring-0' : 'rounded-2xl border-border/60 bg-background'}
                   />
                 </FormControl>
                 <FormMessage />

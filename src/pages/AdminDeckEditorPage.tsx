@@ -464,7 +464,7 @@ export function AdminDeckEditorPage() {
               </section>
 
               {totalCards > 0 && (
-                <div className="flex min-h-11 items-center gap-2 rounded-full border border-border/70 bg-card px-4 shadow-[0_1px_8px_0_rgba(29,28,19,0.08)] dark:bg-surface-container-high dark:shadow-[0_8px_20px_0_rgba(0,0,0,0.24)]">
+                <div className="flex min-h-11 items-center gap-2 rounded-full border border-border/60 bg-background px-4 shadow-[0_1px_3px_0_rgba(29,28,19,0.06)] dark:bg-surface-container-high dark:shadow-[0_1px_6px_0_rgba(0,0,0,0.18)]">
                   <MagnifyingGlassIcon size={14} className="shrink-0 text-muted-foreground" />
                   <Input
                     value={searchCardsQuery}

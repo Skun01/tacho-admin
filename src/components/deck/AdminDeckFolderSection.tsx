@@ -12,6 +12,16 @@ import { Button } from '@/components/ui/button'
 import { ADMIN_DECK_CONTENT, DECK_ADMIN_CARD_TYPE_LABELS } from '@/constants/adminDeck'
 import type { DeckFolderResponse } from '@/types/deckAdmin'
 
+function getCardTypeColors(cardType: string) {
+  if (cardType === 'Vocab') {
+    return 'border-emerald-200/60 bg-emerald-50/60 text-emerald-700'
+  }
+  if (cardType === 'Grammar') {
+    return 'border-sky-200/60 bg-sky-50/60 text-sky-700'
+  }
+  return 'border-violet-200/60 bg-violet-50/60 text-violet-700'
+}
+
 interface AdminDeckFolderSectionProps {
   folder: DeckFolderResponse
   searchQuery?: string
@@ -77,9 +87,9 @@ export function AdminDeckFolderSection({
       onDragOver={onDragOver}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-      className={`flex flex-col gap-3 ${isDragOver ? 'scale-[1.01]' : ''}`}
+      className={`flex flex-col gap-2 ${isDragOver ? 'scale-[1.01]' : ''}`}
     >
-      <div className="flex flex-wrap items-start justify-between gap-4 rounded-3xl border border-border/70 bg-card p-5 shadow-[0_2px_12px_0_rgba(29,28,19,0.07)] dark:bg-surface-container-high dark:shadow-[0_10px_24px_0_rgba(0,0,0,0.24)]">
+      <div className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-border/50 bg-card p-4 shadow-[0_1px_4px_0_rgba(29,28,19,0.04)] dark:bg-surface-container-high dark:shadow-[0_2px_8px_0_rgba(0,0,0,0.14)]">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <span title={ADMIN_DECK_CONTENT.folder.moveUpLabel}>
@@ -106,21 +116,19 @@ export function AdminDeckFolderSection({
             <PlusIcon size={14} />
             {ADMIN_DECK_CONTENT.folder.addCardLabel}
           </Button>
-          <div className="flex items-center gap-1 rounded-full border border-border/70 bg-surface-container-high px-1.5 py-1 dark:bg-surface-container-highest">
-            <Button type="button" variant="ghost" size="icon-xs" onClick={() => onEdit(folder)} disabled={isPending} title={ADMIN_DECK_CONTENT.folder.editLabel}>
-              <PencilSimpleIcon size={12} />
-            </Button>
-            <Button type="button" variant="ghost" size="icon-xs" onClick={() => onDelete(folder)} disabled={isPending} title={ADMIN_DECK_CONTENT.folder.deleteLabel} className="text-muted-foreground hover:bg-rose-50 hover:text-rose-600">
-              <TrashIcon size={12} />
-            </Button>
-          </div>
+          <Button type="button" variant="ghost" size="icon-xs" onClick={() => onEdit(folder)} disabled={isPending} title={ADMIN_DECK_CONTENT.folder.editLabel}>
+            <PencilSimpleIcon size={14} style={{ color: '#92400e' }} />
+          </Button>
+          <Button type="button" variant="ghost" size="icon-xs" onClick={() => onDelete(folder)} disabled={isPending} title={ADMIN_DECK_CONTENT.folder.deleteLabel}>
+            <TrashIcon size={14} style={{ color: '#b91c1c' }} />
+          </Button>
         </div>
       </div>
 
       {expanded && (
         <div className="space-y-2">
           {visibleCards.length === 0 ? (
-            <div className="rounded-2xl border border-border/70 bg-card px-4 py-8 text-center text-sm text-muted-foreground shadow-[0_1px_6px_0_rgba(29,28,19,0.06)] dark:bg-surface-container-high dark:shadow-[0_8px_20px_0_rgba(0,0,0,0.22)]">
+            <div className="rounded-xl border border-dashed border-border/60 bg-background px-4 py-6 text-center text-sm text-muted-foreground dark:bg-surface-container-high">
               {ADMIN_DECK_CONTENT.folder.emptyCardsLabel}
             </div>
           ) : (
@@ -149,32 +157,44 @@ export function AdminDeckFolderSection({
                     onDragCardEnd()
                   }
                 }}
-                className={`flex items-center gap-3 rounded-2xl border border-border/70 bg-card px-4 py-3 shadow-[0_1px_6px_0_rgba(29,28,19,0.06)] dark:bg-surface-container-high ${
-                  dragOverCardId === item.cardId && draggedCardId !== item.cardId ? 'scale-[1.01]' : ''
+                className={`group flex items-center gap-3 rounded-xl border border-border/50 bg-background px-4 py-3 transition-all hover:border-border/80 hover:shadow-[0_2px_8px_0_rgba(29,28,19,0.08)] dark:hover:shadow-[0_4px_12px_0_rgba(0,0,0,0.15)] ${
+                  dragOverCardId === item.cardId && draggedCardId !== item.cardId ? 'border-primary/40 bg-primary/5' : ''
                 }`}
               >
                 <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex min-w-0 items-center gap-2">
                     {!normalizedQuery && (
                       <DotsSixVerticalIcon
                         size={14}
-                        className="text-muted-foreground/40"
+                        className="text-muted-foreground/40 shrink-0"
                       />
                     )}
-                    <Badge variant="outline">{DECK_ADMIN_CARD_TYPE_LABELS[item.card.cardType]}</Badge>
-                    {item.card.level && <Badge variant="outline">{item.card.level}</Badge>}
-                    <span className="truncate font-medium text-foreground">{item.card.title}</span>
+                    <Badge variant="outline" className={`shrink-0 text-[11px] ${getCardTypeColors(item.card.cardType)}`}>
+                      {DECK_ADMIN_CARD_TYPE_LABELS[item.card.cardType]}
+                    </Badge>
+                    {item.card.level && (
+                      <Badge variant="outline" className="shrink-0 text-[11px] border-amber-200/60 bg-amber-50/60 text-amber-700">
+                        {item.card.level}
+                      </Badge>
+                    )}
+                    <span className="truncate text-sm font-medium text-foreground">{item.card.title}</span>
                   </div>
                   {item.card.summary && (
                     <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{item.card.summary}</p>
                   )}
                 </div>
 
-                <div className="flex shrink-0 items-center gap-2">
-                  <Button type="button" variant="ghost" size="sm" onClick={() => onRemoveCard(folder, item.cardId)} disabled={isPending}>
-                    {ADMIN_DECK_CONTENT.folder.removeCardLabel}
-                  </Button>
-                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                  onClick={() => onRemoveCard(folder, item.cardId)}
+                  disabled={isPending}
+                  title={ADMIN_DECK_CONTENT.folder.removeCardLabel}
+                >
+                  <TrashIcon size={14} style={{ color: '#b91c1c' }} />
+                </Button>
               </div>
             ))
           )}
