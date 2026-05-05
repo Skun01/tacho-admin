@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import { DotsThreeOutlineVerticalIcon, PencilSimpleIcon } from '@phosphor-icons/react'
+import { ArchiveBoxIcon, DotsThreeOutlineVerticalIcon, EyeIcon, PencilSimpleIcon } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { AdminTableSection } from '@/components/shared/AdminTableSection'
@@ -116,8 +116,16 @@ export function AdminDeckTable({
               <TableCell>
                 <div className="flex justify-end gap-1">
                   <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => onOpenEdit(item)}>
-                    <PencilSimpleIcon size={16} />
+                    <PencilSimpleIcon size={16} style={{ color: '#92400e' }} />
                   </Button>
+                  <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => onOpenEdit(item)}>
+                    <EyeIcon size={16} style={{ color: 'var(--primary)' }} />
+                  </Button>
+                  {item.status !== 'Archived' && (
+                    <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => onArchive(item)}>
+                      <ArchiveBoxIcon size={16} style={{ color: '#92400e' }} />
+                    </Button>
+                  )}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button type="button" variant="ghost" size="icon" className="h-8 w-8">
@@ -135,14 +143,6 @@ export function AdminDeckTable({
                           {ADMIN_DECK_CONTENT.statusActions.unpublish}
                         </DropdownMenuItem>
                       )}
-                      {item.status !== 'Archived' && (
-                        <DropdownMenuItem onClick={() => onArchive(item)}>
-                          {ADMIN_DECK_CONTENT.statusActions.archive}
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem onClick={() => onOpenEdit(item)}>
-                        {ADMIN_DECK_CONTENT.actions.openDetail}
-                      </DropdownMenuItem>
                       <DropdownMenuItem variant="destructive" onClick={() => onDelete(item)}>
                         {ADMIN_DECK_CONTENT.actions.delete}
                       </DropdownMenuItem>

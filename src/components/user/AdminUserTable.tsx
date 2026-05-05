@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import { EnvelopeSimpleIcon, GearIcon, ShieldCheckIcon, ShieldSlashIcon, UserCircleIcon, XCircleIcon } from '@phosphor-icons/react'
+import { EnvelopeSimpleIcon, EyeIcon, ShieldCheckIcon, ShieldSlashIcon, UserCircleIcon, XCircleIcon } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { AdminTableSection } from '@/components/shared/AdminTableSection'
@@ -105,7 +105,7 @@ export function AdminUserTable({
                       onClick={() => onOpenDetail(item)}
                       title={ADMIN_USER_CONTENT.actions.viewDetail}
                     >
-                      <GearIcon size={16} />
+                      <EyeIcon size={16} style={{ color: 'var(--primary)' }} />
                     </Button>
                     <Button
                       type="button"

@@ -96,7 +96,7 @@ export function JlptExamAdminTable({
                         onOpenDetail(item)
                       }}
                     >
-                      <PencilSimpleIcon size={16} />
+                      <PencilSimpleIcon size={16} style={{ color: '#92400e' }} />
                     </Button>
                   )}
                   <Button

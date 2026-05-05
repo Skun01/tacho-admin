@@ -1,12 +1,6 @@
-import { DotsThreeOutlineVerticalIcon, PencilSimpleIcon } from '@phosphor-icons/react'
+import { EyeIcon, TrashIcon } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { AdminTableSection } from '@/components/shared/AdminTableSection'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import {
@@ -116,29 +110,20 @@ export function ShadowingAdminTable({
                       onOpenDetail(item)
                     }}
                   >
-                    <PencilSimpleIcon size={16} />
+                    <EyeIcon size={16} style={{ color: 'var(--primary)' }} />
                   </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={(event) => event.stopPropagation()}
-                      >
-                        <DotsThreeOutlineVerticalIcon size={16} />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onOpenDetail(item)}>
-                        {SHADOWING_ADMIN_CONTENT.actions.openDetail}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem variant="destructive" onClick={() => onDelete(item)}>
-                        {SHADOWING_ADMIN_CONTENT.actions.delete}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      onDelete(item)
+                    }}
+                  >
+                    <TrashIcon size={16} style={{ color: '#b91c1c' }} />
+                  </Button>
                 </div>
               </TableCell>
             </TableRow>

@@ -1,12 +1,6 @@
-import { DotsThreeOutlineVerticalIcon, EyeIcon } from '@phosphor-icons/react'
+import { EyeIcon } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { AdminTableSection } from '@/components/shared/AdminTableSection'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import {
@@ -114,26 +108,8 @@ export function JlptAiQuestionAdminTable({
                       onViewDetail(item)
                     }}
                   >
-                    <EyeIcon size={16} />
+                    <EyeIcon size={16} style={{ color: 'var(--primary)' }} />
                   </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={(event) => event.stopPropagation()}
-                      >
-                        <DotsThreeOutlineVerticalIcon size={16} />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onViewDetail(item)}>
-                        {JLPT_AI_QUESTION_CONTENT.actions.viewDetail}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
                 </div>
               </TableCell>
             </TableRow>

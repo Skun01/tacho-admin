@@ -112,7 +112,7 @@ export function KanjiAdminTable({
               <TableCell className="text-right">
                 <div className="flex justify-end gap-1">
                   <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => onOpenEdit(item)}>
-                    <PencilSimpleIcon size={16} />
+                    <PencilSimpleIcon size={16} style={{ color: '#92400e' }} />
                   </Button>
                   <Button
                     type="button"
@@ -122,7 +122,7 @@ export function KanjiAdminTable({
                     onClick={() => onDelete(item)}
                     disabled={isDeleting}
                   >
-                    <TrashIcon size={16} />
+                    <TrashIcon size={16} style={{ color: '#b91c1c' }} />
                   </Button>
                 </div>
               </TableCell>
