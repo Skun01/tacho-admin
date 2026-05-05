@@ -222,6 +222,37 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Nunito", "Kiwi Maru", system-ui, sans-serif;
 }
 
+/* Display typography scale (DESIGN.md §Typography) */
+.display-lg {
+  font-size: 3.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+.display-md {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+.headline-md {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.headline-sm {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Editorial card — subtle border and shadow for natural depth */
+.card-editorial {
+  background-color: var(--surface-container-lowest);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(28, 15, 14, 0.06);
+}
+
 /* ─── NProgress — Crimson loading bar ───────────────────────────────────── */
 #nprogress .bar {
   background: var(--primary) !important;

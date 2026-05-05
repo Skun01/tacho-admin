@@ -1,8 +1,8 @@
 import { Helmet } from '@dr.pogodin/react-helmet'
+import { Card } from '@/components/ui/card'
 import { ADMIN_LEARNING_CONTENT } from '@/constants/adminLearning'
-import { DashboardUserSummary } from '@/components/learning/DashboardUserSummary'
-import { DashboardContentSummary } from '@/components/learning/DashboardContentSummary'
-import { DashboardLearningActivity } from '@/components/learning/DashboardLearningActivity'
+import { DashboardStatEditorial } from '@/components/learning/DashboardStatEditorial'
+import { DashboardActivityZone } from '@/components/learning/DashboardActivityZone'
 import { DashboardQuickActions } from '@/components/learning/DashboardQuickActions'
 
 const C = ADMIN_LEARNING_CONTENT.overview
@@ -14,26 +14,37 @@ export function DashboardPage() {
         <title>{C.pageTitle} | Tacho Admin</title>
       </Helmet>
 
-      <div className="space-y-8">
+      <div className="space-y-6">
+        {/* ── Page Header ─────────────────────────────────── */}
         <header>
-          <h2
-            className="font-heading-vn text-2xl font-bold"
+          <h1
+            className="text-2xl font-semibold"
             style={{ color: 'var(--on-surface)' }}
           >
             {C.heading}
-          </h2>
-          <p className="mt-1 text-sm" style={{ color: 'var(--on-surface-variant)' }}>
+          </h1>
+          <p className="text-sm" style={{ color: 'var(--on-surface-variant)' }}>
             {C.description}
           </p>
         </header>
 
-        <DashboardUserSummary />
+        {/* ── Stats ───────────────────────────────────────── */}
+        <DashboardStatEditorial />
 
-        <DashboardContentSummary />
+        {/* ── Quick Actions + Activity Zone ─────────────── */}
+        <div className="flex flex-col lg:flex-row gap-4">
+          {/* Quick actions — narrower right column */}
+          <div className="lg:w-72 shrink-0">
+            <Card className="card-editorial p-4">
+              <DashboardQuickActions />
+            </Card>
+          </div>
 
-        <DashboardLearningActivity />
-
-        <DashboardQuickActions />
+          {/* Activity zone — fills remaining width */}
+          <div className="flex-1 min-w-0">
+            <DashboardActivityZone />
+          </div>
+        </div>
       </div>
     </>
   )

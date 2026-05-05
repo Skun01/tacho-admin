@@ -81,8 +81,6 @@ font-family: "Nunito", "Kiwi Maru", system-ui, sans-serif;
 
 ### Elevation & Depth
 
-Không dùng shadow cho card — dùng tonal layering:
-
 ```
 --surface-container-high (background)
   └── --surface-container-lowest (card) → "pop" tự nhiên
@@ -144,6 +142,5 @@ Floating elements (modal, popover): `box-shadow: 0 12px 40px rgba(28, 15, 14, 0.
 **Don't:**
 
 - Không pure black — luôn dùng `--on-surface` (`#1c0f0e`)
-- Không shadow mặc định shadcn cho card thông thường
 - Không crowd sidebar — `p-12` top padding bắt buộc
 - Không dùng `--on-surface` làm text trên sidebar `#1a0008` — contrast chỉ 1.07:1
