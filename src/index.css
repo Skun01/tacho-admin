@@ -1,7 +1,9 @@
 @import "tailwindcss";
 @import "shadcn/tailwind.css";
 
-/* Tacho Admin Design System — "The Digital Kanso" */
+/* Tacho Admin Design System — "The Digital Kanso" v3 Matcha Zen
+   Palette inspired by Happy Hues #8 (light) & #13 (dark).
+   Warm cream washi paper + teal (matcha) primary + coral (seal) accent. */
 :root {
   /* Typography */
   font-family: "Nunito", "Kiwi Maru", system-ui, sans-serif;
@@ -15,64 +17,64 @@
   /* Radius — tighter than user app (editorial) */
   --radius: 0.5rem;
 
-  /* Admin Color Palette — v2 Monochromatic Crimson */
-  /* Background */
-  --background: #fdf7f6;
-  --foreground: #1c0f0e;
+  /* ── Admin Color Palette — v3 Matcha Zen (Happy Hues #8) ────────── */
+  /* Background — warm cream, washi paper */
+  --background: #f8f5f2;
+  --foreground: #232323;
 
   /* Card */
-  --card: #ffffff;
-  --card-foreground: #1c0f0e;
+  --card: #fffffe;
+  --card-foreground: #232323;
 
   /* Popover */
-  --popover: #ffffff;
-  --popover-foreground: #1c0f0e;
+  --popover: #fffffe;
+  --popover-foreground: #232323;
 
-  /* Primary — Crimson "Red Seal" */
-  --primary: #8f0020;
-  --primary-foreground: #ffffff;
-  --primary-container: #bc002d;
-  --primary-fixed-dim: #f5c0c8;
+  /* Primary — Teal "Matcha" */
+  --primary: #078080;
+  --primary-foreground: #fffffe;
+  --primary-container: #056666;
+  --primary-fixed-dim: #b8e0e0;
 
-  /* Secondary — Deep Burgundy (sidebar) */
-  --secondary: #1a0008;
-  --secondary-foreground: #ffffff;
-  --secondary-container: #f5dde0;
-  --on-secondary-container: #3d0011;
+  /* Secondary — Editorial Ink (sidebar) */
+  --secondary: #232323;
+  --secondary-foreground: #fffffe;
+  --secondary-container: #dfece8;
+  --on-secondary-container: #056666;
 
-  /* Tertiary */
-  --tertiary: #7a2535;
-  --tertiary-foreground: #ffffff;
+  /* Tertiary — Coral "Seal Red" */
+  --tertiary: #d84a35;
+  --tertiary-foreground: #fffffe;
 
   /* Muted */
-  --muted: #f8f0ef;
-  --muted-foreground: #6b3a38;
+  --muted: #eeebe7;
+  --muted-foreground: #52565a;
 
-  /* Accent */
-  --accent: #efe4e3;
-  --accent-foreground: #1c0f0e;
+  /* Accent — Warm Peach (Palette #8 newsletter bg) */
+  --accent: #feefe8;
+  --accent-foreground: #232323;
 
   /* Destructive */
-  --destructive: #b91c1c;
+  --destructive: #d84a35;
 
   /* Border / Input / Ring */
-  --border: #1c0f0e26;
-  --input: #efe4e3;
-  --ring: #8f0020;
+  --border: #23232322;
+  --input: #eeebe7;
+  --ring: #078080;
 
-  /* Surface hierarchy tokens — warm tint */
-  --surface: #fdf7f6;
-  --surface-container-low: #f8f0ef;
-  --surface-container: #f2e8e7;
-  --surface-container-lowest: #ffffff;
-  --surface-container-high: #efe4e3;
-  --surface-container-highest: #e8d8d7;
-  --on-surface: #1c0f0e;
-  --on-surface-variant: #6b3a38;
-  --outline-variant: #e8c4c226;
+  /* Surface hierarchy tokens — warm cream tint */
+  --surface: #f8f5f2;
+  --surface-container-low: #f2eee9;
+  --surface-container: #eeebe7;
+  --surface-container-lowest: #fffffe;
+  --surface-container-high: #e6e1dc;
+  --surface-container-highest: #ded9d2;
+  --on-surface: #232323;
+  --on-surface-variant: #52565a;
+  --outline-variant: #23232326;
 
   /* ── Sidebar tokens (DESIGN.md §Sidebar) ────────────────────────── */
-  --sidebar-bg: #1a0008;
+  --sidebar-bg: #1a1a1a;
   --sidebar-nav-text: rgba(255, 255, 255, 0.55);
   --sidebar-nav-text-active: #ffffff;
   --sidebar-nav-active-bg: rgba(255, 255, 255, 0.08);
@@ -83,60 +85,60 @@
 
   /* ── On-primary text (text trên nền --primary) ────────────── */
   --on-primary: #ffffff;
-  --on-primary-muted: rgba(255, 255, 255, 0.65);
-  --on-primary-dim: rgba(255, 255, 255, 0.5);
+  --on-primary-muted: rgba(255, 255, 255, 0.75);
+  --on-primary-dim: rgba(255, 255, 255, 0.55);
 }
 
-/* Dark Mode — v2 Warm Crimson dark */
+/* Dark Mode — v3 Moonlit Tea House (Happy Hues #13 + teal consistency) */
 .dark {
-  --background: #1c1210;
-  --foreground: #f0e0de;
+  --background: #0f1415;
+  --foreground: #fffffe;
 
-  --card: #150d0c;
-  --card-foreground: #f0e0de;
+  --card: #171e1f;
+  --card-foreground: #fffffe;
 
-  --popover: #221615;
-  --popover-foreground: #f0e0de;
+  --popover: #1b2324;
+  --popover-foreground: #fffffe;
 
-  --primary: #ffb3bc;
-  --primary-foreground: #5c0010;
-  --primary-container: #690016;
-  --primary-fixed-dim: #930020;
+  --primary: #44c5c5;
+  --primary-foreground: #0f1415;
+  --primary-container: #078080;
+  --primary-fixed-dim: #0a5a5a;
 
-  /* Sidebar remains deep burgundy in dark mode */
-  --secondary: #1a0008;
-  --secondary-foreground: #ffffff;
-  --secondary-container: #4a1520;
-  --on-secondary-container: #ffdde2;
+  /* Sidebar remains deep editorial in dark mode */
+  --secondary: #0a0f10;
+  --secondary-foreground: #fffffe;
+  --secondary-container: #1a3535;
+  --on-secondary-container: #b8e0e0;
 
-  --tertiary: #f5b8c4;
-  --tertiary-foreground: #3e0016;
+  --tertiary: #ff8068;
+  --tertiary-foreground: #0f1415;
 
-  --muted: #221615;
-  --muted-foreground: #d4a8a5;
+  --muted: #1b2324;
+  --muted-foreground: #a7a9be;
 
-  --accent: #2a1b1a;
-  --accent-foreground: #f0e0de;
+  --accent: #2a2323;
+  --accent-foreground: #fffffe;
 
-  --destructive: #f87171;
+  --destructive: #ff6b5a;
 
-  --border: #f0e0de26;
-  --input: #2a1b1a;
-  --ring: #ffb3bc;
+  --border: #fffffe22;
+  --input: #1b2324;
+  --ring: #44c5c5;
 
-  /* Surface hierarchy — warm dark */
-  --surface: #1c1210;
-  --surface-container-low: #221615;
-  --surface-container: #261817;
-  --surface-container-lowest: #150d0c;
-  --surface-container-high: #2a1b1a;
-  --surface-container-highest: #321f1e;
-  --on-surface: #f0e0de;
-  --on-surface-variant: #d4a8a5;
-  --outline-variant: #5a2e2c;
+  /* Surface hierarchy — dark tea house */
+  --surface: #0f1415;
+  --surface-container-low: #141a1b;
+  --surface-container: #171e1f;
+  --surface-container-lowest: #0a0f10;
+  --surface-container-high: #1b2324;
+  --surface-container-highest: #222a2b;
+  --on-surface: #fffffe;
+  --on-surface-variant: #a7a9be;
+  --outline-variant: #2a3636;
 
-  /* ── Sidebar tokens — dark mode (same sidebar bg, same white overlays) */
-  --sidebar-bg: #1a0008;
+  /* ── Sidebar tokens — dark mode (deeper ink, same white overlays) */
+  --sidebar-bg: #0a0f10;
   --sidebar-nav-text: rgba(255, 255, 255, 0.55);
   --sidebar-nav-text-active: #ffffff;
   --sidebar-nav-active-bg: rgba(255, 255, 255, 0.08);
@@ -145,10 +147,10 @@
   --sidebar-icon-muted: rgba(255, 255, 255, 0.6);
   --sidebar-separator: rgba(255, 255, 255, 0.1);
 
-  /* ── On-primary text — dark mode (làm sáng hơn trên nền crimson tối hơn) */
-  --on-primary: #ffffff;
-  --on-primary-muted: rgba(255, 255, 255, 0.70);
-  --on-primary-dim: rgba(255, 255, 255, 0.55);
+  /* ── On-primary text — dark mode (trên nền teal sáng) */
+  --on-primary: #0f1415;
+  --on-primary-muted: rgba(15, 20, 21, 0.75);
+  --on-primary-dim: rgba(15, 20, 21, 0.55);
 }
 
 @theme inline {
@@ -250,10 +252,10 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--surface-container-lowest);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  box-shadow: 0 1px 2px rgba(28, 15, 14, 0.06);
+  box-shadow: 0 1px 2px rgba(35, 35, 35, 0.06);
 }
 
-/* ─── NProgress — Crimson loading bar ───────────────────────────────────── */
+/* ─── NProgress — Teal loading bar ───────────────────────────────────── */
 #nprogress .bar {
   background: var(--primary) !important;
   height: 2px !important;

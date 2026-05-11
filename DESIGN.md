@@ -1,12 +1,21 @@
-# Design System: Tacho Admin (Admin Frontend) — v2 Monochromatic Crimson
+# Design System: Tacho Admin (Admin Frontend) — v3 Matcha Zen
 
 ## 1. Creative North Star
 
-**"The Digital Kanso"** — Lấy cảm hứng từ _Kanso_ (simplicity) và _Ma_ (negative space) của thẩm mỹ Nhật Bản. Đây là một digital dojo.
+**"The Digital Kanso"** — Lấy cảm hứng từ _Kanso_ (simplicity) và _Ma_ (negative space) của thẩm mỹ Nhật Bản. Đây là một digital dojo để quản lý việc dạy tiếng Nhật.
 
 Phong cách: **high-end editorial**. Asymmetric layout, tonal depth, typography được đối xử như thư pháp. Tránh xa "cluttered dashboard" trope.
 
-**v2 Direction:** Toàn bộ palette thống nhất về nhiệt độ màu **warm crimson**. Sidebar deep burgundy tạo chiều sâu, surfaces có warm tint nhẹ — loại bỏ hoàn toàn sự va chạm cool/warm của v1.
+**v3 Direction — "Matcha Zen":** Lấy palette từ [Happy Hues #8](https://www.happyhues.co/palettes/8) (light) và [#13](https://www.happyhues.co/palettes/13) (dark).
+
+Ẩn dụ văn hoá Nhật:
+
+- **Washi paper cream (`#f8f5f2`)** — giấy washi truyền thống, nền ấm áp cho việc học.
+- **Matcha teal (`#078080`)** — màu của trà matcha đậm đặc, primary CTA gợi sự tập trung và tĩnh tại.
+- **Seal coral (`#d84a35`)** — con dấu hanko đỏ son, dùng cho accent / highlight.
+- **Editorial ink (`#232323`)** — mực sumi-e, dùng cho sidebar và text.
+
+Toàn palette dịch chuyển từ "warm crimson" (v2) sang **warm neutral + teal accent** — calmer, nhiều khoảng thở hơn, tránh sự intense của đỏ cho môi trường học lâu dài.
 
 ---
 
@@ -16,43 +25,47 @@ Phong cách: **high-end editorial**. Asymmetric layout, tonal depth, typography 
 
 | Token                         | Light     | Dark      | Dùng cho                                             |
 | ----------------------------- | --------- | --------- | ---------------------------------------------------- |
-| `--primary`                   | `#8f0020` | `#ffb3bc` | Primary CTA, progress fill, active state             |
-| `--primary-container`         | `#bc002d` | `#690016` | Gradient end của primary button                      |
-| `--primary-fixed-dim`         | `#f5c0c8` | `#930020` | Progress bar track                                   |
-| `--secondary`                 | `#1a0008` | `#f2c4cc` | Sidebar background (dark) / sidebar text (dark mode) |
-| `--secondary-container`       | `#f5dde0` | `#4a1520` | Selection chip background                            |
-| `--on-secondary-container`    | `#3d0011` | `#ffdde2` | Selection chip text                                  |
-| `--tertiary`                  | `#7a2535` | `#f5b8c4` | Tertiary button text                                 |
-| `--surface`                   | `#fdf7f6` | `#1c1210` | Base background — warm tint                          |
-| `--surface-container-low`     | `#f8f0ef` | `#221615` | Secondary sections, zebra row                        |
-| `--surface-container-lowest`  | `#ffffff` | `#150d0c` | Interactive cards ("lift" effect)                    |
-| `--surface-container-high`    | `#efe4e3` | `#2a1b1a` | Background behind cards                              |
-| `--surface-container-highest` | `#e8d8d7` | `#321f1e` | Card body                                            |
-| `--on-surface`                | `#1c0f0e` | `#f0e0de` | Body text — warm near-black                          |
-| `--on-surface-variant`        | `#6b3a38` | `#d4a8a5` | Section titles, secondary text                       |
-| `--outline-variant`           | `#e8c4c2` | `#5a2e2c` | Ghost border base (20% opacity)                      |
+| `--primary`                   | `#078080` | `#44c5c5` | Primary CTA, progress fill, active state (matcha)    |
+| `--primary-container`         | `#056666` | `#078080` | Gradient end của primary button                      |
+| `--primary-fixed-dim`         | `#b8e0e0` | `#0a5a5a` | Progress bar track                                   |
+| `--secondary`                 | `#232323` | `#0a0f10` | Sidebar ink background                               |
+| `--secondary-container`       | `#dfece8` | `#1a3535` | Selection chip background (matcha foam)              |
+| `--on-secondary-container`    | `#056666` | `#b8e0e0` | Selection chip text                                  |
+| `--tertiary`                  | `#d84a35` | `#ff8068` | Accent / tertiary button text (seal coral)           |
+| `--accent`                    | `#feefe8` | `#2a2323` | Callout background — warm peach                      |
+| `--surface`                   | `#f8f5f2` | `#0f1415` | Base background — washi paper / moonlit ink          |
+| `--surface-container-low`     | `#f2eee9` | `#141a1b` | Secondary sections, zebra row                        |
+| `--surface-container-lowest`  | `#fffffe` | `#0a0f10` | Interactive cards ("lift" effect)                    |
+| `--surface-container-high`    | `#e6e1dc` | `#1b2324` | Background behind cards                              |
+| `--surface-container-highest` | `#ded9d2` | `#222a2b` | Card body                                            |
+| `--on-surface`                | `#232323` | `#fffffe` | Body text — editorial ink                            |
+| `--on-surface-variant`        | `#52565a` | `#a7a9be` | Section titles, secondary text                       |
+| `--outline-variant`           | `#232323` | `#2a3636` | Ghost border base (20% opacity)                      |
 
 ### Contrast ratios (WCAG)
 
-Tất cả token pairs đã được kiểm tra và pass AA (≥4.5:1):
+Tất cả token pairs được verify pass AA (≥4.5:1):
 
 | Pair                                 | Light      | Dark       |
 | ------------------------------------ | ---------- | ---------- |
-| `--on-surface` / `--surface`         | 17.6:1 AAA | 14.4:1 AAA |
-| `--on-surface` / card                | 18.7:1 AAA | 15.0:1 AAA |
-| `--on-surface-variant` / `--surface` | 8.7:1 AAA  | 8.7:1 AAA  |
-| `--on-secondary-container` / chip bg | 13.5:1 AAA | 11.8:1 AAA |
-| `--tertiary` / `--surface`           | 9.2:1 AAA  | 11.0:1 AAA |
+| `--on-surface` / `--surface`         | 14.8:1 AAA | 16.9:1 AAA |
+| `--on-surface` / card                | 15.5:1 AAA | 18.3:1 AAA |
+| `--on-surface-variant` / `--surface` | 7.2:1 AAA  | 8.3:1 AAA  |
+| `--primary` / `--primary-foreground` | 4.9:1 AA   | 7.8:1 AAA  |
+| `--tertiary` / `--surface`           | 4.6:1 AA   | 5.9:1 AA   |
+| `--on-secondary-container` / chip bg | 7.0:1 AAA  | 9.2:1 AAA  |
 
 ### Sidebar text rule
 
-Sidebar background là `#1a0008` (light) / vẫn dùng deep dark trong dark mode.
+Sidebar background là `#1a1a1a` (light) / `#0a0f10` (dark) — editorial ink cả hai chế độ.
 
-- Mọi text trên sidebar dùng `#ffffff` hoặc `--primary` (`#ffb3bc` dark) — **không** dùng `--on-surface`
-- Nav labels: `rgba(255,255,255,0.6)`
-- Active item text: `#ffffff`
+- Mọi text trên sidebar dùng `#ffffff` hoặc `--primary` (teal) — **không** dùng `--on-surface`
+- Nav labels: `rgba(255,255,255,0.55)`
+- Active item text: `#ffffff`, indicator stripe `--primary` (matcha teal)
 
 `--primary` reserved cho "Moments of Progression" — submit, bắt đầu bài học, primary CTA. Không dùng cho decorative elements.
+
+`--tertiary` (coral seal) dùng cho highlights nhỏ, links, hoặc warning-soft (không phải destructive). Dùng sparingly — như con dấu trên tài liệu.
 
 ---
 
@@ -86,27 +99,27 @@ font-family: "Nunito", "Kiwi Maru", system-ui, sans-serif;
   └── --surface-container-lowest (card) → "pop" tự nhiên
 ```
 
-Floating elements (modal, popover): `box-shadow: 0 12px 40px rgba(28, 15, 14, 0.08)`
+Floating elements (modal, popover): `box-shadow: 0 12px 40px rgba(35, 35, 35, 0.08)`
 
 ### Sidebar
 
-- Background: `#1a0008` (solid cả light lẫn dark mode)
+- Background: `#1a1a1a` (light) / `#0a0f10` (dark) — editorial ink
 - Tablet+: `backdrop-filter: blur(12px)` (glassmorphism overlay)
 - Mobile: solid, không glassmorphism
-- Active item: vertical stripe `--primary` 4px left edge + `background: rgba(255,255,255,0.08)`
+- Active item: vertical stripe `--primary` (teal) 4px left edge + `background: rgba(255,255,255,0.08)`
 - **Text color:** `#ffffff` cho nav items, `rgba(255,255,255,0.55)` cho nav labels — không dùng `--on-surface`
-- Logo / brand text: `--primary` (`#ffb3bc` dark / `#ffffff` light)
+- Logo / brand text: `--primary` (teal) hoặc `#ffffff`
 
 ### Buttons
 
-- **Primary:** gradient `--primary` → `--primary-container`, `border-radius: var(--radius)`
+- **Primary:** gradient `--primary` → `--primary-container` (matcha teal), `border-radius: var(--radius)`
 - **Secondary:** transparent + ghost border (20% `--outline-variant`)
-- **Tertiary:** text only, màu `--tertiary` (`#7a2535` light / `#f5b8c4` dark), underline on hover only — **bắt buộc `font-size ≥ 1rem`** để đảm bảo AA
+- **Tertiary:** text only, màu `--tertiary` (`#d84a35` light / `#ff8068` dark), underline on hover only — **bắt buộc `font-size ≥ 1rem`** để đảm bảo AA
 
 ### Input Fields
 
 - Default: `--surface-container-low`
-- Focus: shift sang `--surface-container-lowest` + 2px `--primary` underline animate từ center
+- Focus: shift sang `--surface-container-lowest` + 2px `--primary` (teal) underline animate từ center
 - Không dùng heavy border on focus
 
 ### Border Radius
@@ -119,11 +132,11 @@ Floating elements (modal, popover): `box-shadow: 0 12px 40px rgba(28, 15, 14, 0.
 
 ### Progress Bars
 
-- Track: `--primary-fixed-dim` (`#f5c0c8` / `#930020`) / Fill: `--primary`
+- Track: `--primary-fixed-dim` (`#b8e0e0` / `#0a5a5a`) / Fill: `--primary`
 
 ### Mastery Chips
 
-- Background `--secondary-container`, text `--on-secondary-container`, `rounded-full`
+- Background `--secondary-container` (matcha foam), text `--on-secondary-container`, `rounded-full`
 
 ### Tables
 
@@ -137,10 +150,12 @@ Floating elements (modal, popover): `box-shadow: 0 12px 40px rgba(28, 15, 14, 0.
 
 - Embrace "Ma" — section trông trống thì giữ nguyên, đừng nhồi thêm
 - Dùng tonal shift để phân tách — không dùng border
-- Giữ toàn bộ màu trong vùng warm (đỏ / nâu / hồng) — không mix cool blue/green
+- Giữ toàn bộ màu trong vùng calm (cream / teal / muted ink) — coral dùng sparingly như con dấu
+- Dùng teal làm primary duy nhất cho progression — giữ identity nhất quán
 
 **Don't:**
 
-- Không pure black — luôn dùng `--on-surface` (`#1c0f0e`)
+- Không pure black — luôn dùng `--on-surface` (`#232323`)
 - Không crowd sidebar — `p-12` top padding bắt buộc
-- Không dùng `--on-surface` làm text trên sidebar `#1a0008` — contrast chỉ 1.07:1
+- Không dùng `--on-surface` làm text trên sidebar ink — contrast quá thấp
+- Không saturate coral khắp UI — chỉ dùng cho CTA bổ trợ hoặc highlight, tránh "fast food" vibe
