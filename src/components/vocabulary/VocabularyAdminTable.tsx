@@ -114,7 +114,7 @@ export function VocabularyAdminTable({
                   <Badge variant="outline">{ADMIN_VOCABULARY_CONTENT.tagsCountLabel(item.tags.length)}</Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={item.status === 'Published' ? 'default' : 'secondary'}>{getVocabularyStatusLabel(item.status)}</Badge>
+                  <Badge variant={item.status === 'Published' ? 'success' : item.status === 'Draft' ? 'warning' : 'outline'}>{getVocabularyStatusLabel(item.status)}</Badge>
                 </TableCell>
                 <TableCell>{format(new Date(item.createdAt), 'dd/MM/yyyy HH:mm')}</TableCell>
                 <TableCell>

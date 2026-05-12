@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState }
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { XIcon } from '@phosphor-icons/react'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -91,6 +92,9 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
   const [antonymInput, setAntonymInput] = useState('')
   const [relatedPhraseInput, setRelatedPhraseInput] = useState('')
   const [pitchPattern, setPitchPattern] = useState<number[]>([])
+  const [openSections, setOpenSections] = useState<string[]>(
+    mode === 'edit' ? ['basic', 'meanings', 'relations', 'sentences'] : ['basic']
+  )
   const [libraryKeyword, setLibraryKeyword] = useState('')
   const [libraryItems, setLibraryItems] = useState<Array<{ id: string; text: string; meaning: string; level: string | null }>>([])
   const [isLoadingLibrary, setIsLoadingLibrary] = useState(false)
@@ -160,6 +164,7 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
       setPitchPattern(initialData.pitchPattern ?? [])
       setLibraryKeyword('')
       setLibraryItems([])
+      setOpenSections(['basic', 'meanings', 'relations', 'sentences'])
       return
     }
 
@@ -172,6 +177,7 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
     setPitchPattern([])
     setLibraryKeyword('')
     setLibraryItems([])
+    setOpenSections(['basic'])
   }, [mode, initialData, form, open])
 
   useEffect(() => {
@@ -332,18 +338,11 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
     void form.handleSubmit(handleSubmit)()
   }
 
-  const triggerDraftSubmit = () => {
-    submitAsDraftRef.current = true
-    void form.handleSubmit(handleSubmit, () => {
-      submitAsDraftRef.current = false
-    })()
-  }
-
   useImperativeHandle(
     ref,
     () => ({
       submit: triggerSubmit,
-      submitDraft: triggerDraftSubmit,
+      submitDraft: triggerSubmit,
     }),
   )
 
@@ -366,8 +365,10 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-              <section className="space-y-4">
-                <h3 className="text-base font-semibold">{ADMIN_VOCABULARY_CONTENT.form.sections.basicTitle}</h3>
+              <Accordion type="multiple" value={openSections} onValueChange={setOpenSections} className="space-y-2">
+                <AccordionItem value="basic" className="border rounded-lg px-4">
+                  <AccordionTrigger className="text-base font-semibold">{ADMIN_VOCABULARY_CONTENT.form.sections.basicTitle}</AccordionTrigger>
+                  <AccordionContent className="space-y-4">
 
               <FormField
                 control={form.control}
@@ -397,21 +398,23 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
                 )}
               />
 
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-[1fr_auto] items-start">
                 <VocabularyReadingAudioPanel
                   control={form.control}
                   audioUrl={initialData?.audioUrl ?? null}
                 />
 
-                <VocabularyPitchPanel
-                  readingChars={readingChars}
-                  pitchPattern={pitchPattern}
-                  pitchChart={pitchChart}
-                  onTogglePitchAt={togglePitchAt}
-                />
+                {readingChars.length > 0 && (
+                  <VocabularyPitchPanel
+                    readingChars={readingChars}
+                    pitchPattern={pitchPattern}
+                    pitchChart={pitchChart}
+                    onTogglePitchAt={togglePitchAt}
+                  />
+                )}
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-3">
                 <FormField
                   control={form.control}
                   name="level"
@@ -459,7 +462,6 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
                     </FormItem>
                   )}
                 />
-              </div>
 
               <FormField
                 control={form.control}
@@ -485,6 +487,7 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
                   </FormItem>
                 )}
               />
+              </div>
 
               <FormField
                 control={form.control}
@@ -536,8 +539,12 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
                   </FormItem>
                 )}
               />
-              </section>
+                  </AccordionContent>
+                </AccordionItem>
 
+                <AccordionItem value="meanings" className="border rounded-lg px-4">
+                  <AccordionTrigger className="text-base font-semibold">{ADMIN_VOCABULARY_CONTENT.form.sections.meaningsTitle}</AccordionTrigger>
+                  <AccordionContent>
               <VocabularyMeaningsSection
                 form={form}
                 meaningFieldArray={meaningFieldArray}
@@ -552,7 +559,12 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
                 onAddDefinition={addDefinition}
                 onRemoveDefinition={removeDefinition}
               />
+                  </AccordionContent>
+                </AccordionItem>
 
+                <AccordionItem value="relations" className="border rounded-lg px-4">
+                  <AccordionTrigger className="text-base font-semibold">{ADMIN_VOCABULARY_CONTENT.form.sections.relationsTitle}</AccordionTrigger>
+                  <AccordionContent>
               <VocabularyRelationsSection
                 form={form}
                 synonymInput={synonymInput}
@@ -564,7 +576,12 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
                 onAddListItem={addListItem}
                 onRemoveListItem={removeListItem}
               />
+                  </AccordionContent>
+                </AccordionItem>
 
+                <AccordionItem value="sentences" className="border rounded-lg px-4">
+                  <AccordionTrigger className="text-base font-semibold">{ADMIN_VOCABULARY_CONTENT.form.sections.sentencesTitle}</AccordionTrigger>
+                  <AccordionContent>
               <VocabularySentencesSection
                 form={form}
                 sentenceFieldArray={sentenceFieldArray}
@@ -576,14 +593,14 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
                 onAddSentenceFromLibrary={addSentenceFromLibrary}
                 onAddNewSentence={addNewSentence}
               />
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
 
               <div className="sticky bottom-[-24px] z-10 -mx-6 border-t bg-background/95 px-6 py-4 backdrop-blur-sm lg:bottom-[-32px]">
                 <div className="flex flex-wrap gap-2">
                 <Button type="submit" disabled={isSubmitting || isLoadingDetail}>
-                  {mode === 'create' ? ADMIN_VOCABULARY_CONTENT.form.createActionLabel : ADMIN_VOCABULARY_CONTENT.form.updateActionLabel}
-                </Button>
-                <Button type="button" variant="outline" onClick={triggerDraftSubmit} disabled={isSubmitting || isLoadingDetail}>
-                  {ADMIN_VOCABULARY_CONTENT.actions.saveDraft}
+                  {ADMIN_VOCABULARY_CONTENT.form.saveActionLabel}
                 </Button>
                 <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
                   {ADMIN_VOCABULARY_CONTENT.form.cancelActionLabel}

@@ -315,7 +315,7 @@ export function AdminJlptExamDetailPage() {
             <h1 className="text-2xl font-semibold" style={{ color: 'var(--on-surface)' }}>{exam.title}</h1>
             <div className="mt-1 flex items-center gap-2 text-sm" style={{ color: 'var(--on-surface-variant)' }}>
               <Badge variant="outline">{JLPT_LEVEL_LABELS[exam.level]}</Badge>
-              <Badge variant={isPublished ? 'default' : 'secondary'}>{PUBLISH_STATUS_LABELS[exam.status]}</Badge>
+              <Badge variant={isPublished ? 'success' : exam.status === 'Draft' ? 'warning' : 'outline'}>{PUBLISH_STATUS_LABELS[exam.status]}</Badge>
               <span>{exam.totalDurationMinutes} {JLPT_EXAM_CONTENT.columns.duration.toLowerCase()}</span>
             </div>
           </div>

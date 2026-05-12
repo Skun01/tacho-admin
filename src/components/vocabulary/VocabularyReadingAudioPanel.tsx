@@ -36,34 +36,26 @@ export function VocabularyReadingAudioPanel({
           </FormControl>
           <FormMessage />
 
-          <div
-            className="mt-3 overflow-hidden rounded-md border p-1.5"
-            style={{
-              borderColor: 'var(--border)',
-              backgroundColor: 'color-mix(in srgb, var(--surface) 92%, var(--primary) 2%)',
-            }}
-          >
-            <p className="text-xs font-medium">{ADMIN_VOCABULARY_CONTENT.form.audioPreviewLabel}</p>
-
-            <div className="mt-1">
-              {resolvedAudioUrl ? (
-                <AudioPlayer
-                  src={resolvedAudioUrl}
-                  preload="metadata"
-                  showJumpControls={false}
-                  autoPlayAfterSrcChange={false}
-                  customAdditionalControls={[]}
-                  customVolumeControls={[]}
-                  customProgressBarSection={[RHAP_UI.CURRENT_TIME, RHAP_UI.PROGRESS_BAR, RHAP_UI.DURATION]}
-                  className="vocabulary-audio-player rounded-md"
-                />
-              ) : (
-                <p className="pt-1 text-xs" style={{ color: 'var(--on-surface-variant)' }}>
-                  {ADMIN_VOCABULARY_CONTENT.form.audioEmptyLabel}
-                </p>
-              )}
+          {resolvedAudioUrl && (
+            <div
+              className="mt-2 overflow-hidden rounded-md border p-1.5"
+              style={{
+                borderColor: 'var(--border)',
+                backgroundColor: 'color-mix(in srgb, var(--surface) 92%, var(--primary) 2%)',
+              }}
+            >
+              <AudioPlayer
+                src={resolvedAudioUrl}
+                preload="metadata"
+                showJumpControls={false}
+                autoPlayAfterSrcChange={false}
+                customAdditionalControls={[]}
+                customVolumeControls={[]}
+                customProgressBarSection={[RHAP_UI.CURRENT_TIME, RHAP_UI.PROGRESS_BAR, RHAP_UI.DURATION]}
+                className="vocabulary-audio-player rounded-md"
+              />
             </div>
-          </div>
+          )}
         </FormItem>
       )}
     />

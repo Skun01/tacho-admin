@@ -23,7 +23,7 @@ const INFO_GRID_FIELDS = [
     key: 'status',
     label: SHADOWING_ADMIN_CONTENT.columns.status,
     render: (topic: ShadowingTopicDetailResponse) => (
-      <Badge variant={topic.status === 'Published' ? 'default' : 'secondary'}>
+      <Badge variant={topic.status === 'Published' ? 'success' : topic.status === 'Draft' ? 'warning' : 'outline'}>
         {SHADOWING_STATUS_LABELS[topic.status]}
       </Badge>
     ),

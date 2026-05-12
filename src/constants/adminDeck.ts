@@ -12,9 +12,9 @@ export const DECK_ADMIN_ERROR_MESSAGES: Record<string, string> = {
 }
 
 export const DECK_ADMIN_STATUS_LABELS: Record<DeckStatus, string> = {
-  Draft: 'Nháp',
-  Published: 'Đã phát hành',
-  Archived: 'Đã lưu trữ',
+  Draft: 'Lưu nháp',
+  Published: 'Xuất bản',
+  Archived: 'Lưu trữ',
 }
 
 export const DECK_ADMIN_STATUS_DESCRIPTIONS: Record<DeckStatus, string> = {

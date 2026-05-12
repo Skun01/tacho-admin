@@ -203,13 +203,6 @@ export function GrammarUpsertForm({
     })
   }
 
-  const triggerDraftSubmit = () => {
-    submitAsDraftRef.current = true
-    void form.handleSubmit(handleSubmit, () => {
-      submitAsDraftRef.current = false
-    })()
-  }
-
   if (!open) return null
 
   return (
@@ -500,10 +493,7 @@ export function GrammarUpsertForm({
               <div className="sticky bottom-[-24px] z-10 -mx-6 border-t bg-background/95 px-6 py-4 backdrop-blur-sm lg:bottom-[-32px]">
                 <div className="flex flex-wrap gap-2">
                   <Button type="submit" disabled={isSubmitting || isLoadingDetail}>
-                    {mode === 'create' ? ADMIN_GRAMMAR_CONTENT.form.createActionLabel : ADMIN_GRAMMAR_CONTENT.form.updateActionLabel}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={triggerDraftSubmit} disabled={isSubmitting || isLoadingDetail}>
-                    {ADMIN_GRAMMAR_CONTENT.actions.saveDraft}
+                    {ADMIN_GRAMMAR_CONTENT.form.saveActionLabel}
                   </Button>
                   <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
                     {ADMIN_GRAMMAR_CONTENT.form.cancelActionLabel}

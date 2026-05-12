@@ -17,9 +17,9 @@ export const SHADOWING_ADMIN_ERROR_MESSAGES: Record<string, string> = {
 // ── Status Labels ────────────────────────────────────────────────────────────
 
 export const SHADOWING_STATUS_LABELS: Record<ShadowingStatus, string> = {
-  Draft: 'Nháp',
-  Published: 'Đã phát hành',
-  Archived: 'Đã lưu trữ',
+  Draft: 'Lưu nháp',
+  Published: 'Xuất bản',
+  Archived: 'Lưu trữ',
 }
 
 export const SHADOWING_STATUS_DESCRIPTIONS: Record<ShadowingStatus, string> = {

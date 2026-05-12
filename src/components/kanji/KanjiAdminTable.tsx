@@ -20,9 +20,9 @@ interface KanjiAdminTableProps {
 }
 
 function StatusBadge({ status }: { status: KanjiAdminItem['status'] }) {
-  const variants: Record<string, 'default' | 'secondary' | 'outline'> = {
-    Published: 'default',
-    Draft: 'secondary',
+  const variants: Record<string, 'default' | 'secondary' | 'outline' | 'success' | 'warning'> = {
+    Published: 'success',
+    Draft: 'warning',
     Archived: 'outline',
   }
 

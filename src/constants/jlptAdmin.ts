@@ -37,9 +37,9 @@ export const JLPT_LEVEL_LABELS: Record<JlptLevel, string> = {
 }
 
 export const PUBLISH_STATUS_LABELS: Record<PublishStatus, string> = {
-  Draft: 'Nháp',
-  Published: 'Đã phát hành',
-  Archived: 'Đã lưu trữ',
+  Draft: 'Lưu nháp',
+  Published: 'Xuất bản',
+  Archived: 'Lưu trữ',
 }
 
 export const SECTION_TYPE_LABELS: Record<SectionType, string> = {

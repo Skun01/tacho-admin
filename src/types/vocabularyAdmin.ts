@@ -7,9 +7,9 @@ export type VocabularyStatus = (typeof VOCABULARY_STATUS_OPTIONS)[number]
 export type VocabularyWordType = (typeof VOCABULARY_WORD_TYPE_OPTIONS)[number]
 
 export const VOCABULARY_STATUS_LABELS: Record<VocabularyStatus, string> = {
-  Draft: 'Bản nháp',
-  Published: 'Đã xuất bản',
-  Archived: 'Đã lưu trữ',
+  Draft: 'Lưu nháp',
+  Published: 'Xuất bản',
+  Archived: 'Lưu trữ',
 }
 
 export function getVocabularyStatusLabel(status: VocabularyStatus) {

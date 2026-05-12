@@ -5,9 +5,9 @@ export type KanjiLevel = (typeof KANJI_LEVEL_OPTIONS)[number]
 export type KanjiStatus = (typeof KANJI_STATUS_OPTIONS)[number]
 
 export const KANJI_STATUS_LABELS: Record<KanjiStatus, string> = {
-  Draft: 'Bản nháp',
-  Published: 'Đã xuất bản',
-  Archived: 'Đã lưu trữ',
+  Draft: 'Lưu nháp',
+  Published: 'Xuất bản',
+  Archived: 'Lưu trữ',
 }
 
 export function getKanjiStatusLabel(status: KanjiStatus) {

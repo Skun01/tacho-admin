@@ -76,7 +76,7 @@ export function JlptExamAdminTable({
               </TableCell>
               <TableCell>{item.totalDurationMinutes}</TableCell>
               <TableCell>
-                <Badge variant={item.status === 'Published' ? 'default' : 'secondary'}>
+                <Badge variant={item.status === 'Published' ? 'success' : item.status === 'Draft' ? 'warning' : 'outline'}>
                   {PUBLISH_STATUS_LABELS[item.status]}
                 </Badge>
               </TableCell>

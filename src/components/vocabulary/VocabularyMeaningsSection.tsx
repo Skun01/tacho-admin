@@ -33,9 +33,7 @@ export function VocabularyMeaningsSection({
   onRemoveDefinition,
 }: VocabularyMeaningsSectionProps) {
   return (
-    <section className="space-y-4">
-      <h3 className="text-base font-semibold">{ADMIN_VOCABULARY_CONTENT.form.sections.meaningsTitle}</h3>
-
+    <div className="space-y-4">
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-2">
           <p className="text-sm font-medium">{ADMIN_VOCABULARY_CONTENT.form.fields.meaningDefinitionsLabel}</p>
@@ -142,6 +140,6 @@ export function VocabularyMeaningsSection({
           </div>
         ))}
       </div>
-    </section>
+    </div>
   )
 }

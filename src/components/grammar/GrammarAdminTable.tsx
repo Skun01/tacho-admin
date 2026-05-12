@@ -21,9 +21,9 @@ interface GrammarAdminTableProps {
 }
 
 function StatusBadge({ status }: { status: GrammarAdminItem['status'] }) {
-  const variants: Record<string, 'default' | 'secondary' | 'outline'> = {
-    Published: 'default',
-    Draft: 'secondary',
+  const variants: Record<string, 'default' | 'secondary' | 'outline' | 'success' | 'warning'> = {
+    Published: 'success',
+    Draft: 'warning',
     Archived: 'outline',
   }
 

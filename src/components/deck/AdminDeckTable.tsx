@@ -91,7 +91,7 @@ export function AdminDeckTable({
               <TableCell>{item.type.name ?? ADMIN_COMMON_CONTENT.emptyValueLabel}</TableCell>
               <TableCell>{item.createdBy.username}</TableCell>
               <TableCell>
-                <Badge variant={item.status === 'Published' ? 'default' : 'secondary'}>
+                <Badge variant={item.status === 'Published' ? 'success' : item.status === 'Draft' ? 'warning' : 'outline'}>
                   {DECK_ADMIN_STATUS_LABELS[item.status]}
                 </Badge>
               </TableCell>

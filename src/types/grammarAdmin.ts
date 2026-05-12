@@ -9,9 +9,9 @@ export type GrammarRegister = (typeof GRAMMAR_REGISTER_OPTIONS)[number]
 export type GrammarRelationType = (typeof GRAMMAR_RELATION_TYPE_OPTIONS)[number]
 
 export const GRAMMAR_STATUS_LABELS: Record<GrammarStatus, string> = {
-  Draft: 'Bản nháp',
-  Published: 'Đã xuất bản',
-  Archived: 'Đã lưu trữ',
+  Draft: 'Lưu nháp',
+  Published: 'Xuất bản',
+  Archived: 'Lưu trữ',
 }
 
 export function getGrammarStatusLabel(status: GrammarStatus) {

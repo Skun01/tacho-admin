@@ -37,9 +37,8 @@ export function VocabularySentencesSection({
   onAddNewSentence,
 }: VocabularySentencesSectionProps) {
   return (
-    <section className="space-y-4">
+    <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-base font-semibold">{ADMIN_VOCABULARY_CONTENT.form.sections.sentencesTitle}</h3>
         <Button type="button" variant="outline" size="sm" onClick={onAddNewSentence}>
           {ADMIN_VOCABULARY_CONTENT.form.addSentenceLabel}
         </Button>
@@ -150,6 +149,6 @@ export function VocabularySentencesSection({
           ))}
         </div>
       )}
-    </section>
+    </div>
   )
 }

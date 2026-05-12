@@ -108,9 +108,7 @@ export function VocabularyRelationsSection({
   onRemoveListItem,
 }: VocabularyRelationsSectionProps) {
   return (
-    <section className="space-y-4">
-      <h3 className="text-base font-semibold">{ADMIN_VOCABULARY_CONTENT.form.sections.relationsTitle}</h3>
-
+    <div className="space-y-4">
       <RelationListSection
         form={form}
         path="synonyms"
@@ -143,6 +141,6 @@ export function VocabularyRelationsSection({
         onAddListItem={onAddListItem}
         onRemoveListItem={onRemoveListItem}
       />
-    </section>
+    </div>
   )
 }

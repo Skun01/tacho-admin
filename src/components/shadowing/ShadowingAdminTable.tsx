@@ -82,7 +82,7 @@ export function ShadowingAdminTable({
                 )}
               </TableCell>
               <TableCell>
-                <Badge variant={item.status === 'Published' ? 'default' : 'secondary'}>
+                <Badge variant={item.status === 'Published' ? 'success' : item.status === 'Draft' ? 'warning' : 'outline'}>
                   {SHADOWING_STATUS_LABELS[item.status]}
                 </Badge>
               </TableCell>
