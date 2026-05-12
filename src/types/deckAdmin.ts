@@ -160,3 +160,12 @@ export interface AdminDeckTypeListResult {
 export const DECK_ADMIN_STATUS_OPTIONS: DeckStatus[] = ['Draft', 'Published', 'Archived']
 export const DECK_ADMIN_VISIBILITY_OPTIONS: DeckVisibility[] = ['Public', 'Private']
 export const DECK_ADMIN_CARD_TYPE_OPTIONS: DeckCardType[] = ['Vocab', 'Grammar', 'Kanji']
+export const DECK_ADMIN_LEVEL_OPTIONS = ['N5', 'N4', 'N3', 'N2', 'N1'] as const
+
+export interface AdminDeckSuggestByTopicQuery {
+  topic: string
+  cardType?: DeckCardType
+  level?: 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
+  page?: number
+  pageSize?: number
+}

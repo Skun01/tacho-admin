@@ -1,4 +1,4 @@
-import { MagnifyingGlassIcon, PlusIcon, TrashIcon, XIcon } from '@phosphor-icons/react'
+import { MagnifyingGlassIcon, PlusIcon, SparkleIcon, TrashIcon, XIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -16,10 +16,10 @@ import {
   ADMIN_DECK_CONTENT,
   DECK_ADMIN_CARD_TYPE_LABELS,
 } from '@/constants/adminDeck'
-import { useAdminDeckCardSearch } from '@/hooks/useAdminDeckCardSearch'
+import { useAdminDeckSuggestByTopic } from '@/hooks/useAdminDeckSuggestByTopic'
 import { DECK_ADMIN_CARD_TYPE_OPTIONS, DECK_ADMIN_LEVEL_OPTIONS, type DeckCardType } from '@/types/deckAdmin'
 
-interface AdminDeckAddCardDialogProps {
+interface AdminDeckSuggestByTopicDialogProps {
   open: boolean
   existingCardFolderMap: Record<string, string>
   isPending?: boolean
@@ -38,23 +38,23 @@ function getCardTypeColors(cardType: DeckCardType) {
   return 'border-violet-200/60 bg-violet-50/60 text-violet-700'
 }
 
-export function AdminDeckAddCardDialog({
+export function AdminDeckSuggestByTopicDialog({
   open,
   existingCardFolderMap,
   isPending = false,
   onOpenChange,
   onAddCard,
   onRemoveCard,
-}: AdminDeckAddCardDialogProps) {
-  const [query, setQuery] = useState('')
+}: AdminDeckSuggestByTopicDialogProps) {
+  const [topic, setTopic] = useState('')
   const [cardType, setCardType] = useState<DeckCardType | undefined>(undefined)
   const [level, setLevel] = useState<'N5' | 'N4' | 'N3' | 'N2' | 'N1' | undefined>(undefined)
   const [page, setPage] = useState(1)
 
-  const searchQuery = query.trim()
+  const trimmedTopic = topic.trim()
 
-  function handleQueryChange(value: string) {
-    setQuery(value)
+  function handleTopicChange(value: string) {
+    setTopic(value)
     setPage(1)
   }
 
@@ -68,22 +68,22 @@ export function AdminDeckAddCardDialog({
     setPage(1)
   }
 
-  const searchResult = useAdminDeckCardSearch(
+  const searchResult = useAdminDeckSuggestByTopic(
     {
-      q: searchQuery,
+      topic: trimmedTopic,
       cardType,
       level,
       page,
       pageSize: 20,
     },
-    open && Boolean(searchQuery),
+    open && Boolean(trimmedTopic),
   )
 
   const items = searchResult.data?.data ?? []
   const metaData = searchResult.data?.metaData
   const totalPage = metaData ? Math.ceil(metaData.total / metaData.pageSize) : 1
 
-  const content = ADMIN_DECK_CONTENT.addCardDialog
+  const content = ADMIN_DECK_CONTENT.suggestByTopicDialog
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -98,21 +98,21 @@ export function AdminDeckAddCardDialog({
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="px-6 pb-4">
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+              <SparkleIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
               <Input
                 autoFocus
-                value={query}
-                onChange={(event) => handleQueryChange(event.target.value)}
+                value={topic}
+                onChange={(event) => handleTopicChange(event.target.value)}
                 placeholder={content.searchPlaceholder}
                 className="h-11 rounded-xl border-border/60 bg-background pl-10 pr-10 shadow-none focus-visible:border-primary/40 focus-visible:ring-0"
               />
-              {query.trim() && (
+              {topic.trim() && (
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon-xs"
                   className="absolute right-1.5 top-1/2 -translate-y-1/2"
-                  onClick={() => handleQueryChange('')}
+                  onClick={() => handleTopicChange('')}
                   aria-label={content.clearSearchLabel}
                 >
                   <XIcon size={14} />
@@ -138,10 +138,10 @@ export function AdminDeckAddCardDialog({
 
             <Select value={level ?? '__all__'} onValueChange={(value) => handleLevelChange(value === '__all__' ? undefined : (value as 'N5' | 'N4' | 'N3' | 'N2' | 'N1'))}>
               <SelectTrigger className="h-9 w-32 rounded-lg border-border/60 bg-background shadow-none">
-                <SelectValue placeholder={ADMIN_DECK_CONTENT.suggestByTopicDialog.levelFilterPlaceholder} />
+                <SelectValue placeholder={content.levelFilterPlaceholder} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__all__">{ADMIN_DECK_CONTENT.suggestByTopicDialog.allLevelsLabel}</SelectItem>
+                <SelectItem value="__all__">{content.allLevelsLabel}</SelectItem>
                 {DECK_ADMIN_LEVEL_OPTIONS.map((option) => (
                   <SelectItem key={option} value={option}>
                     {option}
@@ -153,9 +153,9 @@ export function AdminDeckAddCardDialog({
 
           <div className="min-h-0 flex-1 overflow-y-auto px-6">
             <div className="space-y-2 pb-4">
-              {!searchQuery ? (
+              {!trimmedTopic ? (
                 <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-background py-12 text-center">
-                  <MagnifyingGlassIcon size={24} className="text-muted-foreground/50 mb-2" />
+                  <SparkleIcon size={24} className="text-muted-foreground/50 mb-2" />
                   <p className="text-sm text-muted-foreground">
                     {content.emptySearchLabel}
                   </p>
@@ -166,6 +166,7 @@ export function AdminDeckAddCardDialog({
                 ))
               ) : items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-background py-12 text-center">
+                  <MagnifyingGlassIcon size={24} className="text-muted-foreground/50 mb-2" />
                   <p className="text-sm text-muted-foreground">
                     {content.emptyResultLabel}
                   </p>
@@ -241,7 +242,7 @@ export function AdminDeckAddCardDialog({
           </div>
         </div>
 
-        {searchQuery && items.length > 0 ? (
+        {trimmedTopic && items.length > 0 ? (
           <div className="flex items-center justify-between border-t border-border/60 px-6 py-4">
             <div className="flex items-center gap-2">
               <Button
@@ -252,10 +253,10 @@ export function AdminDeckAddCardDialog({
                 onClick={() => setPage((p) => p - 1)}
                 className="rounded-lg"
               >
-                {ADMIN_DECK_CONTENT.suggestByTopicDialog.previousPageLabel}
+                {content.previousPageLabel}
               </Button>
               <span className="text-sm text-muted-foreground">
-                {ADMIN_DECK_CONTENT.suggestByTopicDialog.pageInfoLabel(page, totalPage)}
+                {content.pageInfoLabel(page, totalPage)}
               </span>
               <Button
                 type="button"
@@ -265,7 +266,7 @@ export function AdminDeckAddCardDialog({
                 onClick={() => setPage((p) => p + 1)}
                 className="rounded-lg"
               >
-                {ADMIN_DECK_CONTENT.suggestByTopicDialog.nextPageLabel}
+                {content.nextPageLabel}
               </Button>
             </div>
             <Button type="button" variant="secondary" onClick={() => onOpenChange(false)} className="rounded-lg">

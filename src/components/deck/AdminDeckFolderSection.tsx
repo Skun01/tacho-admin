@@ -5,6 +5,7 @@ import {
   DotsSixVerticalIcon,
   PencilSimpleIcon,
   PlusIcon,
+  SparkleIcon,
   TrashIcon,
 } from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
@@ -35,6 +36,7 @@ interface AdminDeckFolderSectionProps {
   onEdit: (folder: DeckFolderResponse) => void
   onDelete: (folder: DeckFolderResponse) => void
   onAddCard: (folder: DeckFolderResponse) => void
+  onSuggestByTopic: (folder: DeckFolderResponse) => void
   onRemoveCard: (folder: DeckFolderResponse, cardId: string) => void
   onDragCardStart?: (cardId: string) => void
   onDragCardOver?: (cardId: string) => void
@@ -57,6 +59,7 @@ export function AdminDeckFolderSection({
   onEdit,
   onDelete,
   onAddCard,
+  onSuggestByTopic,
   onRemoveCard,
   onDragCardStart,
   onDragCardOver,
@@ -115,6 +118,10 @@ export function AdminDeckFolderSection({
           <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={() => onAddCard(folder)} disabled={isPending}>
             <PlusIcon size={14} />
             {ADMIN_DECK_CONTENT.folder.addCardLabel}
+          </Button>
+          <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={() => onSuggestByTopic(folder)} disabled={isPending}>
+            <SparkleIcon size={14} />
+            {ADMIN_DECK_CONTENT.folder.suggestByTopicLabel}
           </Button>
           <Button type="button" variant="ghost" size="icon-xs" onClick={() => onEdit(folder)} disabled={isPending} title={ADMIN_DECK_CONTENT.folder.editLabel}>
             <PencilSimpleIcon size={14} style={{ color: '#92400e' }} />

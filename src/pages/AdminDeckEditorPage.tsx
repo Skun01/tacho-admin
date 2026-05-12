@@ -14,6 +14,7 @@ import { AdminDeckConfirmDialog } from '@/components/deck/AdminDeckConfirmDialog
 import { AdminDeckFolderForm } from '@/components/deck/AdminDeckFolderForm'
 import { AdminDeckFolderSection } from '@/components/deck/AdminDeckFolderSection'
 import { AdminDeckForm } from '@/components/deck/AdminDeckForm'
+import { AdminDeckSuggestByTopicDialog } from '@/components/deck/AdminDeckSuggestByTopicDialog'
 import { gooeyToast } from '@/components/ui/goey-toaster'
 import { Button } from '@/components/ui/button'
 import {
@@ -110,6 +111,7 @@ export function AdminDeckEditorPage() {
   const [editingFolder, setEditingFolder] = useState<DeckFolderResponse | null>(null)
   const [folderDialogOpen, setFolderDialogOpen] = useState(false)
   const [addCardFolder, setAddCardFolder] = useState<DeckFolderResponse | null>(null)
+  const [suggestByTopicFolder, setSuggestByTopicFolder] = useState<DeckFolderResponse | null>(null)
   const [deleteDeckConfirmOpen, setDeleteDeckConfirmOpen] = useState(false)
   const [deleteFolderTarget, setDeleteFolderTarget] = useState<DeckFolderResponse | null>(null)
   const [deckFormDialogOpen, setDeckFormDialogOpen] = useState(isCreateMode)
@@ -310,6 +312,24 @@ export function AdminDeckEditorPage() {
     if (!deck || !addCardFolder) return
     try {
       const currentFolder = sortedFolders.find((folder) => folder.id === addCardFolder.id) ?? addCardFolder
+      await addCardMutation.mutateAsync({
+        deckId: deck.id,
+        folderId: currentFolder.id,
+        payload: {
+          cardId,
+          position: (currentFolder.cards.length + 1) * 1000,
+        },
+      })
+      gooeyToast.success(ADMIN_DECK_CONTENT.toast.addCardSuccess)
+    } catch (error) {
+      gooeyToast.error(getApiErrorMessage(error, ADMIN_DECK_CONTENT.toast.crudErrorFallback))
+    }
+  }
+
+  async function handleSuggestAddCard(cardId: string) {
+    if (!deck || !suggestByTopicFolder) return
+    try {
+      const currentFolder = sortedFolders.find((folder) => folder.id === suggestByTopicFolder.id) ?? suggestByTopicFolder
       await addCardMutation.mutateAsync({
         deckId: deck.id,
         folderId: currentFolder.id,
@@ -554,6 +574,7 @@ export function AdminDeckEditorPage() {
                       }}
                       onDelete={setDeleteFolderTarget}
                       onAddCard={setAddCardFolder}
+                      onSuggestByTopic={setSuggestByTopicFolder}
                       onRemoveCard={handleRemoveCard}
                       onDragCardStart={(cardId) => {
                         if (searchCardsQuery.trim()) return
@@ -616,6 +637,21 @@ export function AdminDeckEditorPage() {
                   if (!open) setAddCardFolder(null)
                 }}
                 onAddCard={handleAddCard}
+                onRemoveCard={(cardId, folderId) => {
+                  const folder = sortedFolders.find((item) => item.id === folderId)
+                  if (!folder) return
+                  void handleRemoveCard(folder, cardId)
+                }}
+              />
+
+              <AdminDeckSuggestByTopicDialog
+                open={Boolean(suggestByTopicFolder)}
+                existingCardFolderMap={existingCardFolderMap}
+                isPending={addCardMutation.isPending}
+                onOpenChange={(open) => {
+                  if (!open) setSuggestByTopicFolder(null)
+                }}
+                onAddCard={handleSuggestAddCard}
                 onRemoveCard={(cardId, folderId) => {
                   const folder = sortedFolders.find((item) => item.id === folderId)
                   if (!folder) return
