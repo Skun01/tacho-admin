@@ -27,14 +27,10 @@ export function Sidebar() {
         className={`
           fixed top-0 left-0 z-40 h-screen flex flex-col
           transition-all duration-300 ease-in-out
+          bg-sidebar-bg backdrop-blur-[12px]
           ${isCollapsed ? 'w-16' : 'w-64'}
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
-        style={{
-          backgroundColor: 'var(--sidebar-bg)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-        }}
       >
         {/* Top: Logo + collapse/close button */}
         <div
@@ -49,10 +45,7 @@ export function Sidebar() {
                 alt="Tacho"
                 className="w-7 h-7 object-contain brightness-0 invert"
               />
-              <span
-                className="font-bold text-base tracking-wide"
-                style={{ color: 'var(--on-primary)' }}
-              >
+              <span className="font-bold text-base tracking-wide text-on-primary">
                 Tacho
               </span>
             </Link>
@@ -61,8 +54,7 @@ export function Sidebar() {
           {/* Desktop: collapse toggle */}
           <button
             onClick={toggleCollapsed}
-            className="hidden lg:flex items-center justify-center w-8 h-8 rounded transition-colors hover:brightness-110"
-            style={{ color: 'var(--sidebar-icon-muted)' }}
+            className="hidden lg:flex items-center justify-center w-8 h-8 rounded transition-colors hover:brightness-110 text-sidebar-icon-muted"
             aria-label={isCollapsed ? 'Mở rộng sidebar' : 'Thu gọn sidebar'}
           >
             {isCollapsed
@@ -74,8 +66,7 @@ export function Sidebar() {
           {/* Mobile: close button */}
           <button
             onClick={close}
-            className="lg:hidden flex items-center justify-center w-8 h-8 rounded"
-            style={{ color: 'var(--sidebar-icon-muted)' }}
+            className="lg:hidden flex items-center justify-center w-8 h-8 rounded text-sidebar-icon-muted"
             aria-label="Đóng menu"
           >
             <XIcon size={18} />
@@ -104,7 +95,7 @@ export function Sidebar() {
             ))}
 
             {/* Tonal separator trước external link */}
-            <div className="my-2 h-px mx-3" style={{ backgroundColor: 'var(--sidebar-separator)' }} />
+            <div className="my-2 h-px mx-3 bg-sidebar-separator" />
 
             <SidebarNavItem
               item={ADMIN_NAV_EXTERNAL}

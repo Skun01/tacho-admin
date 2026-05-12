@@ -3,6 +3,7 @@ import {
   CaretDownIcon,
   PencilSimpleIcon,
   PlusIcon,
+  SparkleIcon,
   SpeakerHighIcon,
   TrashIcon,
 } from '@phosphor-icons/react'
@@ -11,6 +12,8 @@ import { Helmet } from '@dr.pogodin/react-helmet'
 import { useNavigate, useParams } from 'react-router'
 import { JlptConfirmDialog } from '@/components/jlpt/JlptConfirmDialog'
 import { JlptExamFormDialog } from '@/components/jlpt/JlptExamFormDialog'
+import { JlptAiGenerateDialog } from '@/components/jlpt/JlptAiGenerateDialog'
+import { JlptAiGenerateResultDialog } from '@/components/jlpt/JlptAiGenerateResultDialog'
 import { JlptQuestionFormDialog } from '@/components/jlpt/JlptQuestionFormDialog'
 import { JlptQuestionGroupFormDialog } from '@/components/jlpt/JlptQuestionGroupFormDialog'
 import { JlptSectionFormDialog } from '@/components/jlpt/JlptSectionFormDialog'
@@ -21,6 +24,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { gooeyToast } from '@/components/ui/goey-toaster'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
+  JLPT_AI_QUESTION_CONTENT,
   JLPT_EXAM_CONTENT,
   JLPT_LEVEL_LABELS,
   OPTION_LABEL_LABELS,
@@ -30,6 +34,7 @@ import {
 import { useJlptAdminMutations } from '@/hooks/useJlptAdminMutations'
 import { useJlptExamDetail } from '@/hooks/useJlptAdminQueries'
 import type {
+  AiGeneratedQuestionResponse,
   ChoukaiMondaiType,
   ExamSectionResponse,
   JlptLevel,
@@ -38,7 +43,7 @@ import type {
   QuestionGroupResponse,
   SectionType,
 } from '@/types/jlptAdmin'
-import type { QuestionFormValues } from '@/lib/validations/jlptAdmin'
+import type { AiGenerateFormValues, QuestionFormValues } from '@/lib/validations/jlptAdmin'
 
 type DialogTarget =
   | { type: 'editExam' }
@@ -52,12 +57,18 @@ type DialogTarget =
   | { type: 'editQuestion'; groupId: string; question: QuestionGroupQuestionResponse }
   | { type: 'deleteQuestion'; questionId: string }
   | { type: 'publish' }
+  | { type: 'generateAiForGroup'; groupId: string; sectionType: SectionType; level: JlptLevel }
 
 export function AdminJlptExamDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { data: exam, isLoading } = useJlptExamDetail(id ?? '')
   const [dialog, setDialog] = useState<DialogTarget | null>(null)
+  const [aiResults, setAiResults] = useState<AiGeneratedQuestionResponse[]>([])
+  const [showAiResults, setShowAiResults] = useState(false)
+  const [approvingId, setApprovingId] = useState<string | null>(null)
+  const [rejectingId, setRejectingId] = useState<string | null>(null)
+  const [editingAiId, setEditingAiId] = useState<string | null>(null)
 
   const {
     updateExamMutation,
@@ -72,6 +83,10 @@ export function AdminJlptExamDetailPage() {
     createQuestionMutation,
     updateQuestionMutation,
     deleteQuestionMutation,
+    generateAiQuestionsMutation,
+    approveAiQuestionMutation,
+    rejectAiQuestionMutation,
+    updateAiQuestionMutation,
     getApiErrorMessage,
   } = useJlptAdminMutations()
 
@@ -222,6 +237,65 @@ export function AdminJlptExamDetailPage() {
     }
   }
 
+  // ── AI Generate handlers ─────────────────────────────────────────────────
+
+  async function handleGenerateAiForGroup(values: AiGenerateFormValues) {
+    if (dialog?.type !== 'generateAiForGroup') return
+    try {
+      const results = await generateAiQuestionsMutation.mutateAsync({
+        level: values.level,
+        sectionType: values.sectionType,
+        topic: values.topic,
+        count: values.count,
+        questionGroupId: dialog.groupId,
+      })
+      setAiResults(results)
+      closeDialog()
+      setShowAiResults(true)
+    } catch (error) {
+      gooeyToast.error(getApiErrorMessage(error, JLPT_AI_QUESTION_CONTENT.generateFailedFallback))
+    }
+  }
+
+  async function handleApproveAiQuestion(aiId: string) {
+    setApprovingId(aiId)
+    try {
+      await approveAiQuestionMutation.mutateAsync(aiId)
+      setAiResults((prev) => prev.map((i) => i.id === aiId ? { ...i, status: 'Approved' as const } : i))
+      gooeyToast.success(JLPT_AI_QUESTION_CONTENT.approvedSuccess)
+    } catch (error) {
+      gooeyToast.error(getApiErrorMessage(error, JLPT_AI_QUESTION_CONTENT.approveFailedFallback))
+    } finally {
+      setApprovingId(null)
+    }
+  }
+
+  async function handleRejectAiQuestion(aiId: string) {
+    setRejectingId(aiId)
+    try {
+      await rejectAiQuestionMutation.mutateAsync(aiId)
+      setAiResults((prev) => prev.map((i) => i.id === aiId ? { ...i, status: 'Rejected' as const } : i))
+      gooeyToast.success(JLPT_AI_QUESTION_CONTENT.rejectedSuccess)
+    } catch (error) {
+      gooeyToast.error(getApiErrorMessage(error, JLPT_AI_QUESTION_CONTENT.rejectFailedFallback))
+    } finally {
+      setRejectingId(null)
+    }
+  }
+
+  async function handleSaveAiEdit(aiId: string, generatedData: string) {
+    setEditingAiId(aiId)
+    try {
+      await updateAiQuestionMutation.mutateAsync({ id: aiId, payload: { generatedData } })
+      setAiResults((prev) => prev.map((i) => i.id === aiId ? { ...i, generatedData, status: 'Edited' as const } : i))
+      gooeyToast.success(JLPT_AI_QUESTION_CONTENT.editedSuccess)
+    } catch (error) {
+      gooeyToast.error(getApiErrorMessage(error, JLPT_AI_QUESTION_CONTENT.editFailedFallback))
+    } finally {
+      setEditingAiId(null)
+    }
+  }
+
   const isPublished = exam.status === 'Published'
   const sections = [...exam.sections].sort((a, b) => a.orderIndex - b.orderIndex)
 
@@ -292,6 +366,7 @@ export function AdminJlptExamDetailPage() {
                 onCreateQuestion={(groupId) => setDialog({ type: 'createQuestion', groupId, sectionType: section.sectionType, level: exam.level })}
                 onEditQuestion={(groupId, question) => setDialog({ type: 'editQuestion', groupId, question })}
                 onDeleteQuestion={(questionId) => setDialog({ type: 'deleteQuestion', questionId })}
+                onGenerateAi={(groupId) => setDialog({ type: 'generateAiForGroup', groupId, sectionType: section.sectionType, level: exam.level })}
               />
             ))}
           </CardContent>
@@ -426,6 +501,37 @@ export function AdminJlptExamDetailPage() {
           onConfirm={() => handleDeleteQuestion(dialog.questionId)}
         />
       )}
+
+      {dialog?.type === 'generateAiForGroup' && (
+        <JlptAiGenerateDialog
+          open
+          onOpenChange={(o) => { if (!o) closeDialog() }}
+          isPending={generateAiQuestionsMutation.isPending}
+          onSubmit={handleGenerateAiForGroup}
+          defaultLevel={dialog.level}
+          defaultSectionType={dialog.sectionType}
+          lockLevelAndSection
+        />
+      )}
+
+      {showAiResults && aiResults.length > 0 && (
+        <JlptAiGenerateResultDialog
+          open={showAiResults}
+          items={aiResults}
+          onOpenChange={(o) => {
+            if (!o) {
+              setShowAiResults(false)
+              setAiResults([])
+            }
+          }}
+          onApprove={handleApproveAiQuestion}
+          onReject={handleRejectAiQuestion}
+          onSaveEdit={handleSaveAiEdit}
+          approvingId={approvingId}
+          rejectingId={rejectingId}
+          editingId={editingAiId}
+        />
+      )}
     </>
   )
 }
@@ -445,6 +551,7 @@ interface SectionCardProps {
   onCreateQuestion: (groupId: string) => void
   onEditQuestion: (groupId: string, question: QuestionGroupQuestionResponse) => void
   onDeleteQuestion: (questionId: string) => void
+  onGenerateAi: (groupId: string) => void
 }
 
 function SectionCard({
@@ -460,6 +567,7 @@ function SectionCard({
   onCreateQuestion,
   onEditQuestion,
   onDeleteQuestion,
+  onGenerateAi,
 }: SectionCardProps) {
   const groups = [...section.questionGroups].sort((a, b) => a.orderIndex - b.orderIndex)
 
@@ -523,6 +631,7 @@ function SectionCard({
               onCreateQuestion={() => onCreateQuestion(group.id)}
               onEditQuestion={(q) => onEditQuestion(group.id, q)}
               onDeleteQuestion={onDeleteQuestion}
+              onGenerateAi={() => onGenerateAi(group.id)}
             />
           ))}
         </div>
@@ -544,6 +653,7 @@ interface GroupCardProps {
   onCreateQuestion: () => void
   onEditQuestion: (question: QuestionGroupQuestionResponse) => void
   onDeleteQuestion: (questionId: string) => void
+  onGenerateAi: () => void
 }
 
 function GroupCard({
@@ -557,6 +667,7 @@ function GroupCard({
   onCreateQuestion,
   onEditQuestion,
   onDeleteQuestion,
+  onGenerateAi,
 }: GroupCardProps) {
   const questions = [...group.questions].sort((a, b) => a.orderIndex - b.orderIndex)
   const isChoukai = sectionType === 'Choukai'
@@ -609,10 +720,16 @@ function GroupCard({
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium">{JLPT_EXAM_CONTENT.questionsHeading} ({questions.length})</span>
           {!isPublished && (
-            <Button type="button" variant="outline" size="sm" className="h-6 text-xs" onClick={onCreateQuestion}>
-              <PlusIcon size={12} />
-              {JLPT_EXAM_CONTENT.addQuestionLabel}
-            </Button>
+            <div className="flex gap-1">
+              <Button type="button" variant="outline" size="sm" className="h-6 text-xs" onClick={onGenerateAi}>
+                <SparkleIcon size={12} />
+                {JLPT_AI_QUESTION_CONTENT.generateAiForGroupLabel}
+              </Button>
+              <Button type="button" variant="outline" size="sm" className="h-6 text-xs" onClick={onCreateQuestion}>
+                <PlusIcon size={12} />
+                {JLPT_EXAM_CONTENT.addQuestionLabel}
+              </Button>
+            </div>
           )}
         </div>
 

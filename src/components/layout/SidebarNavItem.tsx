@@ -28,26 +28,13 @@ export function SidebarNavItem({ item, isCollapsed, onClick }: SidebarNavItemPro
     </span>
   )
 
-  const activeStyle = {
-    boxShadow: 'inset 4px 0 0 var(--primary)',
-    backgroundColor: 'var(--sidebar-nav-active-bg)',
-    color: 'var(--sidebar-nav-text-active)',
-  }
-
-  const baseStyle = {
-    color: 'var(--sidebar-nav-text)',
-    display: 'block',
-    borderRadius: '0.375rem',
-  }
-
   if (external) {
     return (
       <a
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        style={baseStyle}
-        className="hover:brightness-110 transition-all"
+        className="block rounded-md text-sidebar-nav-text hover:brightness-110 transition-all"
         title={isCollapsed ? label : undefined}
         onClick={onClick}
       >
@@ -59,8 +46,13 @@ export function SidebarNavItem({ item, isCollapsed, onClick }: SidebarNavItemPro
   const link = (
     <NavLink
       to={href}
-      style={({ isActive }) => (isActive ? activeStyle : baseStyle)}
-      className="hover:brightness-110 transition-all"
+      className={({ isActive }) =>
+        `block rounded-md hover:brightness-110 transition-all ${
+          isActive
+            ? 'bg-sidebar-nav-active-bg text-sidebar-nav-text-active shadow-[inset_4px_0_0_var(--primary)]'
+            : 'text-sidebar-nav-text'
+        }`
+      }
       onClick={onClick}
     >
       {content}

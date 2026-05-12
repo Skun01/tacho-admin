@@ -18,10 +18,9 @@ export function SidebarNavGroup({ item, isCollapsed, onClick }: SidebarNavGroupP
     <button
       type="button"
       onClick={() => setIsOpen((prev) => !prev)}
-      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-150 hover:brightness-110 ${
+      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-150 hover:brightness-110 text-sidebar-nav-text ${
         isCollapsed ? 'justify-center' : 'justify-between'
       }`}
-      style={{ color: 'var(--sidebar-nav-text)' }}
       aria-label={label}
       aria-expanded={isOpen}
     >

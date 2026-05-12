@@ -35,13 +35,7 @@ export function SidebarUserFooter({ isCollapsed }: SidebarUserFooterProps) {
   const avatar = (
     <Avatar className="h-8 w-8 shrink-0 cursor-pointer">
       <AvatarImage src={user?.avatarUrl} alt={user?.displayName} />
-      <AvatarFallback
-        className="text-xs font-semibold"
-        style={{
-          backgroundColor: 'var(--sidebar-avatar-bg)',
-          color: 'var(--sidebar-avatar-text)',
-        }}
-      >
+      <AvatarFallback className="text-xs font-semibold bg-sidebar-avatar-bg text-sidebar-avatar-text">
         {initials}
       </AvatarFallback>
     </Avatar>
@@ -51,19 +45,15 @@ export function SidebarUserFooter({ isCollapsed }: SidebarUserFooterProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="flex items-center gap-3 px-3 py-2.5 rounded w-full transition-colors hover:brightness-110"
-          style={{ color: 'var(--sidebar-nav-text-active)' }}
+          className="flex items-center gap-3 px-3 py-2.5 rounded w-full transition-colors hover:brightness-110 text-sidebar-nav-text-active"
         >
           {avatar}
           {!isCollapsed && (
             <div className="flex-1 text-left min-w-0">
-              <p
-                className="text-sm font-medium truncate"
-                style={{ color: 'var(--sidebar-nav-text-active)' }}
-              >
+              <p className="text-sm font-medium truncate text-sidebar-nav-text-active">
                 {user?.displayName ?? 'Admin'}
               </p>
-              <p className="text-xs truncate" style={{ color: 'var(--sidebar-nav-text)' }}>
+              <p className="text-xs truncate text-sidebar-nav-text">
                 {roleLabel[user?.role ?? ''] ?? user?.role}
               </p>
             </div>

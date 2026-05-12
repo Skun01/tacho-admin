@@ -81,6 +81,7 @@ export const aiGenerateSchema = z.object({
   sectionType: z.enum(['Moji', 'Bunpou', 'Dokkai', 'Choukai'], { message: 'Loại section là bắt buộc' }),
   topic: z.string().trim().min(1, 'Chủ đề là bắt buộc').max(500, 'Chủ đề tối đa 500 ký tự'),
   count: z.coerce.number().int().min(1, 'Tối thiểu 1 câu').max(20, 'Tối đa 20 câu'),
+  questionGroupId: z.string().trim().max(50, 'Tối đa 50 ký tự').optional().or(z.literal('')),
 })
 
 export type AiGenerateFormValues = z.infer<typeof aiGenerateSchema>

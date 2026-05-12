@@ -8,7 +8,6 @@ import {
   BracketsAngleIcon,
   CardsIcon,
   UsersIcon,
-  GearIcon,
   ArrowSquareOutIcon,
   GraduationCapIcon,
   WarningCircleIcon,
@@ -63,7 +62,6 @@ export const ADMIN_NAV_ITEMS: AdminNavEntry[] = [
     ],
   },
   { icon: UsersIcon, label: 'Người dùng', href: '/admin/users' },
-  { icon: GearIcon, label: 'Cài đặt', href: '/settings' },
 ]
 
 export const ADMIN_NAV_EXTERNAL: NavItem = {

@@ -195,6 +195,20 @@
   --color-on-surface-variant: var(--on-surface-variant);
   --color-on-secondary-container: var(--on-secondary-container);
   --color-outline-variant: var(--outline-variant);
+
+  /* On-primary & primary-fixed-dim */
+  --color-on-primary: var(--on-primary);
+  --color-primary-fixed-dim: var(--primary-fixed-dim);
+
+  /* Sidebar tokens */
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-nav-text: var(--sidebar-nav-text);
+  --color-sidebar-nav-text-active: var(--sidebar-nav-text-active);
+  --color-sidebar-nav-active-bg: var(--sidebar-nav-active-bg);
+  --color-sidebar-icon-muted: var(--sidebar-icon-muted);
+  --color-sidebar-separator: var(--sidebar-separator);
+  --color-sidebar-avatar-bg: var(--sidebar-avatar-bg);
+  --color-sidebar-avatar-text: var(--sidebar-avatar-text);
 }
 
 @layer base {

@@ -32,6 +32,7 @@ export function AdminJlptAiQuestionsPage() {
         sectionType: values.sectionType,
         topic: values.topic,
         count: values.count,
+        questionGroupId: values.questionGroupId || null,
       })
       gooeyToast.success(JLPT_AI_QUESTION_CONTENT.generateSuccess)
       state.handleCloseGenerate()

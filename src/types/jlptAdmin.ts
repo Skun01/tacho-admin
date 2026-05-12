@@ -259,6 +259,7 @@ export interface AiGeneratedQuestionResponse {
   level: JlptLevel
   sectionType: SectionType
   topic: string
+  questionGroupId: string | null
   generatedData: string
   status: AiQuestionStatus
   reviewedBy: string | null
@@ -274,6 +275,8 @@ export interface AiGeneratedQuestionResponse {
 export interface AiGeneratedDataQuestion {
   questionText: string
   explanation: string | null
+  difficultyScore: number | null
+  skillTags: string[]
   options: Array<{
     label: string
     text: string
@@ -281,9 +284,32 @@ export interface AiGeneratedDataQuestion {
   }>
 }
 
+export interface AiDifficulty {
+  level: string
+  score: number
+  reason: string
+}
+
+export interface AiDuplicateCandidate {
+  sourceType: string
+  sourceId: string
+  previewText: string
+  similarityScore: number
+}
+
+export interface AiMetadata {
+  isValid: boolean
+  qualityScore: number
+  requiresManualReview: boolean
+  validationWarnings: string[]
+  duplicateCandidates: AiDuplicateCandidate[]
+}
+
 export interface AiGeneratedData {
   passage: string | null
   script: string | null
+  difficulty: AiDifficulty | null
+  metadata: AiMetadata | null
   questions: AiGeneratedDataQuestion[]
 }
 

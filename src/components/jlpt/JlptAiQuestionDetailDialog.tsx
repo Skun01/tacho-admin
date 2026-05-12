@@ -1,4 +1,4 @@
-import { CheckIcon, PencilSimpleIcon, SpinnerGapIcon, XIcon } from '@phosphor-icons/react'
+import { CheckIcon, PencilSimpleIcon, SpinnerGapIcon, WarningIcon, XIcon } from '@phosphor-icons/react'
 import { useCallback, useMemo, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -91,6 +91,11 @@ export function JlptAiQuestionDetailDialog({
             <Badge variant={item.status === 'Approved' ? 'default' : 'secondary'}>
               {AI_QUESTION_STATUS_LABELS[item.status]}
             </Badge>
+            {item.questionGroupId && (
+              <Badge variant="outline">
+                {JLPT_AI_QUESTION_CONTENT.questionGroupIdLabel}: {item.questionGroupId}
+              </Badge>
+            )}
           </div>
 
           <div className="text-sm">
@@ -119,6 +124,55 @@ export function JlptAiQuestionDetailDialog({
                   <p className="mt-1 whitespace-pre-wrap text-sm">{parsed.script}</p>
                 </div>
               )}
+
+              {parsed.difficulty && (
+                <div>
+                  <p className="text-xs font-semibold">{JLPT_AI_QUESTION_CONTENT.difficultyLabel}</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-2">
+                    <Badge variant="outline">{parsed.difficulty.level}</Badge>
+                    <span className="text-xs">{parsed.difficulty.score}/100</span>
+                  </div>
+                  {parsed.difficulty.reason && (
+                    <p className="mt-1 text-xs" style={{ color: 'var(--on-surface-variant)' }}>{parsed.difficulty.reason}</p>
+                  )}
+                </div>
+              )}
+
+              {parsed.metadata && (
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-semibold">{JLPT_AI_QUESTION_CONTENT.qualityScoreLabel}:</span>
+                    <span className="text-xs">{parsed.metadata.qualityScore}/100</span>
+                    {parsed.metadata.requiresManualReview && (
+                      <Badge variant="secondary" className="text-xs">
+                        <WarningIcon size={12} className="mr-1" />
+                        {JLPT_AI_QUESTION_CONTENT.requiresReviewLabel}
+                      </Badge>
+                    )}
+                  </div>
+                  {parsed.metadata.validationWarnings.length > 0 && (
+                    <ul className="list-inside list-disc text-xs" style={{ color: 'var(--on-surface-variant)' }}>
+                      {parsed.metadata.validationWarnings.map((w, i) => (
+                        <li key={i}>{w}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {parsed.metadata.duplicateCandidates.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold">{JLPT_AI_QUESTION_CONTENT.duplicatesLabel}</p>
+                      <div className="mt-1 space-y-1">
+                        {parsed.metadata.duplicateCandidates.map((d, i) => (
+                          <div key={i} className="flex items-center gap-2 text-xs" style={{ color: 'var(--on-surface-variant)' }}>
+                            <span>{d.previewText}</span>
+                            <Badge variant="outline" className="text-xs">{Math.round(d.similarityScore * 100)}%</Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {parsed.questions && parsed.questions.length > 0 && (
                 <div>
                   <p className="text-xs font-semibold">{JLPT_AI_QUESTION_CONTENT.questionsLabel}</p>
@@ -133,6 +187,18 @@ export function JlptAiQuestionDetailDialog({
                             </Badge>
                           ))}
                         </div>
+                        {(q.skillTags?.length > 0 || q.difficultyScore != null) && (
+                          <div className="mt-1 flex flex-wrap items-center gap-1">
+                            {q.difficultyScore != null && (
+                              <Badge variant="outline" className="text-xs">
+                                {JLPT_AI_QUESTION_CONTENT.difficultyLabel}: {q.difficultyScore}/10
+                              </Badge>
+                            )}
+                            {q.skillTags?.map((tag, ti) => (
+                              <Badge key={ti} variant="secondary" className="text-xs">{tag}</Badge>
+                            ))}
+                          </div>
+                        )}
                         {q.explanation && (
                           <p className="mt-1 text-xs" style={{ color: 'var(--on-surface-variant)' }}>
                             {q.explanation}

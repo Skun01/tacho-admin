@@ -7,7 +7,7 @@ export function AdminLayout() {
   const isCollapsed = useSidebarStore((s) => s.isCollapsed)
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: 'var(--surface)' }}>
+    <div className="flex h-screen overflow-hidden bg-surface">
 
       {/* Sidebar */}
       <Sidebar />
@@ -21,7 +21,7 @@ export function AdminLayout() {
       >
         <AdminTopbar />
 
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-6 md:p-8 max-w-[1440px] mx-auto w-full">
           <Outlet />
         </main>
       </div>

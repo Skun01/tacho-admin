@@ -36,6 +36,9 @@ interface JlptAiGenerateDialogProps {
   onOpenChange: (open: boolean) => void
   isPending: boolean
   onSubmit: (values: AiGenerateFormValues) => Promise<void>
+  defaultLevel?: JlptLevel
+  defaultSectionType?: SectionType
+  lockLevelAndSection?: boolean
 }
 
 export function JlptAiGenerateDialog({
@@ -43,15 +46,19 @@ export function JlptAiGenerateDialog({
   onOpenChange,
   isPending,
   onSubmit,
+  defaultLevel,
+  defaultSectionType,
+  lockLevelAndSection = false,
 }: JlptAiGenerateDialogProps) {
   const form = useForm<AiGenerateFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(aiGenerateSchema) as any,
     defaultValues: {
-      level: 'N5',
-      sectionType: 'Moji',
+      level: defaultLevel ?? 'N5',
+      sectionType: defaultSectionType ?? 'Moji',
       topic: '',
       count: 5,
+      questionGroupId: '',
     },
   })
 
@@ -93,7 +100,7 @@ export function JlptAiGenerateDialog({
                 render={({ field }) => (
                   <FormItem className="gap-1.5">
                     <FormLabel>{JLPT_AI_QUESTION_CONTENT.levelFieldLabel}</FormLabel>
-                    <Select value={field.value} onValueChange={(v) => field.onChange(v as JlptLevel)}>
+                    <Select value={field.value} onValueChange={(v) => field.onChange(v as JlptLevel)} disabled={lockLevelAndSection}>
                       <FormControl>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                       </FormControl>
@@ -116,7 +123,7 @@ export function JlptAiGenerateDialog({
                 render={({ field }) => (
                   <FormItem className="gap-1.5">
                     <FormLabel>{JLPT_AI_QUESTION_CONTENT.sectionTypeFieldLabel}</FormLabel>
-                    <Select value={field.value} onValueChange={(v) => field.onChange(v as SectionType)}>
+                    <Select value={field.value} onValueChange={(v) => field.onChange(v as SectionType)} disabled={lockLevelAndSection}>
                       <FormControl>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                       </FormControl>

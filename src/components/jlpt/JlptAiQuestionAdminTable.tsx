@@ -74,6 +74,7 @@ export function JlptAiQuestionAdminTable({
             <TableHead>{JLPT_AI_QUESTION_CONTENT.columns.level}</TableHead>
             <TableHead>{JLPT_AI_QUESTION_CONTENT.columns.sectionType}</TableHead>
             <TableHead>{JLPT_AI_QUESTION_CONTENT.columns.status}</TableHead>
+            <TableHead>{JLPT_AI_QUESTION_CONTENT.columns.questionGroupId}</TableHead>
             <TableHead>{JLPT_AI_QUESTION_CONTENT.columns.creator}</TableHead>
             <TableHead>{JLPT_AI_QUESTION_CONTENT.columns.createdAt}</TableHead>
             <TableHead className="text-right">{JLPT_AI_QUESTION_CONTENT.columns.actions}</TableHead>
@@ -93,6 +94,13 @@ export function JlptAiQuestionAdminTable({
                 <Badge variant={getStatusBadgeVariant(item.status)}>
                   {AI_QUESTION_STATUS_LABELS[item.status]}
                 </Badge>
+              </TableCell>
+              <TableCell>
+                {item.questionGroupId ? (
+                  <span className="text-xs font-mono">{item.questionGroupId}</span>
+                ) : (
+                  <span style={{ color: 'var(--on-surface-variant)' }}>{JLPT_AI_QUESTION_CONTENT.noneSymbol}</span>
+                )}
               </TableCell>
               <TableCell>{item.creatorName}</TableCell>
               <TableCell>{formatDate(item.createdAt)}</TableCell>
