@@ -172,6 +172,7 @@ export const SHADOWING_ADMIN_CONTENT = {
   topicInfoYesLabel: 'Có',
   topicInfoNoLabel: 'Không',
   sentenceAnalyticsTextColumn: 'Câu',
+  topicInfoDescriptionLabel: 'Mô tả',
   noneSymbol: '-',
   confirmDeleteLabel: 'Xóa',
   confirmCancelLabel: 'Hủy',

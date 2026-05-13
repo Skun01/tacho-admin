@@ -47,6 +47,11 @@ export function ShadowingTopicAnalyticsSection({
                 ? Math.round(topicAnalytics.averagePronScore)
                 : SHADOWING_ADMIN_CONTENT.noneSymbol
             }
+            colorClass={
+              topicAnalytics.averagePronScore !== null
+                ? getScoreColorClass(Math.round(topicAnalytics.averagePronScore))
+                : undefined
+            }
           />
           <MetricCard
             title={SHADOWING_ADMIN_CONTENT.latestAttemptLabel}
@@ -107,7 +112,11 @@ export function ShadowingTopicAnalyticsSection({
                       <TableCell>{item.distinctUsersCount}</TableCell>
                       <TableCell>
                         {item.averagePronScore !== null
-                          ? Math.round(item.averagePronScore)
+                          ? (
+                            <span className={`font-medium ${getScoreColorClass(Math.round(item.averagePronScore))}`}>
+                              {Math.round(item.averagePronScore)}
+                            </span>
+                          )
                           : SHADOWING_ADMIN_CONTENT.noneSymbol}
                       </TableCell>
                     </TableRow>
@@ -125,17 +134,24 @@ export function ShadowingTopicAnalyticsSection({
 interface MetricCardProps {
   title: string
   value: number | string
+  colorClass?: string
 }
 
-function MetricCard({ title, value }: MetricCardProps) {
+function MetricCard({ title, value, colorClass }: MetricCardProps) {
   return (
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-3xl font-bold">{value}</p>
+        <p className={`text-3xl font-bold ${colorClass ?? ''}`}>{value}</p>
       </CardContent>
     </Card>
   )
+}
+
+function getScoreColorClass(score: number): string {
+  if (score >= 80) return 'text-emerald-600 dark:text-emerald-400'
+  if (score >= 50) return 'text-amber-600 dark:text-amber-400'
+  return 'text-red-600 dark:text-red-400'
 }

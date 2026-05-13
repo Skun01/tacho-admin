@@ -75,13 +75,22 @@ export function ShadowingTopicInfoSection({ topic }: ShadowingTopicInfoSectionPr
       <CardHeader>
         <CardTitle>{SHADOWING_ADMIN_CONTENT.topicInfo}</CardTitle>
       </CardHeader>
-      <CardContent className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {INFO_GRID_FIELDS.map((field) => (
-          <div key={field.key} className="space-y-1 rounded-lg border bg-muted/20 p-4">
-            <p className="text-sm text-muted-foreground">{field.label}</p>
-            <div className="text-sm font-medium">{field.render(topic)}</div>
-          </div>
-        ))}
+      <CardContent className="space-y-4">
+        <div className="space-y-1">
+          <p className="text-sm text-muted-foreground">{SHADOWING_ADMIN_CONTENT.topicInfoDescriptionLabel}</p>
+          <p className="whitespace-pre-line text-sm">
+            {topic.description || SHADOWING_ADMIN_CONTENT.noneSymbol}
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {INFO_GRID_FIELDS.map((field) => (
+            <div key={field.key} className="space-y-1 rounded-lg border bg-muted/20 p-4">
+              <p className="text-sm text-muted-foreground">{field.label}</p>
+              <div className="text-sm font-medium">{field.render(topic)}</div>
+            </div>
+          ))}
+        </div>
       </CardContent>
     </Card>
   )

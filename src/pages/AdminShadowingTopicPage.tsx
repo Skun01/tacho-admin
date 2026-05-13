@@ -1,5 +1,5 @@
 import { ChartBarIcon, InfoIcon, ListIcon } from '@phosphor-icons/react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Helmet } from '@dr.pogodin/react-helmet'
 import { useNavigate, useParams } from 'react-router'
 import { ShadowingAddSentenceDialog } from '@/components/shadowing/ShadowingAddSentenceDialog'
@@ -21,6 +21,7 @@ import {
   useShadowingTopicDetail,
   useTopicAnalytics,
 } from '@/hooks/useShadowingAdminQueries'
+import { resolveApiMediaUrl } from '@/lib/mediaUrl'
 import { resourceService } from '@/services/resourceService'
 import type { ShadowingLevel, ShadowingStatus, ShadowingVisibility } from '@/types/shadowingAdmin'
 
@@ -33,6 +34,8 @@ export function AdminShadowingTopicPage() {
   const [isAddSentenceDialogOpen, setIsAddSentenceDialogOpen] = useState(false)
   const [pendingDeleteSentenceId, setPendingDeleteSentenceId] = useState<string | null>(null)
   const [availableSearchQuery, setAvailableSearchQuery] = useState('')
+  const [playingAudioUrl, setPlayingAudioUrl] = useState<string | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const topicQuery = useShadowingTopicDetail(topicId)
   const availableSentencesQuery = useAvailableSentences(topicId, {
@@ -53,6 +56,54 @@ export function AdminShadowingTopicPage() {
   const availableSentences = availableSentencesQuery.data?.items ?? []
   const topicAnalytics = topicAnalyticsQuery.data
   const sentenceAnalytics = sentenceAnalyticsQuery.data ?? []
+
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+    }
+  }, [])
+
+  async function handlePlayAudio(audioUrl?: string | null) {
+    const resolvedAudioUrl = resolveApiMediaUrl(audioUrl)
+    if (!resolvedAudioUrl) return
+
+    const currentAudio = audioRef.current
+    const isSameAudio = playingAudioUrl === resolvedAudioUrl && currentAudio && !currentAudio.paused
+    if (isSameAudio) {
+      currentAudio.pause()
+      currentAudio.currentTime = 0
+      audioRef.current = null
+      setPlayingAudioUrl(null)
+      return
+    }
+
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+    }
+
+    const audio = new Audio(resolvedAudioUrl)
+    audioRef.current = audio
+    setPlayingAudioUrl(resolvedAudioUrl)
+    audio.onended = () => {
+      if (audioRef.current === audio) {
+        audioRef.current = null
+        setPlayingAudioUrl(null)
+      }
+    }
+
+    try {
+      await audio.play()
+    } catch {
+      if (audioRef.current === audio) {
+        audioRef.current = null
+        setPlayingAudioUrl(null)
+      }
+    }
+  }
 
   async function handleUploadCoverImage(file: File) {
     const { data } = await resourceService.uploadImage(file)
@@ -108,8 +159,17 @@ export function AdminShadowingTopicPage() {
   if (topicQuery.isLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-96 w-full" />
+        <div className="flex items-start gap-3">
+          <Skeleton className="size-10 rounded-md" />
+          <Skeleton className="size-12 rounded-md" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-7 w-64" />
+            <Skeleton className="h-4 w-40" />
+          </div>
+          <Skeleton className="h-9 w-24" />
+        </div>
+        <Skeleton className="h-10 w-72" />
+        <Skeleton className="h-64 w-full rounded-lg" />
       </div>
     )
   }
@@ -137,6 +197,8 @@ export function AdminShadowingTopicPage() {
         <ShadowingTopicHeader
           title={topic.title}
           description={topic.description}
+          coverImageUrl={topic.coverImageUrl}
+          status={topic.status}
           onBack={() => navigate('/admin/shadowing')}
           onEdit={() => setIsEditDialogOpen(true)}
         />
@@ -189,6 +251,8 @@ export function AdminShadowingTopicPage() {
             <ShadowingTopicSentencesSection
               topic={topic}
               isRemoving={removeSentenceMutation.isPending}
+              playingAudioUrl={playingAudioUrl}
+              onPlayAudio={(url) => { void handlePlayAudio(url) }}
               onAddSentence={() => setIsAddSentenceDialogOpen(true)}
               onDeleteSentence={setPendingDeleteSentenceId}
             />
