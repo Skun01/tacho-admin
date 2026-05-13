@@ -153,9 +153,8 @@ export function GrammarStructuresSection({ form, structureFieldArray }: GrammarS
   }
 
   return (
-    <section className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold">{ADMIN_GRAMMAR_CONTENT.form.sections.structuresTitle}</h3>
+    <div className="space-y-4">
+      <div className="flex items-center justify-end">
         <Button
           type="button"
           variant="outline"
@@ -305,6 +304,6 @@ export function GrammarStructuresSection({ form, structureFieldArray }: GrammarS
           </CardContent>
         </Card>
       ))}
-    </section>
+    </div>
   )
 }

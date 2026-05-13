@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { XIcon } from '@phosphor-icons/react'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { GrammarStructuresSection } from '@/components/grammar/GrammarStructuresSection'
 import { GrammarRelationsSection } from '@/components/grammar/GrammarRelationsSection'
 import { GrammarResourcesSection } from '@/components/grammar/GrammarResourcesSection'
@@ -91,6 +91,9 @@ export function GrammarUpsertForm({
 
   const [tagInput, setTagInput] = useState('')
   const [alternateFormInput, setAlternateFormInput] = useState('')
+  const [openSections, setOpenSections] = useState<string[]>(
+    mode === 'edit' ? ['basic', 'structures', 'content', 'relations', 'sentences'] : ['basic']
+  )
   const submitAsDraftRef = useRef(false)
 
   // Reset form when initialData changes
@@ -134,12 +137,14 @@ export function GrammarUpsertForm({
       })
       setTagInput('')
       setAlternateFormInput('')
+      setOpenSections(['basic', 'structures', 'content', 'relations', 'sentences'])
       return
     }
 
     form.reset(DEFAULT_VALUES)
     setTagInput('')
     setAlternateFormInput('')
+    setOpenSections(['basic'])
   }, [mode, initialData, form, open])
 
   // Track dirty state
@@ -219,65 +224,20 @@ export function GrammarUpsertForm({
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-              <Tabs defaultValue="basic">
-                <TabsList className="w-full justify-start flex-wrap h-auto gap-1">
-                  <TabsTrigger value="basic">{ADMIN_GRAMMAR_CONTENT.form.tabs.basic}</TabsTrigger>
-                  <TabsTrigger value="structures">{ADMIN_GRAMMAR_CONTENT.form.tabs.structures}</TabsTrigger>
-                  <TabsTrigger value="content">{ADMIN_GRAMMAR_CONTENT.form.tabs.content}</TabsTrigger>
-                  <TabsTrigger value="relations">{ADMIN_GRAMMAR_CONTENT.form.tabs.relations}</TabsTrigger>
-                  <TabsTrigger value="sentences">{ADMIN_GRAMMAR_CONTENT.form.tabs.sentences}</TabsTrigger>
-                </TabsList>
-
-                {/* Tab: Basic info */}
-                <TabsContent value="basic" className="space-y-4 pt-4">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.titleLabel}</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.titlePlaceholder} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="summary"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.summaryLabel}</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.summaryPlaceholder} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid gap-4 md:grid-cols-2">
+              <Accordion type="multiple" value={openSections} onValueChange={setOpenSections} className="space-y-2">
+                {/* Section: Basic info */}
+                <AccordionItem value="basic" className="border rounded-lg px-4">
+                  <AccordionTrigger className="text-base font-semibold">{ADMIN_GRAMMAR_CONTENT.form.sections.basicTitle}</AccordionTrigger>
+                  <AccordionContent className="space-y-4">
                     <FormField
                       control={form.control}
-                      name="level"
+                      name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.levelLabel}</FormLabel>
-                          <div className="flex flex-wrap gap-2">
-                            {GRAMMAR_LEVEL_OPTIONS.map((level) => (
-                              <Button
-                                key={level}
-                                type="button"
-                                size="sm"
-                                variant={field.value === level ? 'default' : 'outline'}
-                                onClick={() => field.onChange(field.value === level ? null : level)}
-                              >
-                                {level}
-                              </Button>
-                            ))}
-                          </div>
+                          <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.titleLabel}</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.titlePlaceholder} />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -285,212 +245,258 @@ export function GrammarUpsertForm({
 
                     <FormField
                       control={form.control}
-                      name="status"
+                      name="summary"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.statusLabel}</FormLabel>
-                          <div className="flex flex-wrap gap-2">
-                            {GRAMMAR_STATUS_OPTIONS.map((status) => (
-                              <Button
-                                key={status}
-                                type="button"
-                                size="sm"
-                                variant={field.value === status ? 'default' : 'outline'}
-                                onClick={() => field.onChange(status)}
-                              >
-                                {GRAMMAR_STATUS_LABELS[status]}
-                              </Button>
-                            ))}
-                          </div>
+                          <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.summaryLabel}</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.summaryPlaceholder} />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name="register"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.registerLabel}</FormLabel>
-                        <FormControl>
-                          <div className="flex flex-wrap gap-2">
-                            {GRAMMAR_REGISTER_OPTIONS.map((reg) => (
-                              <Button
-                                key={reg}
-                                type="button"
-                                size="sm"
-                                variant={field.value === reg ? 'default' : 'outline'}
-                                onClick={() => field.onChange(field.value === reg ? null : reg)}
-                              >
-                                {GRAMMAR_REGISTER_LABELS[reg]}
-                              </Button>
-                            ))}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Tags */}
-                  <FormField
-                    control={form.control}
-                    name="tags"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.tagsLabel}</FormLabel>
-                        <FormControl>
-                          <div className="space-y-2">
-                            <div className="flex gap-2">
-                              <Input
-                                value={tagInput}
-                                placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.tagsPlaceholder}
-                                onChange={(e) => setTagInput(e.target.value)}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    e.preventDefault()
-                                    addListItem('tags', tagInput, () => setTagInput(''))
-                                  }
-                                }}
-                              />
-                              <Button type="button" variant="outline" onClick={() => addListItem('tags', tagInput, () => setTagInput(''))}>
-                                {ADMIN_GRAMMAR_CONTENT.form.addItemLabel}
-                              </Button>
+                    <div className="grid gap-4 md:grid-cols-3">
+                      <FormField
+                        control={form.control}
+                        name="level"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.levelLabel}</FormLabel>
+                            <div className="flex flex-wrap gap-2">
+                              {GRAMMAR_LEVEL_OPTIONS.map((level) => (
+                                <Button
+                                  key={level}
+                                  type="button"
+                                  size="sm"
+                                  variant={field.value === level ? 'default' : 'outline'}
+                                  onClick={() => field.onChange(field.value === level ? null : level)}
+                                >
+                                  {level}
+                                </Button>
+                              ))}
                             </div>
-                            {(field.value?.length ?? 0) > 0 && (
-                              <div className="flex flex-wrap gap-2">
-                                {field.value.map((tag, index) => (
-                                  <Badge key={`${tag}-${index}`} variant="secondary" className="gap-1 pr-1">
-                                    <span>{tag}</span>
-                                    <Button type="button" variant="ghost" size="icon" className="h-5 w-5" onClick={() => removeListItem('tags', tag)}>
-                                      <XIcon size={12} />
-                                    </Button>
-                                  </Badge>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                  {/* Alternate Forms */}
-                  <FormField
-                    control={form.control}
-                    name="alternateForms"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.alternateFormsLabel}</FormLabel>
-                        <FormControl>
-                          <div className="space-y-2">
-                            <div className="flex gap-2">
-                              <Input
-                                value={alternateFormInput}
-                                placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.alternateFormsPlaceholder}
-                                onChange={(e) => setAlternateFormInput(e.target.value)}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    e.preventDefault()
-                                    addListItem('alternateForms', alternateFormInput, () => setAlternateFormInput(''))
-                                  }
-                                }}
-                              />
-                              <Button type="button" variant="outline" onClick={() => addListItem('alternateForms', alternateFormInput, () => setAlternateFormInput(''))}>
-                                {ADMIN_GRAMMAR_CONTENT.form.addItemLabel}
-                              </Button>
+                      <FormField
+                        control={form.control}
+                        name="status"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.statusLabel}</FormLabel>
+                            <div className="flex flex-wrap gap-2">
+                              {GRAMMAR_STATUS_OPTIONS.map((status) => (
+                                <Button
+                                  key={status}
+                                  type="button"
+                                  size="sm"
+                                  variant={field.value === status ? 'default' : 'outline'}
+                                  onClick={() => field.onChange(status)}
+                                >
+                                  {GRAMMAR_STATUS_LABELS[status]}
+                                </Button>
+                              ))}
                             </div>
-                            {(field.value?.length ?? 0) > 0 && (
-                              <div className="flex flex-wrap gap-2">
-                                {field.value.map((form2, index) => (
-                                  <Badge key={`${form2}-${index}`} variant="secondary" className="gap-1 pr-1">
-                                    <span>{form2}</span>
-                                    <Button type="button" variant="ghost" size="icon" className="h-5 w-5" onClick={() => removeListItem('alternateForms', form2)}>
-                                      <XIcon size={12} />
-                                    </Button>
-                                  </Badge>
-                                ))}
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="register"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.registerLabel}</FormLabel>
+                            <div className="flex flex-wrap gap-2">
+                              {GRAMMAR_REGISTER_OPTIONS.map((reg) => (
+                                <Button
+                                  key={reg}
+                                  type="button"
+                                  size="sm"
+                                  variant={field.value === reg ? 'default' : 'outline'}
+                                  onClick={() => field.onChange(field.value === reg ? null : reg)}
+                                >
+                                  {GRAMMAR_REGISTER_LABELS[reg]}
+                                </Button>
+                              ))}
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="tags"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.tagsLabel}</FormLabel>
+                          <FormControl>
+                            <div className="space-y-2">
+                              <div className="flex gap-2">
+                                <Input
+                                  value={tagInput}
+                                  placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.tagsPlaceholder}
+                                  onChange={(e) => setTagInput(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault()
+                                      addListItem('tags', tagInput, () => setTagInput(''))
+                                    }
+                                  }}
+                                />
+                                <Button type="button" variant="outline" onClick={() => addListItem('tags', tagInput, () => setTagInput(''))}>
+                                  {ADMIN_GRAMMAR_CONTENT.form.addItemLabel}
+                                </Button>
                               </div>
-                            )}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </TabsContent>
+                              {(field.value?.length ?? 0) > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                  {field.value.map((tag, index) => (
+                                    <Badge key={`${tag}-${index}`} variant="secondary" className="gap-1 pr-1">
+                                      <span>{tag}</span>
+                                      <Button type="button" variant="ghost" size="icon" className="h-5 w-5" onClick={() => removeListItem('tags', tag)}>
+                                        <XIcon size={12} />
+                                      </Button>
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                {/* Tab: Structures */}
-                <TabsContent value="structures" className="pt-4">
-                  <GrammarStructuresSection form={form} structureFieldArray={structureFieldArray} />
-                </TabsContent>
+                    <FormField
+                      control={form.control}
+                      name="alternateForms"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.alternateFormsLabel}</FormLabel>
+                          <FormControl>
+                            <div className="space-y-2">
+                              <div className="flex gap-2">
+                                <Input
+                                  value={alternateFormInput}
+                                  placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.alternateFormsPlaceholder}
+                                  onChange={(e) => setAlternateFormInput(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault()
+                                      addListItem('alternateForms', alternateFormInput, () => setAlternateFormInput(''))
+                                    }
+                                  }}
+                                />
+                                <Button type="button" variant="outline" onClick={() => addListItem('alternateForms', alternateFormInput, () => setAlternateFormInput(''))}>
+                                  {ADMIN_GRAMMAR_CONTENT.form.addItemLabel}
+                                </Button>
+                              </div>
+                              {(field.value?.length ?? 0) > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                  {field.value.map((form2, index) => (
+                                    <Badge key={`${form2}-${index}`} variant="secondary" className="gap-1 pr-1">
+                                      <span>{form2}</span>
+                                      <Button type="button" variant="ghost" size="icon" className="h-5 w-5" onClick={() => removeListItem('alternateForms', form2)}>
+                                        <XIcon size={12} />
+                                      </Button>
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
 
-                {/* Tab: Content (explanation + caution) */}
-                <TabsContent value="content" className="space-y-4 pt-4">
-                  <h3 className="text-base font-semibold">{ADMIN_GRAMMAR_CONTENT.form.sections.contentTitle}</h3>
+                {/* Section: Structures */}
+                <AccordionItem value="structures" className="border rounded-lg px-4">
+                  <AccordionTrigger className="text-base font-semibold">{ADMIN_GRAMMAR_CONTENT.form.sections.structuresTitle}</AccordionTrigger>
+                  <AccordionContent>
+                    <GrammarStructuresSection form={form} structureFieldArray={structureFieldArray} />
+                  </AccordionContent>
+                </AccordionItem>
 
-                  <FormField
-                    control={form.control}
-                    name="explanation"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.explanationLabel}</FormLabel>
-                        <FormControl>
-                          <RichTextEditor
-                            value={field.value}
-                            onChange={field.onChange}
-                            placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.explanationPlaceholder}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                {/* Section: Content (explanation + caution) */}
+                <AccordionItem value="content" className="border rounded-lg px-4">
+                  <AccordionTrigger className="text-base font-semibold">{ADMIN_GRAMMAR_CONTENT.form.sections.contentTitle}</AccordionTrigger>
+                  <AccordionContent className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="explanation"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.explanationLabel}</FormLabel>
+                          <FormControl>
+                            <RichTextEditor
+                              value={field.value}
+                              onChange={field.onChange}
+                              placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.explanationPlaceholder}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <FormField
-                    control={form.control}
-                    name="caution"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.cautionLabel}</FormLabel>
-                        <FormControl>
-                          <RichTextEditor
-                            value={field.value}
-                            onChange={field.onChange}
-                            placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.cautionPlaceholder}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </TabsContent>
+                    <FormField
+                      control={form.control}
+                      name="caution"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{ADMIN_GRAMMAR_CONTENT.form.fields.cautionLabel}</FormLabel>
+                          <FormControl>
+                            <RichTextEditor
+                              value={field.value}
+                              onChange={field.onChange}
+                              placeholder={ADMIN_GRAMMAR_CONTENT.form.fields.cautionPlaceholder}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
 
-                {/* Tab: Relations + Resources */}
-                <TabsContent value="relations" className="space-y-6 pt-4">
-                  <GrammarRelationsSection
-                    form={form}
-                    relationFieldArray={relationFieldArray}
-                    currentCardId={initialData?.id}
-                  />
+                {/* Section: Relations + Resources */}
+                <AccordionItem value="relations" className="border rounded-lg px-4">
+                  <AccordionTrigger className="text-base font-semibold">{ADMIN_GRAMMAR_CONTENT.form.sections.relationsTitle}</AccordionTrigger>
+                  <AccordionContent className="space-y-6">
+                    <GrammarRelationsSection
+                      form={form}
+                      relationFieldArray={relationFieldArray}
+                      currentCardId={initialData?.id}
+                    />
 
-                  <GrammarResourcesSection form={form} resourceFieldArray={resourceFieldArray} />
-                </TabsContent>
+                    <GrammarResourcesSection form={form} resourceFieldArray={resourceFieldArray} />
+                  </AccordionContent>
+                </AccordionItem>
 
-                {/* Tab: Sentences */}
-                <TabsContent value="sentences" className="pt-4">
-                  <GrammarSentencesSection
-                    form={form}
-                    sentenceFieldArray={sentenceFieldArray}
-                  />
-                </TabsContent>
-              </Tabs>
+                {/* Section: Sentences */}
+                <AccordionItem value="sentences" className="border rounded-lg px-4">
+                  <AccordionTrigger className="text-base font-semibold">{ADMIN_GRAMMAR_CONTENT.form.sections.sentencesTitle}</AccordionTrigger>
+                  <AccordionContent>
+                    <GrammarSentencesSection
+                      form={form}
+                      sentenceFieldArray={sentenceFieldArray}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
 
               {/* Sticky footer */}
-              <div className="sticky bottom-[-24px] z-10 -mx-6 border-t bg-background/95 px-6 py-4 backdrop-blur-sm lg:bottom-[-32px]">
+              <div className="border-t pt-4">
                 <div className="flex flex-wrap gap-2">
                   <Button type="submit" disabled={isSubmitting || isLoadingDetail}>
                     {ADMIN_GRAMMAR_CONTENT.form.saveActionLabel}

@@ -4,7 +4,7 @@ import { gooeyToast } from '@/components/ui/goey-toaster'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { ADMIN_SENTENCE_CONTENT } from '@/constants/adminContent'
 import { useSentenceAdminImport } from '@/hooks/useSentenceAdminImport'
@@ -96,21 +96,16 @@ export function SentenceImportDialog({ open, onOpenChange, onImported }: Sentenc
       <DialogContent className="flex max-h-[85vh] flex-col overflow-hidden sm:max-w-[960px]">
         <DialogHeader className="shrink-0">
           <DialogTitle>{ADMIN_SENTENCE_CONTENT.importDialog.title}</DialogTitle>
-          <DialogDescription>{ADMIN_SENTENCE_CONTENT.importDialog.description}</DialogDescription>
         </DialogHeader>
 
         <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
           <div className="space-y-2">
-            <p className="text-sm font-medium">{ADMIN_SENTENCE_CONTENT.importDialog.fileLabel}</p>
             <input
               type="file"
               accept="application/json,.json"
               onChange={(event) => handleFileChange(event.target.files?.[0])}
               className="block w-full cursor-pointer rounded-md border border-input px-3 py-2 text-sm"
             />
-            <p className="text-xs" style={{ color: 'var(--on-surface-variant)' }}>
-              {ADMIN_SENTENCE_CONTENT.importDialog.fileHint}
-            </p>
             {fileName && (
               <Badge variant="outline">
                 {ADMIN_SENTENCE_CONTENT.importDialog.selectedFileLabel}: {fileName}
@@ -132,7 +127,7 @@ export function SentenceImportDialog({ open, onOpenChange, onImported }: Sentenc
             </Button>
           </div>
 
-          {parsedPreview ? (
+          {parsedPreview && (
             <Card>
               <CardHeader>
                 <CardTitle>{ADMIN_SENTENCE_CONTENT.importDialog.summaryTitle}</CardTitle>
@@ -223,10 +218,6 @@ export function SentenceImportDialog({ open, onOpenChange, onImported }: Sentenc
                 </div>
               </CardContent>
             </Card>
-          ) : (
-            <div className="rounded-md border border-dashed px-4 py-3 text-sm" style={{ color: 'var(--on-surface-variant)' }}>
-              {ADMIN_SENTENCE_CONTENT.importDialog.emptyPreviewLabel}
-            </div>
           )}
         </div>
       </DialogContent>

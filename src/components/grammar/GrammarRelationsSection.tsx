@@ -72,10 +72,7 @@ export function GrammarRelationsSection({ form, relationFieldArray, currentCardI
   }
 
   return (
-    <section className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold">{ADMIN_GRAMMAR_CONTENT.form.sections.relationsTitle}</h3>
-      </div>
+    <div className="space-y-4">
 
       {/* Inline typeahead search */}
       <div className="relative">
@@ -212,6 +209,6 @@ export function GrammarRelationsSection({ form, relationFieldArray, currentCardI
           </Card>
         )
       })}
-    </section>
+    </div>
   )
 }

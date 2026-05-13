@@ -91,9 +91,9 @@ export function JlptAiQuestionDetailDialog({
             <Badge variant={item.status === 'Approved' ? 'default' : 'secondary'}>
               {AI_QUESTION_STATUS_LABELS[item.status]}
             </Badge>
-            {item.questionGroupId && (
+            {item.targetExamTitle && (
               <Badge variant="outline">
-                {JLPT_AI_QUESTION_CONTENT.questionGroupIdLabel}: {item.questionGroupId}
+                {JLPT_AI_QUESTION_CONTENT.questionGroupIdLabel}: {item.targetExamTitle}
               </Badge>
             )}
           </div>

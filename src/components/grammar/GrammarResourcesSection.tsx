@@ -14,9 +14,9 @@ interface GrammarResourcesSectionProps {
 
 export function GrammarResourcesSection({ form, resourceFieldArray }: GrammarResourcesSectionProps) {
   return (
-    <section className="space-y-4">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold">{ADMIN_GRAMMAR_CONTENT.form.sections.resourcesTitle}</h3>
+        <p className="text-sm font-medium">{ADMIN_GRAMMAR_CONTENT.form.sections.resourcesTitle}</p>
         <Button
           type="button"
           variant="outline"
@@ -81,6 +81,6 @@ export function GrammarResourcesSection({ form, resourceFieldArray }: GrammarRes
           </CardContent>
         </Card>
       ))}
-    </section>
+    </div>
   )
 }

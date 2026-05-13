@@ -260,6 +260,7 @@ export interface AiGeneratedQuestionResponse {
   sectionType: SectionType
   topic: string
   questionGroupId: string | null
+  targetExamTitle: string | null
   generatedData: string
   status: AiQuestionStatus
   reviewedBy: string | null

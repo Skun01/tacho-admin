@@ -96,8 +96,8 @@ export function JlptAiQuestionAdminTable({
                 </Badge>
               </TableCell>
               <TableCell>
-                {item.questionGroupId ? (
-                  <span className="text-xs font-mono">{item.questionGroupId}</span>
+                {item.targetExamTitle ? (
+                  <span className="text-sm">{item.targetExamTitle}</span>
                 ) : (
                   <span style={{ color: 'var(--on-surface-variant)' }}>{JLPT_AI_QUESTION_CONTENT.noneSymbol}</span>
                 )}

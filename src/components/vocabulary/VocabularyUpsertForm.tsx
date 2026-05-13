@@ -597,7 +597,7 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
                 </AccordionItem>
               </Accordion>
 
-              <div className="sticky bottom-[-24px] z-10 -mx-6 border-t bg-background/95 px-6 py-4 backdrop-blur-sm lg:bottom-[-32px]">
+              <div className="border-t pt-4">
                 <div className="flex flex-wrap gap-2">
                 <Button type="submit" disabled={isSubmitting || isLoadingDetail}>
                   {ADMIN_VOCABULARY_CONTENT.form.saveActionLabel}

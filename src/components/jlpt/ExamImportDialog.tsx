@@ -1,13 +1,14 @@
 import { useRef, useState } from 'react'
 import {
   SpinnerGapIcon,
-  UploadSimpleIcon,
   WarningCircleIcon,
   XCircleIcon,
 } from '@phosphor-icons/react'
 import { gooeyToast } from '@/components/ui/goey-toaster'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { JLPT_EXAM_CONTENT, JLPT_LEVEL_LABELS } from '@/constants/jlptAdmin'
 import { useExamAdminImport } from '@/hooks/useExamAdminImport'
@@ -27,6 +28,21 @@ export function ExamImportDialog({ open, onOpenChange, onImported }: ExamImportD
   const [previewResult, setPreviewResult] = useState<ExamImportPreviewResult | null>(null)
 
   const { previewMutation, commitMutation, getApiErrorMessage } = useExamAdminImport()
+
+  const resetState = () => {
+    setSelectedFile(null)
+    setPayload(null)
+    setPreviewResult(null)
+    previewMutation.reset()
+    commitMutation.reset()
+  }
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      resetState()
+    }
+    onOpenChange(nextOpen)
+  }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null
@@ -71,10 +87,8 @@ export function ExamImportDialog({ open, onOpenChange, onImported }: ExamImportD
       const result = data.data
       if (result.isSuccess) {
         gooeyToast.success(JLPT_EXAM_CONTENT.importDialog.commitSuccess)
-        setSelectedFile(null)
-        setPayload(null)
-        setPreviewResult(null)
         onImported()
+        handleOpenChange(false)
       } else {
         gooeyToast.error(
           result.errors.length > 0
@@ -87,55 +101,38 @@ export function ExamImportDialog({ open, onOpenChange, onImported }: ExamImportD
     }
   }
 
-  const handleClose = () => {
-    setSelectedFile(null)
-    setPayload(null)
-    setPreviewResult(null)
-    onOpenChange(false)
-  }
-
   const canCommit = previewResult && previewResult.isValid
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="flex max-h-[85vh] flex-col overflow-hidden sm:max-w-[700px]">
         <DialogHeader className="shrink-0">
           <DialogTitle>{JLPT_EXAM_CONTENT.importDialog.title}</DialogTitle>
-          <DialogDescription>{JLPT_EXAM_CONTENT.importDialog.description}</DialogDescription>
         </DialogHeader>
 
         <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
-          {/* File input */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">{JLPT_EXAM_CONTENT.importDialog.fileLabel}</label>
             <input
               ref={fileInputRef}
               type="file"
-              accept=".json"
+              accept="application/json,.json"
               onChange={handleFileChange}
-              className="block w-full text-sm file:mr-3 file:rounded-md file:border-0 file:px-3 file:py-1.5 file:text-sm file:font-medium"
+              className="block w-full cursor-pointer rounded-md border border-input px-3 py-2 text-sm"
             />
-            <p className="text-xs" style={{ color: 'var(--on-surface-variant)' }}>
-              {JLPT_EXAM_CONTENT.importDialog.fileHint}
-            </p>
+            {selectedFile && (
+              <Badge variant="outline">
+                {JLPT_EXAM_CONTENT.importDialog.selectedFileLabel}: {selectedFile.name}
+              </Badge>
+            )}
           </div>
 
-          {selectedFile && (
-            <p className="text-sm">
-              {JLPT_EXAM_CONTENT.importDialog.selectedFileLabel}: <strong>{selectedFile.name}</strong>
-            </p>
-          )}
-
-          {/* Action buttons */}
           <div className="flex flex-wrap gap-2">
             <Button
               type="button"
-              variant="outline"
               onClick={handlePreview}
-              disabled={!payload || previewMutation.isPending}
+              disabled={!payload || previewMutation.isPending || commitMutation.isPending}
             >
               {previewMutation.isPending && <SpinnerGapIcon size={16} className="animate-spin" />}
-              <UploadSimpleIcon size={16} />
               {JLPT_EXAM_CONTENT.importDialog.previewButtonLabel}
             </Button>
 
@@ -143,21 +140,23 @@ export function ExamImportDialog({ open, onOpenChange, onImported }: ExamImportD
               type="button"
               onClick={handleCommit}
               disabled={!canCommit || commitMutation.isPending}
+              variant={canCommit ? 'default' : 'outline'}
             >
               {commitMutation.isPending && <SpinnerGapIcon size={16} className="animate-spin" />}
               {JLPT_EXAM_CONTENT.importDialog.commitButtonLabel}
             </Button>
 
-            <Button type="button" variant="outline" onClick={handleClose}>
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} disabled={commitMutation.isPending}>
               {JLPT_EXAM_CONTENT.importDialog.closeButtonLabel}
             </Button>
           </div>
 
-          {/* Preview results */}
-          {previewResult ? (
-            <div className="space-y-3">
-              <h4 className="text-sm font-semibold">{JLPT_EXAM_CONTENT.importDialog.summaryTitle}</h4>
-              <div className="flex flex-col gap-2 rounded-md border p-3">
+          {previewResult && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{JLPT_EXAM_CONTENT.importDialog.summaryTitle}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-3">
                   <span>{JLPT_LEVEL_LABELS[previewResult.item.level]}</span>
                   <span>sections: {previewResult.item.sectionsCount}</span>
@@ -165,29 +164,33 @@ export function ExamImportDialog({ open, onOpenChange, onImported }: ExamImportD
                   <span>câu hỏi: {previewResult.item.questionsCount}</span>
                   <span>đáp án: {previewResult.item.optionsCount}</span>
                 </div>
-              </div>
 
-              <div className="flex flex-wrap gap-4 text-sm">
-                <span className="text-green-600">
-                  {JLPT_EXAM_CONTENT.importDialog.statusValidLabel}: {previewResult.item.isValid ? '✓' : '✗'}
-                </span>
-                <span className="text-red-600">
-                  {previewResult.errorCount} {JLPT_EXAM_CONTENT.importDialog.errorCountLabel}
-                </span>
-                {previewResult.warningCount > 0 && (
-                  <span className="text-yellow-600">
-                    {previewResult.warningCount} {JLPT_EXAM_CONTENT.importDialog.warningCountLabel}
-                  </span>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant={previewResult.item.isValid ? 'success' : 'destructive'}>
+                    {previewResult.item.isValid
+                      ? JLPT_EXAM_CONTENT.importDialog.statusValidLabel
+                      : JLPT_EXAM_CONTENT.importDialog.statusInvalidLabel}
+                  </Badge>
+                  {previewResult.errorCount > 0 && (
+                    <Badge variant="destructive">
+                      {previewResult.errorCount} {JLPT_EXAM_CONTENT.importDialog.errorCountLabel}
+                    </Badge>
+                  )}
+                  {previewResult.warningCount > 0 && (
+                    <Badge variant="warning">
+                      {previewResult.warningCount} {JLPT_EXAM_CONTENT.importDialog.warningCountLabel}
+                    </Badge>
+                  )}
+                </div>
+
+                {!previewResult.isValid && (
+                  <div className="flex items-center gap-2 rounded-md border border-yellow-400/60 bg-yellow-100/70 px-3 py-2 text-sm">
+                    <WarningCircleIcon size={18} />
+                    <span>{JLPT_EXAM_CONTENT.importDialog.hasInvalidBlockLabel}</span>
+                  </div>
                 )}
-              </div>
 
-              {!previewResult.isValid && (
-                <p className="text-sm text-red-600">{JLPT_EXAM_CONTENT.importDialog.hasInvalidBlockLabel}</p>
-              )}
-
-              {(previewResult.item.errors.length > 0 || previewResult.item.warnings.length > 0) && (
-                <>
-                  <h4 className="text-sm font-semibold">{JLPT_EXAM_CONTENT.importDialog.resultTitle}</h4>
+                {(previewResult.item.errors.length > 0 || previewResult.item.warnings.length > 0) && (
                   <ScrollArea className="max-h-[240px] rounded-md border">
                     <div className="space-y-1 p-2">
                       {previewResult.item.errors.map((err, i) => (
@@ -204,13 +207,9 @@ export function ExamImportDialog({ open, onOpenChange, onImported }: ExamImportD
                       ))}
                     </div>
                   </ScrollArea>
-                </>
-              )}
-            </div>
-          ) : (
-            <p className="text-sm" style={{ color: 'var(--on-surface-variant)' }}>
-              {JLPT_EXAM_CONTENT.importDialog.emptyPreviewLabel}
-            </p>
+                )}
+              </CardContent>
+            </Card>
           )}
         </div>
       </DialogContent>
