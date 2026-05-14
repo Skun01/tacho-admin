@@ -90,6 +90,9 @@ export interface GrammarSentenceUpsertInput {
   text: string
   meaning: string
   level: GrammarLevel | null
+  blankWord?: string
+  hint?: string
+  answerList?: string[]
 }
 
 export interface GrammarAdminDetail extends GrammarAdminItem {
@@ -135,6 +138,9 @@ export interface GrammarImportSentenceItem {
   text: string
   meaning: string
   level: GrammarLevel | null
+  blankWord?: string
+  hint?: string
+  answerList?: string[]
 }
 
 export interface GrammarImportItem {

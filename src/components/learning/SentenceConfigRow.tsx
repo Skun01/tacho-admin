@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { TrashIcon, DotsSixVerticalIcon } from '@phosphor-icons/react'
+import { TrashIcon } from '@phosphor-icons/react'
 import { ADMIN_LEARNING_CONTENT } from '@/constants/adminLearning'
 import type { LearningAdminCardSentenceConfigResponse } from '@/types/learningAdmin'
 import { useState, type KeyboardEvent } from 'react'
@@ -47,9 +47,6 @@ export function SentenceConfigRow({
     >
       {/* Header row */}
       <div className="flex items-start gap-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center cursor-grab" title={C.dragHintLabel}>
-          <DotsSixVerticalIcon size={18} style={{ color: 'var(--on-surface-variant)' }} />
-        </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium" style={{ color: 'var(--on-surface)' }}>{sentence.jp}</p>
           <p className="mt-0.5 text-xs" style={{ color: 'var(--on-surface-variant)' }}>{sentence.en}</p>

@@ -133,6 +133,9 @@ export function GrammarUpsertForm({
           text: s.text,
           meaning: s.meaning,
           level: s.level,
+          blankWord: s.blankWord ?? '',
+          hint: s.hint ?? '',
+          answerList: s.answerList ?? [],
         })) ?? [],
       })
       setTagInput('')
@@ -204,6 +207,9 @@ export function GrammarUpsertForm({
         text: s.text.trim(),
         meaning: s.meaning.trim(),
         level: s.level,
+        blankWord: s.blankWord?.trim() || undefined,
+        hint: s.hint?.trim() || undefined,
+        answerList: s.answerList?.length ? s.answerList : undefined,
       })),
     })
   }

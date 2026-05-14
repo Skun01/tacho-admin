@@ -1,10 +1,15 @@
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PencilSimpleIcon } from '@phosphor-icons/react'
+import { FillBlankConfigDialog, type FillBlankConfigValues } from '@/components/learning/FillBlankConfigDialog'
 import { ADMIN_VOCABULARY_CONTENT } from '@/constants/adminContent'
 import { VOCABULARY_LEVEL_OPTIONS } from '@/types/vocabularyAdmin'
 import type { UseFieldArrayReturn, UseFormReturn } from 'react-hook-form'
 import type { VocabularyUpsertInput } from '@/lib/validations/vocabularyAdmin'
+
+const F = ADMIN_VOCABULARY_CONTENT.form.fields
 
 interface LibrarySentenceItem {
   id: string
@@ -36,6 +41,17 @@ export function VocabularySentencesSection({
   onAddSentenceFromLibrary,
   onAddNewSentence,
 }: VocabularySentencesSectionProps) {
+  const [configDialogIndex, setConfigDialogIndex] = useState<number | null>(null)
+
+  const activeSentence = configDialogIndex !== null ? form.getValues(`sentences.${configDialogIndex}`) : null
+
+  const handleSaveConfig = (values: FillBlankConfigValues) => {
+    if (configDialogIndex === null) return
+    form.setValue(`sentences.${configDialogIndex}.blankWord`, values.blankWord, { shouldDirty: true })
+    form.setValue(`sentences.${configDialogIndex}.hint`, values.hint, { shouldDirty: true })
+    form.setValue(`sentences.${configDialogIndex}.answerList`, values.answerList, { shouldDirty: true })
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
@@ -86,69 +102,117 @@ export function VocabularySentencesSection({
         </p>
       ) : (
         <div className="space-y-3">
-          {sentenceFieldArray.fields.map((field, index) => (
-            <div key={field.id} className="space-y-3 rounded-lg border p-3" style={{ borderColor: 'var(--border)' }}>
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-medium">{ADMIN_VOCABULARY_CONTENT.form.sections.sentenceItemLabel(index + 1)}</p>
-                <Button type="button" variant="ghost" size="sm" onClick={() => sentenceFieldArray.remove(index)}>
-                  {ADMIN_VOCABULARY_CONTENT.form.removeSentenceLabel}
+          {sentenceFieldArray.fields.map((field, index) => {
+            const hasBlankConfig = !!(form.watch(`sentences.${index}.blankWord`) || form.watch(`sentences.${index}.answerList`)?.length)
+
+            return (
+              <div key={field.id} className="space-y-3 rounded-lg border p-3" style={{ borderColor: 'var(--border)' }}>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-medium">{ADMIN_VOCABULARY_CONTENT.form.sections.sentenceItemLabel(index + 1)}</p>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => sentenceFieldArray.remove(index)}>
+                    {ADMIN_VOCABULARY_CONTENT.form.removeSentenceLabel}
+                  </Button>
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name={`sentences.${index}.text`}
+                  render={({ field: sentenceField }) => (
+                    <FormItem>
+                      <FormLabel>{F.sentenceTextLabel}</FormLabel>
+                      <FormControl>
+                        <Input {...sentenceField} placeholder={F.sentenceTextPlaceholder} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`sentences.${index}.meaning`}
+                  render={({ field: sentenceField }) => (
+                    <FormItem>
+                      <FormLabel>{F.sentenceMeaningLabel}</FormLabel>
+                      <FormControl>
+                        <Input {...sentenceField} placeholder={F.sentenceMeaningPlaceholder} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`sentences.${index}.level`}
+                  render={({ field: sentenceField }) => (
+                    <FormItem>
+                      <FormLabel>{F.sentenceLevelLabel}</FormLabel>
+                      <div className="flex flex-wrap gap-2">
+                        {VOCABULARY_LEVEL_OPTIONS.map((level) => (
+                          <Button
+                            key={level}
+                            type="button"
+                            size="sm"
+                            variant={sentenceField.value === level ? 'default' : 'outline'}
+                            onClick={() => sentenceField.onChange(sentenceField.value === level ? null : level)}
+                          >
+                            {level}
+                          </Button>
+                        ))}
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-center gap-1.5"
+                  onClick={() => setConfigDialogIndex(index)}
+                >
+                  <PencilSimpleIcon size={14} />
+                  {F.fillBlankToggleLabel}
+                  {hasBlankConfig && (
+                    <span
+                      className="rounded-full px-1.5 py-0.5 text-[10px]"
+                      style={{ backgroundColor: 'var(--primary-container)', color: 'var(--on-primary-container)' }}
+                    >
+                      Đã cấu hình
+                    </span>
+                  )}
                 </Button>
               </div>
-
-              <FormField
-                control={form.control}
-                name={`sentences.${index}.text`}
-                render={({ field: sentenceField }) => (
-                  <FormItem>
-                    <FormLabel>{ADMIN_VOCABULARY_CONTENT.form.fields.sentenceTextLabel}</FormLabel>
-                    <FormControl>
-                      <Input {...sentenceField} placeholder={ADMIN_VOCABULARY_CONTENT.form.fields.sentenceTextPlaceholder} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name={`sentences.${index}.meaning`}
-                render={({ field: sentenceField }) => (
-                  <FormItem>
-                    <FormLabel>{ADMIN_VOCABULARY_CONTENT.form.fields.sentenceMeaningLabel}</FormLabel>
-                    <FormControl>
-                      <Input {...sentenceField} placeholder={ADMIN_VOCABULARY_CONTENT.form.fields.sentenceMeaningPlaceholder} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name={`sentences.${index}.level`}
-                render={({ field: sentenceField }) => (
-                  <FormItem>
-                    <FormLabel>{ADMIN_VOCABULARY_CONTENT.form.fields.sentenceLevelLabel}</FormLabel>
-                    <div className="flex flex-wrap gap-2">
-                      {VOCABULARY_LEVEL_OPTIONS.map((level) => (
-                        <Button
-                          key={level}
-                          type="button"
-                          size="sm"
-                          variant={sentenceField.value === level ? 'default' : 'outline'}
-                          onClick={() => sentenceField.onChange(sentenceField.value === level ? null : level)}
-                        >
-                          {level}
-                        </Button>
-                      ))}
-                    </div>
-                  </FormItem>
-                )}
-              />
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
+
+      <FillBlankConfigDialog
+        open={configDialogIndex !== null}
+        onOpenChange={(open) => { if (!open) setConfigDialogIndex(null) }}
+        sentenceText={activeSentence?.text ?? ''}
+        initialValues={{
+          blankWord: activeSentence?.blankWord ?? '',
+          hint: activeSentence?.hint ?? '',
+          answerList: activeSentence?.answerList ?? [],
+        }}
+        onSave={handleSaveConfig}
+        labels={{
+          title: F.fillBlankDialogTitle,
+          description: F.fillBlankDialogDescription,
+          selectHint: F.fillBlankSelectHint,
+          blankWordLabel: F.blankWordLabel,
+          blankWordPlaceholder: F.blankWordPlaceholder,
+          hintLabel: F.hintLabel,
+          hintPlaceholder: F.hintPlaceholder,
+          answerListLabel: F.answerListLabel,
+          answerListPlaceholder: F.answerListPlaceholder,
+          saveLabel: F.fillBlankSaveLabel,
+          cancelLabel: F.fillBlankCancelLabel,
+        }}
+      />
     </div>
   )
 }

@@ -154,6 +154,9 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
             text: sentence.text,
             meaning: sentence.meaning,
             level: sentence.level,
+            blankWord: sentence.blankWord ?? '',
+            hint: sentence.hint ?? '',
+            answerList: sentence.answerList ?? [],
           })) ?? [],
       })
       setDefinitionInputByMeaningId({})
@@ -284,6 +287,9 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
       text: item.text,
       meaning: item.meaning,
       level: (item.level as VocabularyUpsertInput['level']) ?? null,
+      blankWord: '',
+      hint: '',
+      answerList: [],
     })
   }
 
@@ -292,6 +298,9 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
       text: '',
       meaning: '',
       level: null,
+      blankWord: '',
+      hint: '',
+      answerList: [],
     })
   }
 
@@ -329,6 +338,9 @@ export const VocabularyUpsertForm = forwardRef<VocabularyUpsertFormHandle, Vocab
         text: sentence.text.trim(),
         meaning: sentence.meaning.trim(),
         level: sentence.level,
+        blankWord: sentence.blankWord?.trim() || undefined,
+        hint: sentence.hint?.trim() || undefined,
+        answerList: sentence.answerList?.length ? sentence.answerList : undefined,
       })),
     })
   }

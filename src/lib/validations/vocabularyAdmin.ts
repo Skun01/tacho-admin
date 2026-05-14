@@ -11,6 +11,9 @@ const vocabularySentenceSchema = z.object({
   text: z.string().trim().min(1, 'Câu ví dụ là bắt buộc').max(1000, 'Câu ví dụ tối đa 1000 ký tự'),
   meaning: z.string().trim().min(1, 'Nghĩa câu ví dụ là bắt buộc').max(1000, 'Nghĩa câu ví dụ tối đa 1000 ký tự'),
   level: z.enum(VOCABULARY_LEVEL_OPTIONS).nullable(),
+  blankWord: z.string().trim().max(200, 'Từ trống tối đa 200 ký tự').optional().default(''),
+  hint: z.string().trim().max(500, 'Gợi ý tối đa 500 ký tự').optional().default(''),
+  answerList: z.array(z.string().trim()).optional().default([]),
 })
 
 export const vocabularyUpsertSchema = z.object({

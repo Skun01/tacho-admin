@@ -81,6 +81,9 @@ export interface VocabularySentenceUpsertInput {
   text: string
   meaning: string
   level: VocabularyLevel | null
+  blankWord?: string
+  hint?: string
+  answerList?: string[]
 }
 
 export interface VocabularySearchQuery {
@@ -98,6 +101,9 @@ export interface VocabularyImportSentenceItem {
   text: string
   meaning: string
   level: VocabularyLevel | null
+  blankWord?: string
+  hint?: string
+  answerList?: string[]
 }
 
 export interface VocabularyImportItem {

@@ -4,13 +4,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
 import {
   Popover,
   PopoverContent,
@@ -49,25 +48,21 @@ export function CardConfigDrawer({ cardId, open, onOpenChange }: CardConfigDrawe
   const { data, isLoading } = useLearningCardConfig(cardId ?? '', open && Boolean(cardId))
 
   return (
-    <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent
-          className="
-            max-w-[calc(100vw-1rem)] h-[calc(100vh-1rem)] max-h-[calc(100vh-1rem)] p-0 gap-0 flex flex-col overflow-hidden
-            sm:max-w-[980px] sm:h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-2rem)]
-            sm:left-auto sm:right-4 sm:top-1/2 sm:translate-x-0 sm:-translate-y-1/2
-          "
-          style={{ backgroundColor: 'var(--surface)' }}
-        >
-          <DialogHeader className="border-b px-6 py-4 pr-12">
-            <DialogTitle>{C.drawerTitle}</DialogTitle>
-            <DialogDescription>
-              {data ? C.detailDescription(data.title, CARD_TYPE_LABELS[data.cardType]) : C.drawerDescription}
-            </DialogDescription>
-          </DialogHeader>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="right"
+        className="sm:max-w-[980px] w-full p-0 gap-0 flex flex-col overflow-hidden"
+        style={{ backgroundColor: 'var(--surface)' }}
+      >
+        <SheetHeader className="border-b px-6 py-4 pr-12">
+          <SheetTitle>{C.drawerTitle}</SheetTitle>
+          <SheetDescription>
+            {data ? C.detailDescription(data.title, CARD_TYPE_LABELS[data.cardType]) : C.drawerDescription}
+          </SheetDescription>
+        </SheetHeader>
 
-          <ScrollArea className="min-h-0 flex-1">
-            <div className="px-6 py-4">
+        <ScrollArea className="min-h-0 flex-1">
+          <div className="px-6 py-4">
             {isLoading && (
               <div className="space-y-4">
                 <Skeleton className="h-8 w-full" />
@@ -85,11 +80,10 @@ export function CardConfigDrawer({ cardId, open, onOpenChange }: CardConfigDrawe
                 onClose={() => onOpenChange(false)}
               />
             )}
-            </div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
-    </>
+          </div>
+        </ScrollArea>
+      </SheetContent>
+    </Sheet>
   )
 }
 
@@ -231,58 +225,64 @@ function CardConfigBody({ cardId, data, onClose }: CardConfigBodyProps) {
 
           <Card>
             <CardHeader className="gap-3 pb-3">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <WarningDiamondIcon className="text-destructive" />
-                    <CardTitle className="text-base">{C.issuesTitle}</CardTitle>
-                  </div>
-                  {data.issues.length > 0 && (
-                    <Badge className="bg-destructive text-destructive-foreground">{C.issueCountLabel(data.issues.length)}</Badge>
-                  )}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <WarningDiamondIcon className="text-destructive" />
+                  <CardTitle className="text-base">{C.issuesTitle}</CardTitle>
                 </div>
+                {data.issues.length > 0 && (
+                  <Badge className="bg-destructive text-destructive-foreground">{C.issueCountLabel(data.issues.length)}</Badge>
+                )}
+              </div>
               <CardDescription>{C.issuesSectionDescription}</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-2">
               {data.issues.length === 0 && (
-                <Alert>
-                  <CheckCircleIcon className="text-emerald-600" />
-                  <AlertTitle>{C.issuesTitle}</AlertTitle>
-                  <AlertDescription>{C.noIssuesLabel}</AlertDescription>
-                </Alert>
+                <div className="flex items-center gap-2 rounded-md border p-3">
+                  <CheckCircleIcon className="shrink-0 text-emerald-600" size={18} />
+                  <p className="text-sm">{C.noIssuesLabel}</p>
+                </div>
               )}
 
               {data.issues.map((issue, i) => (
-                <Alert
+                <div
                   key={`${issue.type}-${issue.sentenceId ?? 'global'}-${i}`}
-                  variant="destructive"
-                  className="space-y-2 border-destructive/30 bg-[var(--error-container,rgba(255,0,0,0.06))] text-[var(--on-error-container,#7f1d1d)] [&>svg]:text-[var(--on-error-container,#7f1d1d)]"
+                  className="flex items-start gap-2 rounded-md border border-destructive/20 bg-destructive/5 p-2.5"
                 >
-                  <WarningDiamondIcon />
-                  <AlertTitle className="line-clamp-none flex flex-wrap items-center gap-2 text-[var(--on-error-container,#7f1d1d)]">
-                    <Badge className="bg-destructive text-destructive-foreground">{LEARNING_ISSUE_TYPE_LABELS[issue.type]}</Badge>
-                    {issue.sentenceId && <Badge variant="outline">{C.issueSentenceIdLabel(issue.sentenceId)}</Badge>}
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 text-[var(--on-error-container,#7f1d1d)] hover:bg-black/10"
-                          aria-label={C.issuesTitle}
-                        >
-                          <InfoIcon />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent align="end">
-                        <PopoverHeader>
-                          <PopoverTitle>{LEARNING_ISSUE_TYPE_LABELS[issue.type]}</PopoverTitle>
-                          <PopoverDescription>{issue.message}</PopoverDescription>
-                        </PopoverHeader>
-                      </PopoverContent>
-                    </Popover>
-                  </AlertTitle>
-                  <AlertDescription className="text-[var(--on-error-container,#7f1d1d)]/90">{issue.message}</AlertDescription>
-                </Alert>
+                  <WarningDiamondIcon className="mt-0.5 shrink-0 text-destructive" size={16} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
+                        {LEARNING_ISSUE_TYPE_LABELS[issue.type]}
+                      </Badge>
+                      {issue.sentenceId && (
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                          {C.issueSentenceIdLabel(issue.sentenceId)}
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{issue.message}</p>
+                  </div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        className="shrink-0"
+                        aria-label={C.issuesTitle}
+                      >
+                        <InfoIcon size={14} />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent align="end">
+                      <PopoverHeader>
+                        <PopoverTitle>{LEARNING_ISSUE_TYPE_LABELS[issue.type]}</PopoverTitle>
+                        <PopoverDescription>{issue.message}</PopoverDescription>
+                      </PopoverHeader>
+                    </PopoverContent>
+                  </Popover>
+                </div>
               ))}
             </CardContent>
           </Card>
