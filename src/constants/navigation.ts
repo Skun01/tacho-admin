@@ -10,7 +10,6 @@ import {
   UsersIcon,
   ArrowSquareOutIcon,
   GraduationCapIcon,
-  WarningCircleIcon,
   MicrophoneIcon,
   ExamIcon,
   RobotIcon,
@@ -54,13 +53,7 @@ export const ADMIN_NAV_ITEMS: AdminNavEntry[] = [
     ],
   },
   { icon: CardsIcon, label: 'Bộ thẻ', href: '/admin/decks' },
-  {
-    icon: GraduationCapIcon,
-    label: 'Học tập',
-    children: [
-      { icon: WarningCircleIcon, label: 'Vấn đề nội dung', href: '/admin/learning/issues' },
-    ],
-  },
+  { icon: GraduationCapIcon, label: 'Học tập', href: '/admin/learning' },
   { icon: UsersIcon, label: 'Người dùng', href: '/admin/users' },
 ]
 
@@ -86,8 +79,8 @@ export const ADMIN_NAV_BREADCRUMB_MAP: Record<string, string> = {
   'admin/decks/create': 'Tạo bộ thẻ',
   'admin/decks/:id/edit': 'Sửa bộ thẻ',
   'admin/deck-types': 'Loại bộ thẻ',
-  'admin/learning/issues': 'Vấn đề nội dung',
   'admin/decks/:id/coverage': 'Phạm vi bộ thẻ',
+  'admin/learning': 'Học tập',
   'admin/shadowing': 'Shadowing',
   'admin/shadowing/:id': 'Chủ đề Shadowing',
   'admin/jlpt/exams': 'Đề thi JLPT',

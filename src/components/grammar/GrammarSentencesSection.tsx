@@ -259,21 +259,13 @@ export function GrammarSentencesSection({
 
               <Button
                 type="button"
-                variant="outline"
+                variant={hasBlankConfig ? 'default' : 'outline'}
                 size="sm"
                 className="w-full justify-center gap-1.5"
                 onClick={() => setConfigDialogIndex(index)}
               >
                 <PencilSimpleIcon size={14} />
                 {F.fillBlankToggleLabel}
-                {hasBlankConfig && (
-                  <span
-                    className="rounded-full px-1.5 py-0.5 text-[10px]"
-                    style={{ backgroundColor: 'var(--primary-container)', color: 'var(--on-primary-container)' }}
-                  >
-                    Đã cấu hình
-                  </span>
-                )}
               </Button>
             </CardContent>
           </Card>

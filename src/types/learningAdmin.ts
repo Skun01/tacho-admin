@@ -148,29 +148,6 @@ export interface ReorderSentencesPayload {
 }
 
 // ────────────────────────────────────────────────
-// 15.9  Issues list
-// ────────────────────────────────────────────────
-
-export interface LearningAdminIssueListItemResponse {
-  cardId: string
-  cardType: CardType
-  title: string
-  summary: string
-  availableModes: StudyMode[]
-  issues: LearningAdminCardIssueItemResponse[]
-}
-
-export interface LearningAdminIssuesQuery {
-  page?: number
-  pageSize?: number
-  cardType?: CardType
-  mode?: StudyMode
-  issueType?: LearningIssueType
-  q?: string
-  deckId?: string
-}
-
-// ────────────────────────────────────────────────
 // 15.10  Deck coverage
 // ────────────────────────────────────────────────
 

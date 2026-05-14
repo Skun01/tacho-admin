@@ -1,14 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { learningAdminService } from '@/services/learningAdminService'
 import type {
-  LearningAdminIssuesQuery,
   LearningPreviewQuery,
 } from '@/types/learningAdmin'
 
 export const LEARNING_ADMIN_QUERY_KEYS = {
   all: ['admin', 'learning'] as const,
   cardConfig: (cardId: string) => [...LEARNING_ADMIN_QUERY_KEYS.all, 'card-config', cardId] as const,
-  issues: (query: LearningAdminIssuesQuery) => [...LEARNING_ADMIN_QUERY_KEYS.all, 'issues', query] as const,
   deckCoverage: (deckId: string) => [...LEARNING_ADMIN_QUERY_KEYS.all, 'deck-coverage', deckId] as const,
   overview: () => [...LEARNING_ADMIN_QUERY_KEYS.all, 'overview'] as const,
   deckAnalytics: (deckId: string) => [...LEARNING_ADMIN_QUERY_KEYS.all, 'deck-analytics', deckId] as const,
@@ -23,13 +21,6 @@ export function useLearningCardConfig(cardId: string, enabled = true) {
     queryKey: LEARNING_ADMIN_QUERY_KEYS.cardConfig(cardId),
     queryFn: () => learningAdminService.getCardConfig(cardId),
     enabled: enabled && Boolean(cardId),
-  })
-}
-
-export function useLearningIssues(query: LearningAdminIssuesQuery) {
-  return useQuery({
-    queryKey: LEARNING_ADMIN_QUERY_KEYS.issues(query),
-    queryFn: () => learningAdminService.getIssues(query),
   })
 }
 

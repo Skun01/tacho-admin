@@ -21,8 +21,8 @@ import AdminKanjiPage from './pages/AdminKanjiPage'
 import { AdminDecksPage } from './pages/AdminDecksPage'
 import { AdminDeckEditorPage } from './pages/AdminDeckEditorPage'
 import { AdminDeckTypesPage } from './pages/AdminDeckTypesPage'
-import { AdminLearningIssuesPage } from './pages/AdminLearningIssuesPage'
 import { AdminDeckCoveragePage } from './pages/AdminDeckCoveragePage'
+import { AdminLearningPage } from './pages/AdminLearningPage'
 import { AdminShadowingPage } from './pages/AdminShadowingPage'
 import { AdminShadowingTopicPage } from './pages/AdminShadowingTopicPage'
 import { AdminJlptExamsPage } from './pages/AdminJlptExamsPage'
@@ -71,7 +71,7 @@ const router = createBrowserRouter(
             <Route path="/admin/decks/create" element={<AdminDeckEditorPage />} />
             <Route path="/admin/decks/:id/edit" element={<AdminDeckEditorPage />} />
             <Route path="/admin/deck-types" element={<AdminDeckTypesPage />} />
-            <Route path="/admin/learning/issues" element={<AdminLearningIssuesPage />} />
+            <Route path="/admin/learning" element={<AdminLearningPage />} />
             <Route path="/admin/decks/:id/coverage" element={<AdminDeckCoveragePage />} />
             <Route path="/admin/shadowing" element={<AdminShadowingPage />} />
             <Route path="/admin/shadowing/:id" element={<AdminShadowingTopicPage />} />

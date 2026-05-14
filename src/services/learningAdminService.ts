@@ -1,5 +1,5 @@
 import api from '@/services/api'
-import type { ApiResponse, PaginatedResponse } from '@/types/api'
+import type { ApiResponse } from '@/types/api'
 import type {
   AttachSentencePayload,
   CardAnalyticsResponse,
@@ -7,8 +7,6 @@ import type {
   DeckCoverageResponse,
   LearningAdminCardConfigResponse,
   LearningAdminCardSentenceConfigResponse,
-  LearningAdminIssueListItemResponse,
-  LearningAdminIssuesQuery,
   LearningOverviewResponse,
   LearningPreviewQuery,
   LearningPreviewResponse,
@@ -89,28 +87,6 @@ export const learningAdminService = {
       payload,
     )
     return response.data.data ?? []
-  },
-
-  // ── 15.9  Issues list ─────────────────────────
-  async getIssues(query: LearningAdminIssuesQuery) {
-    const response = await api.get<PaginatedResponse<LearningAdminIssueListItemResponse>>(
-      '/admin/learning/cards/issues',
-      {
-        params: omitNullishValues({
-          page: query.page,
-          pageSize: query.pageSize,
-          cardType: query.cardType,
-          mode: query.mode,
-          issueType: query.issueType,
-          q: query.q,
-          deckId: query.deckId,
-        }),
-      },
-    )
-    return {
-      items: response.data.data ?? [],
-      meta: response.data.metaData ?? null,
-    }
   },
 
   // ── 15.10 Deck coverage ───────────────────────

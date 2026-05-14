@@ -6,7 +6,6 @@ import {
   ExamIcon,
   MicrophoneIcon,
   OnigiriIcon,
-  WarningCircleIcon,
 } from '@phosphor-icons/react'
 import { ADMIN_LEARNING_CONTENT } from '@/constants/adminLearning'
 
@@ -55,12 +54,6 @@ const QUICK_ACTIONS: QuickAction[] = [
     label: C.quickViewShadowing,
     href: '/admin/shadowing',
     description: 'Nội dung shadowing',
-  },
-  {
-    icon: WarningCircleIcon,
-    label: C.quickViewIssues,
-    href: '/admin/learning/issues',
-    description: 'Vấn đề cấu hình',
   },
 ]
 

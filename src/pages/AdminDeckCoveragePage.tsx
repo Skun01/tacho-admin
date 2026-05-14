@@ -1,6 +1,6 @@
 import { Helmet } from '@dr.pogodin/react-helmet'
 import { useParams, Link } from 'react-router'
-import { ArrowLeftIcon, WarningCircleIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { DeckCoverageSection } from '@/components/learning/DeckCoverageSection'
 import { DeckAnalyticsSection } from '@/components/learning/DeckAnalyticsSection'
@@ -59,14 +59,6 @@ export function AdminDeckCoveragePage() {
 
           <TabsContent value="coverage" className="mt-4">
             <DeckCoverageSection deckId={deckId} />
-            <div className="mt-4">
-              <Button asChild variant="outline" size="sm">
-                <Link to={`/admin/learning/issues?deckId=${deckId}`}>
-                  <WarningCircleIcon size={14} className="mr-1" />
-                  {C_COVERAGE.viewIssuesLabel}
-                </Link>
-              </Button>
-            </div>
           </TabsContent>
 
           <TabsContent value="analytics" className="mt-4">
