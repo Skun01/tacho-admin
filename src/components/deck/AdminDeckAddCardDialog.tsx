@@ -1,5 +1,6 @@
 import { MagnifyingGlassIcon, PlusIcon, TrashIcon, XIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
+import { useDebounce } from '@/hooks/useDebounce'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
@@ -51,7 +52,7 @@ export function AdminDeckAddCardDialog({
   const [level, setLevel] = useState<'N5' | 'N4' | 'N3' | 'N2' | 'N1' | undefined>(undefined)
   const [page, setPage] = useState(1)
 
-  const searchQuery = query.trim()
+  const searchQuery = useDebounce(query.trim(), 300)
 
   function handleQueryChange(value: string) {
     setQuery(value)
@@ -160,7 +161,7 @@ export function AdminDeckAddCardDialog({
                     {content.emptySearchLabel}
                   </p>
                 </div>
-              ) : searchResult.isFetching ? (
+              ) : searchResult.isLoading ? (
                 Array.from({ length: 4 }).map((_, index) => (
                   <Skeleton key={index} className="h-16 rounded-xl" />
                 ))

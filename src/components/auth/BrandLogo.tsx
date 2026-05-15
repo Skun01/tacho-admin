@@ -4,7 +4,7 @@ export function BrandLogo() {
   return (
     <Link to="/" className="flex items-center gap-2.5 group w-fit">
       <img
-        src="/projectLogo.png"
+        src="/torii.svg"
         alt="Tacho logo"
         className="w-8 h-8 object-contain"
       />

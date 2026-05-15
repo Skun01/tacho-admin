@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/form'
 import { ImageUpload } from '@/components/ui/image-upload'
 import { Input } from '@/components/ui/input'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import {
@@ -154,7 +155,8 @@ export function ShadowingTopicFormDialog(props: ShadowingTopicFormDialogProps) {
 
         <Form {...form}>
           <form className="flex min-h-0 flex-1 flex-col overflow-hidden" onSubmit={form.handleSubmit(handleSubmit)}>
-            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
+            <ScrollArea className="min-h-0 flex-1 pr-1">
+              <div className="space-y-4 pr-3">
             <FormField
               control={form.control}
               name="coverImageFile"
@@ -280,7 +282,8 @@ export function ShadowingTopicFormDialog(props: ShadowingTopicFormDialogProps) {
               )}
             />
 
-            </div>
+              </div>
+            </ScrollArea>
             <DialogFooter className="shrink-0 pt-4">
               <Button type="button" variant="outline" onClick={() => props.onOpenChange(false)}>
                 {SHADOWING_ADMIN_CONTENT.cancelLabel}

@@ -39,6 +39,7 @@ export const questionGroupSchema = z.object({
   instruction: z.string().trim().min(1, 'Hướng dẫn là bắt buộc').max(2000, 'Hướng dẫn tối đa 2000 ký tự'),
   passageText: z.string().trim().optional().or(z.literal('')),
   audioScript: z.string().trim().optional().or(z.literal('')),
+  audioFile: z.any().nullable().optional(),
   orderIndex: z.coerce.number().int().min(0, 'Thứ tự >= 0'),
   mondaiType: z.enum(['Mondai1', 'Mondai2', 'Mondai3', 'Mondai4', 'Mondai5']).optional().nullable(),
 })
@@ -50,8 +51,9 @@ export type QuestionGroupFormValues = z.infer<typeof questionGroupSchema>
 const optionSchema = z.object({
   id: z.string().optional(),
   label: z.enum(['A', 'B', 'C', 'D']),
-  text: z.string().trim().min(1, 'Nội dung đáp án là bắt buộc'),
+  text: z.string().trim().optional().or(z.literal('')),
   imageUrl: z.string().nullable().optional(),
+  imageFile: z.any().nullable().optional(),
   optionType: z.enum(['Text', 'Image', 'TextAndImage']),
   isCorrect: z.boolean(),
 })
@@ -59,6 +61,7 @@ const optionSchema = z.object({
 export const questionSchema = z.object({
   questionText: z.string().trim().min(1, 'Nội dung câu hỏi là bắt buộc').max(5000, 'Tối đa 5000 ký tự'),
   imageUrl: z.string().nullable().optional(),
+  imageFile: z.any().nullable().optional(),
   imageCaption: z.string().nullable().optional(),
   explanation: z.string().trim().optional().or(z.literal('')),
   score: z.coerce.number().int().min(1, 'Điểm phải lớn hơn 0'),

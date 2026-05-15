@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { cardSearchService } from '@/services/cardSearchService'
 import type { AdminDeckSuggestByTopicQuery } from '@/types/deckAdmin'
 
@@ -9,6 +9,7 @@ export function useAdminDeckSuggestByTopic(query: AdminDeckSuggestByTopicQuery, 
       const { data } = await cardSearchService.suggestByTopic(query)
       return data
     },
+    placeholderData: keepPreviousData,
     enabled,
   })
 }

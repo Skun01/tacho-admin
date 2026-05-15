@@ -33,6 +33,7 @@ import {
 } from '@/constants/jlptAdmin'
 import { useJlptAdminMutations } from '@/hooks/useJlptAdminMutations'
 import { useJlptExamDetail } from '@/hooks/useJlptAdminQueries'
+import { resourceService } from '@/services/resourceService'
 import type {
   AiGeneratedQuestionResponse,
   ChoukaiMondaiType,
@@ -159,9 +160,15 @@ export function AdminJlptExamDetailPage() {
 
   // ── Group handlers ───────────────────────────────────────────────────────
 
-  async function handleCreateGroup(sectionId: string, payload: { instruction: string; passageText?: string | null; audioScript?: string | null; orderIndex: number; mondaiType?: ChoukaiMondaiType | null }) {
+  async function handleCreateGroup(sectionId: string, payload: { instruction: string; passageText?: string | null; audioScript?: string | null; audioFile?: File | null; orderIndex: number; mondaiType?: ChoukaiMondaiType | null }) {
     try {
-      await createGroupMutation.mutateAsync({ examId: examId, sectionId, payload })
+      let audioUrl: string | null = null
+      if (payload.audioFile) {
+        const res = await resourceService.uploadAudio(payload.audioFile)
+        audioUrl = res.data.data.fileUrl
+      }
+      const { audioFile, ...rest } = payload
+      await createGroupMutation.mutateAsync({ examId: examId, sectionId, payload: { ...rest, audioUrl } })
       gooeyToast.success(JLPT_EXAM_CONTENT.groupCreatedSuccess)
       closeDialog()
     } catch (error) {
@@ -169,9 +176,15 @@ export function AdminJlptExamDetailPage() {
     }
   }
 
-  async function handleUpdateGroup(sectionId: string, groupId: string, payload: { instruction: string; passageText?: string | null; audioScript?: string | null; orderIndex: number; mondaiType?: ChoukaiMondaiType | null }) {
+  async function handleUpdateGroup(sectionId: string, groupId: string, payload: { instruction: string; passageText?: string | null; audioScript?: string | null; audioFile?: File | null; orderIndex: number; mondaiType?: ChoukaiMondaiType | null }) {
     try {
-      await updateGroupMutation.mutateAsync({ examId: examId, sectionId, groupId, payload })
+      let audioUrl: string | null | undefined = undefined
+      if (payload.audioFile) {
+        const res = await resourceService.uploadAudio(payload.audioFile)
+        audioUrl = res.data.data.fileUrl
+      }
+      const { audioFile, ...rest } = payload
+      await updateGroupMutation.mutateAsync({ examId: examId, sectionId, groupId, payload: { ...rest, ...(audioUrl !== undefined ? { audioUrl } : {}) } })
       gooeyToast.success(JLPT_EXAM_CONTENT.groupUpdatedSuccess)
       closeDialog()
     } catch (error) {
@@ -202,9 +215,26 @@ export function AdminJlptExamDetailPage() {
 
   async function handleCreateQuestion(groupId: string, values: QuestionFormValues) {
     try {
+      let imageUrl = values.imageUrl ?? null
+      if (values.imageFile) {
+        const res = await resourceService.uploadImage(values.imageFile)
+        imageUrl = res.data.data.fileUrl
+      }
+      const options = await Promise.all(
+        values.options.map(async (opt) => {
+          let optImageUrl = opt.imageUrl ?? null
+          if (opt.imageFile) {
+            const res = await resourceService.uploadImage(opt.imageFile)
+            optImageUrl = res.data.data.fileUrl
+          }
+          const { imageFile: _f, ...optRest } = opt
+          return { ...optRest, imageUrl: optImageUrl }
+        }),
+      )
+      const { imageFile, options: _opts, ...rest } = values
       await createQuestionMutation.mutateAsync({
         examId: examId,
-        payload: { groupId, ...values, explanation: values.explanation || null },
+        payload: { groupId, ...rest, imageUrl, options, explanation: rest.explanation || null },
       })
       gooeyToast.success(JLPT_EXAM_CONTENT.questionCreatedSuccess)
       closeDialog()
@@ -215,10 +245,27 @@ export function AdminJlptExamDetailPage() {
 
   async function handleUpdateQuestion(questionId: string, values: QuestionFormValues) {
     try {
+      let imageUrl = values.imageUrl ?? null
+      if (values.imageFile) {
+        const res = await resourceService.uploadImage(values.imageFile)
+        imageUrl = res.data.data.fileUrl
+      }
+      const options = await Promise.all(
+        values.options.map(async (opt) => {
+          let optImageUrl = opt.imageUrl ?? null
+          if (opt.imageFile) {
+            const res = await resourceService.uploadImage(opt.imageFile)
+            optImageUrl = res.data.data.fileUrl
+          }
+          const { imageFile: _f, ...optRest } = opt
+          return { ...optRest, imageUrl: optImageUrl }
+        }),
+      )
+      const { imageFile, options: _opts, ...rest } = values
       await updateQuestionMutation.mutateAsync({
         examId: examId,
         id: questionId,
-        payload: { ...values, explanation: values.explanation || null },
+        payload: { ...rest, imageUrl, options, explanation: rest.explanation || null },
       })
       gooeyToast.success(JLPT_EXAM_CONTENT.questionUpdatedSuccess)
       closeDialog()

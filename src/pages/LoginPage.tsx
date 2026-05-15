@@ -33,7 +33,7 @@ export function LoginPage() {
 
         {/* Top: Logo trên nền đỏ */}
         <div className="relative z-10 flex items-center gap-2.5">
-          <img src="/projectLogo.png" alt="Tacho logo" className="w-9 h-9 object-contain brightness-0 invert" />
+          <img src="/torii.svg" alt="Tacho logo" className="w-9 h-9 object-contain brightness-0 invert" />
           <span
             className="text-xl font-bold tracking-wide"
             style={{ color: 'var(--on-primary)' }}

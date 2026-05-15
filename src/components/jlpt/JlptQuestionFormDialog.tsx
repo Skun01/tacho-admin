@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PlusIcon, SparkleIcon, SpinnerGapIcon, TrashIcon } from '@phosphor-icons/react'
-import { useEffect, useState } from 'react'
+import { PlusIcon, SparkleIcon, SpinnerGapIcon, TrashIcon, UploadSimpleIcon } from '@phosphor-icons/react'
+import { useEffect, useRef, useState } from 'react'
 import { type Control, useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { JlptAiQuestionPickerDialog } from '@/components/jlpt/JlptAiQuestionPickerDialog'
 import { Button } from '@/components/ui/button'
@@ -21,9 +21,12 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { ImageUpload } from '@/components/ui/image-upload'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { JLPT_EXAM_CONTENT, OPTION_LABEL_LABELS } from '@/constants/jlptAdmin'
+import { resolveApiMediaUrl } from '@/lib/mediaUrl'
 import { questionSchema, type QuestionFormValues } from '@/lib/validations/jlptAdmin'
 import type {
   AiGeneratedData,
@@ -61,13 +64,14 @@ function buildCreateDefaults(orderIndex: number): QuestionFormValues {
   return {
     questionText: '',
     imageUrl: null,
+    imageFile: null,
     imageCaption: null,
     explanation: '',
     score: 1,
     orderIndex,
     options: [
-      { label: 'A', text: '', imageUrl: null, optionType: 'Text', isCorrect: true },
-      { label: 'B', text: '', imageUrl: null, optionType: 'Text', isCorrect: false },
+      { label: 'A', text: '', imageUrl: null, imageFile: null, optionType: 'Text', isCorrect: true },
+      { label: 'B', text: '', imageUrl: null, imageFile: null, optionType: 'Text', isCorrect: false },
     ],
   }
 }
@@ -76,6 +80,7 @@ function buildEditDefaults(q: QuestionGroupQuestionResponse): QuestionFormValues
   return {
     questionText: q.questionText,
     imageUrl: q.imageUrl,
+    imageFile: null,
     imageCaption: q.imageCaption,
     explanation: q.explanation ?? '',
     score: q.score,
@@ -85,6 +90,7 @@ function buildEditDefaults(q: QuestionGroupQuestionResponse): QuestionFormValues
       label: o.label,
       text: o.text,
       imageUrl: o.imageUrl,
+      imageFile: null,
       optionType: o.optionType,
       isCorrect: o.isCorrect,
     })),
@@ -97,6 +103,7 @@ function buildFromAi(parsed: AiGeneratedData, orderIndex: number): QuestionFormV
     label: (OPTION_LABELS[i] ?? 'A') as OptionLabel,
     text: o.text,
     imageUrl: null,
+    imageFile: null,
     optionType: 'Text' as const,
     isCorrect: o.isCorrect,
   }))
@@ -106,6 +113,7 @@ function buildFromAi(parsed: AiGeneratedData, orderIndex: number): QuestionFormV
   return {
     questionText: first.questionText,
     imageUrl: null,
+    imageFile: null,
     imageCaption: null,
     explanation: first.explanation ?? '',
     score: 1,
@@ -113,8 +121,8 @@ function buildFromAi(parsed: AiGeneratedData, orderIndex: number): QuestionFormV
     options: options.length >= 2
       ? options
       : [
-          { label: 'A', text: '', imageUrl: null, optionType: 'Text', isCorrect: true },
-          { label: 'B', text: '', imageUrl: null, optionType: 'Text', isCorrect: false },
+          { label: 'A', text: '', imageUrl: null, imageFile: null, optionType: 'Text', isCorrect: true },
+          { label: 'B', text: '', imageUrl: null, imageFile: null, optionType: 'Text', isCorrect: false },
         ],
   }
 }
@@ -133,6 +141,7 @@ function OptionCheckbox({ control, index, onSetCorrect }: { control: Control<Que
 export function JlptQuestionFormDialog(props: JlptQuestionFormDialogProps) {
   const isCreateMode = props.mode === 'create'
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [removeImage, setRemoveImage] = useState(false)
 
   const form = useForm<QuestionFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -143,6 +152,7 @@ export function JlptQuestionFormDialog(props: JlptQuestionFormDialogProps) {
   const { fields, append, remove, replace } = useFieldArray({ control: form.control, name: 'options' })
 
   useEffect(() => {
+    setRemoveImage(false)
     if (isCreateMode) {
       form.reset(buildCreateDefaults(props.nextOrderIndex))
       return
@@ -153,14 +163,24 @@ export function JlptQuestionFormDialog(props: JlptQuestionFormDialogProps) {
   const isSubmitting = props.isPending || form.formState.isSubmitting
 
   async function handleSubmit(values: QuestionFormValues) {
+    if (removeImage && !values.imageFile) {
+      values.imageUrl = null
+      values.imageCaption = null
+    } else if (!values.imageFile && !isCreateMode) {
+      values.imageUrl = props.question.imageUrl
+      values.imageCaption = values.imageCaption || props.question.imageCaption
+    }
     await props.onSubmit(values)
-    if (isCreateMode) form.reset(buildCreateDefaults(props.nextOrderIndex))
+    if (isCreateMode) {
+      form.reset(buildCreateDefaults(props.nextOrderIndex))
+      setRemoveImage(false)
+    }
   }
 
   function handleAddOption() {
     if (fields.length >= 4) return
     const nextLabel = OPTION_LABELS[fields.length]
-    append({ label: nextLabel, text: '', imageUrl: null, optionType: 'Text', isCorrect: false })
+    append({ label: nextLabel, text: '', imageUrl: null, imageFile: null, optionType: 'Text', isCorrect: false })
   }
 
   function handleSetCorrect(index: number) {
@@ -250,6 +270,50 @@ export function JlptQuestionFormDialog(props: JlptQuestionFormDialogProps) {
                   )}
                 />
 
+                <FormField
+                  control={form.control}
+                  name="imageFile"
+                  render={({ field }) => (
+                    <FormItem className="gap-1.5">
+                      <FormLabel>{JLPT_EXAM_CONTENT.imageFieldLabel}</FormLabel>
+                      <FormControl>
+                        <ImageUpload
+                          value={field.value ?? null}
+                          onChange={(file) => {
+                            field.onChange(file)
+                            if (file) setRemoveImage(false)
+                          }}
+                          onRemove={() => {
+                            field.onChange(null)
+                            setRemoveImage(true)
+                          }}
+                          defaultPreview={
+                            removeImage
+                              ? undefined
+                              : (!isCreateMode ? resolveApiMediaUrl(props.question.imageUrl) : undefined) ?? undefined
+                          }
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground">{JLPT_EXAM_CONTENT.imageFieldHint}</p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="imageCaption"
+                  render={({ field }) => (
+                    <FormItem className="gap-1.5">
+                      <FormLabel>{JLPT_EXAM_CONTENT.imageCaptionFieldLabel}</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ''} placeholder={JLPT_EXAM_CONTENT.imageCaptionFieldPlaceholder} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <h4 className="text-sm font-medium">{JLPT_EXAM_CONTENT.optionsHeading}</h4>
@@ -261,32 +325,86 @@ export function JlptQuestionFormDialog(props: JlptQuestionFormDialogProps) {
                     )}
                   </div>
                   <FormField control={form.control} name="options" render={() => <FormMessage />} />
-                  {fields.map((field, index) => (
-                    <div key={field.id} className="flex items-start gap-3 rounded-lg border p-3">
-                      <div className="flex flex-col items-center gap-2 pt-6">
-                        <span className="text-sm font-semibold">{OPTION_LABEL_LABELS[field.label as OptionLabel] ?? field.label}</span>
-                        <OptionCheckbox control={form.control} index={index} onSetCorrect={handleSetCorrect} />
-                      </div>
-                      <div className="flex-1 space-y-2">
-                        <FormField
-                          control={form.control}
-                          name={`options.${index}.text`}
-                          render={({ field: optField }) => (
-                            <FormItem className="gap-1">
-                              <FormLabel className="text-xs">{JLPT_EXAM_CONTENT.optionTextFieldLabel}</FormLabel>
-                              <FormControl><Input {...optField} placeholder={JLPT_EXAM_CONTENT.optionTextFieldPlaceholder} /></FormControl>
-                              <FormMessage />
-                            </FormItem>
+                  {fields.map((field, index) => {
+                    const optionType = form.watch(`options.${index}.optionType`)
+                    const showText = optionType === 'Text' || optionType === 'TextAndImage'
+                    const showImage = optionType === 'Image' || optionType === 'TextAndImage'
+
+                    return (
+                      <div key={field.id} className="flex items-start gap-3 rounded-lg border p-3">
+                        <div className="flex flex-col items-center gap-2 pt-6">
+                          <span className="text-sm font-semibold">{OPTION_LABEL_LABELS[field.label as OptionLabel] ?? field.label}</span>
+                          <OptionCheckbox control={form.control} index={index} onSetCorrect={handleSetCorrect} />
+                        </div>
+                        <div className="flex-1 space-y-2">
+                          <FormField
+                            control={form.control}
+                            name={`options.${index}.optionType`}
+                            render={({ field: optTypeField }) => (
+                              <FormItem className="gap-1">
+                                <FormLabel className="text-xs">{JLPT_EXAM_CONTENT.optionTypeFieldLabel}</FormLabel>
+                                <Select value={optTypeField.value} onValueChange={optTypeField.onChange}>
+                                  <FormControl>
+                                    <SelectTrigger className="h-8 text-xs">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="Text">{JLPT_EXAM_CONTENT.optionTypeText}</SelectItem>
+                                    <SelectItem value="Image">{JLPT_EXAM_CONTENT.optionTypeImage}</SelectItem>
+                                    <SelectItem value="TextAndImage">{JLPT_EXAM_CONTENT.optionTypeTextAndImage}</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {showText && (
+                            <FormField
+                              control={form.control}
+                              name={`options.${index}.text`}
+                              render={({ field: optField }) => (
+                                <FormItem className="gap-1">
+                                  <FormLabel className="text-xs">{JLPT_EXAM_CONTENT.optionTextFieldLabel}</FormLabel>
+                                  <FormControl><Input {...optField} placeholder={JLPT_EXAM_CONTENT.optionTextFieldPlaceholder} /></FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
                           )}
-                        />
+
+                          {showImage && (
+                            <FormField
+                              control={form.control}
+                              name={`options.${index}.imageFile`}
+                              render={({ field: imgField }) => (
+                                <FormItem className="gap-1">
+                                  <FormLabel className="text-xs">{JLPT_EXAM_CONTENT.optionImageLabel}</FormLabel>
+                                  <FormControl>
+                                    <ImageUpload
+                                      value={imgField.value ?? null}
+                                      onChange={(file) => imgField.onChange(file)}
+                                      onRemove={() => imgField.onChange(null)}
+                                      defaultPreview={
+                                        (!isCreateMode ? resolveApiMediaUrl(form.getValues(`options.${index}.imageUrl`)) : undefined) ?? undefined
+                                      }
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          )}
+                        </div>
+                        {fields.length > 2 && (
+                          <Button type="button" variant="ghost" size="icon" className="mt-6 h-8 w-8 shrink-0" onClick={() => remove(index)}>
+                            <TrashIcon size={14} />
+                          </Button>
+                        )}
                       </div>
-                      {fields.length > 2 && (
-                        <Button type="button" variant="ghost" size="icon" className="mt-6 h-8 w-8 shrink-0" onClick={() => remove(index)}>
-                          <TrashIcon size={14} />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
 

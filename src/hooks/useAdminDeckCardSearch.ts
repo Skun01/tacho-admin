@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { cardSearchService } from '@/services/cardSearchService'
 import type { AdminDeckSearchCardsQuery } from '@/types/deckAdmin'
 
@@ -9,6 +9,7 @@ export function useAdminDeckCardSearch(query: AdminDeckSearchCardsQuery, enabled
       const { data } = await cardSearchService.search(query)
       return data
     },
+    placeholderData: keepPreviousData,
     enabled,
   })
 }

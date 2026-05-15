@@ -1,12 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { SpinnerGapIcon } from '@phosphor-icons/react'
-import { useEffect } from 'react'
+import { SpinnerGapIcon, UploadSimpleIcon, TrashIcon } from '@phosphor-icons/react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -23,11 +22,10 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import {
-  CHOUKAI_MONDAI_TYPE_DESCRIPTIONS,
   CHOUKAI_MONDAI_TYPE_LABELS,
   JLPT_EXAM_CONTENT,
-  SECTION_TYPE_LABELS,
 } from '@/constants/jlptAdmin'
+import { resolveApiMediaUrl } from '@/lib/mediaUrl'
 import {
   questionGroupSchema,
   type QuestionGroupFormValues,
@@ -45,6 +43,7 @@ interface CreateProps {
     instruction: string
     passageText?: string | null
     audioScript?: string | null
+    audioFile?: File | null
     orderIndex: number
     mondaiType?: ChoukaiMondaiType | null
   }) => Promise<void>
@@ -61,6 +60,7 @@ interface EditProps {
     instruction: string
     passageText?: string | null
     audioScript?: string | null
+    audioFile?: File | null
     orderIndex: number
     mondaiType?: ChoukaiMondaiType | null
   }) => Promise<void>
@@ -69,7 +69,7 @@ interface EditProps {
 type JlptGroupFormDialogProps = CreateProps | EditProps
 
 function buildCreateDefaults(orderIndex: number): QuestionGroupFormValues {
-  return { instruction: '', passageText: '', audioScript: '', orderIndex, mondaiType: null }
+  return { instruction: '', passageText: '', audioScript: '', audioFile: null, orderIndex, mondaiType: null }
 }
 
 function buildEditDefaults(group: QuestionGroupResponse): QuestionGroupFormValues {
@@ -77,6 +77,7 @@ function buildEditDefaults(group: QuestionGroupResponse): QuestionGroupFormValue
     instruction: group.instruction,
     passageText: group.passageText ?? '',
     audioScript: group.audioScript ?? '',
+    audioFile: null,
     orderIndex: group.orderIndex,
     mondaiType: group.mondaiType,
   }
@@ -88,6 +89,9 @@ export function JlptQuestionGroupFormDialog(props: JlptGroupFormDialogProps) {
   const isDokkai = sectionType === 'Dokkai'
   const isChoukai = sectionType === 'Choukai'
 
+  const [removeAudio, setRemoveAudio] = useState(false)
+  const audioInputRef = useRef<HTMLInputElement>(null)
+
   const form = useForm<QuestionGroupFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(questionGroupSchema) as any,
@@ -95,6 +99,7 @@ export function JlptQuestionGroupFormDialog(props: JlptGroupFormDialogProps) {
   })
 
   useEffect(() => {
+    setRemoveAudio(false)
     if (isCreateMode) {
       form.reset(buildCreateDefaults(props.nextOrderIndex))
       return
@@ -109,26 +114,27 @@ export function JlptQuestionGroupFormDialog(props: JlptGroupFormDialogProps) {
       instruction: values.instruction.trim(),
       passageText: isDokkai ? (values.passageText?.trim() || null) : null,
       audioScript: isChoukai ? (values.audioScript?.trim() || null) : null,
+      audioFile: isChoukai ? (values.audioFile ?? null) : null,
       orderIndex: values.orderIndex,
       mondaiType: isChoukai ? (values.mondaiType ?? null) : null,
     })
-    if (isCreateMode) form.reset(buildCreateDefaults(props.nextOrderIndex))
+    if (isCreateMode) {
+      form.reset(buildCreateDefaults(props.nextOrderIndex))
+      setRemoveAudio(false)
+    }
   }
 
   const selectedMondai = useWatch({ control: form.control, name: 'mondaiType' })
+  const audioFile = useWatch({ control: form.control, name: 'audioFile' })
+
+  const existingAudioUrl = !isCreateMode ? props.group.audioUrl : null
+  const showExistingAudio = existingAudioUrl && !removeAudio && !audioFile
 
   return (
     <Dialog open={props.open} onOpenChange={props.onOpenChange}>
       <DialogContent className="flex max-h-[85vh] flex-col overflow-hidden sm:max-w-lg">
         <DialogHeader className="shrink-0">
           <DialogTitle>{isCreateMode ? JLPT_EXAM_CONTENT.createGroupTitle : JLPT_EXAM_CONTENT.editGroupTitle}</DialogTitle>
-          <DialogDescription>
-            {isCreateMode ? JLPT_EXAM_CONTENT.createGroupDescription : JLPT_EXAM_CONTENT.editGroupDescription}
-            {' '}
-            <span className="text-xs" style={{ color: 'var(--on-surface-variant)' }}>
-              (Section: {SECTION_TYPE_LABELS[sectionType]})
-            </span>
-          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -141,7 +147,6 @@ export function JlptQuestionGroupFormDialog(props: JlptGroupFormDialogProps) {
                   <FormItem className="gap-1.5">
                     <FormLabel>{JLPT_EXAM_CONTENT.instructionFieldLabel}</FormLabel>
                     <FormControl><Textarea {...field} placeholder={JLPT_EXAM_CONTENT.instructionFieldPlaceholder} rows={2} /></FormControl>
-                    <p className="text-xs" style={{ color: 'var(--on-surface-variant)' }}>{JLPT_EXAM_CONTENT.instructionFieldHint}</p>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -155,7 +160,6 @@ export function JlptQuestionGroupFormDialog(props: JlptGroupFormDialogProps) {
                     <FormItem className="gap-1.5">
                       <FormLabel>{JLPT_EXAM_CONTENT.passageTextFieldLabel}</FormLabel>
                       <FormControl><Textarea {...field} value={field.value ?? ''} placeholder={JLPT_EXAM_CONTENT.passageTextFieldPlaceholder} rows={5} /></FormControl>
-                      <p className="text-xs" style={{ color: 'var(--on-surface-variant)' }}>{JLPT_EXAM_CONTENT.passageTextFieldHint}</p>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -166,12 +170,84 @@ export function JlptQuestionGroupFormDialog(props: JlptGroupFormDialogProps) {
                 <>
                   <FormField
                     control={form.control}
+                    name="audioFile"
+                    render={({ field }) => (
+                      <FormItem className="gap-1.5">
+                        <FormLabel>{JLPT_EXAM_CONTENT.audioFileFieldLabel}</FormLabel>
+                        <FormControl>
+                          <div className="space-y-2">
+                            {showExistingAudio && (
+                              <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
+                                <audio controls src={resolveApiMediaUrl(existingAudioUrl) ?? undefined} className="h-8 flex-1" />
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon-xs"
+                                  onClick={() => {
+                                    setRemoveAudio(true)
+                                    field.onChange(null)
+                                  }}
+                                >
+                                  <TrashIcon size={14} />
+                                </Button>
+                              </div>
+                            )}
+
+                            {audioFile && (
+                              <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
+                                <span className="flex-1 truncate text-sm text-foreground">{audioFile.name}</span>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon-xs"
+                                  onClick={() => {
+                                    field.onChange(null)
+                                    if (audioInputRef.current) audioInputRef.current.value = ''
+                                  }}
+                                >
+                                  <TrashIcon size={14} />
+                                </Button>
+                              </div>
+                            )}
+
+                            {!showExistingAudio && !audioFile && (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => audioInputRef.current?.click()}
+                              >
+                                <UploadSimpleIcon size={14} />
+                                <span className="ml-1.5">Chọn file âm thanh</span>
+                              </Button>
+                            )}
+
+                            <input
+                              ref={audioInputRef}
+                              type="file"
+                              accept="audio/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0] ?? null
+                                field.onChange(file)
+                                if (file) setRemoveAudio(false)
+                              }}
+                            />
+                          </div>
+                        </FormControl>
+                        <p className="text-xs text-muted-foreground">{JLPT_EXAM_CONTENT.audioFileFieldHint}</p>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="audioScript"
                     render={({ field }) => (
                       <FormItem className="gap-1.5">
                         <FormLabel>{JLPT_EXAM_CONTENT.audioScriptFieldLabel}</FormLabel>
                         <FormControl><Textarea {...field} value={field.value ?? ''} placeholder={JLPT_EXAM_CONTENT.audioScriptFieldPlaceholder} rows={4} /></FormControl>
-                        <p className="text-xs" style={{ color: 'var(--on-surface-variant)' }}>{JLPT_EXAM_CONTENT.audioScriptFieldHint}</p>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -197,11 +273,6 @@ export function JlptQuestionGroupFormDialog(props: JlptGroupFormDialogProps) {
                             ))}
                           </SelectContent>
                         </Select>
-                        <p className="text-xs" style={{ color: 'var(--on-surface-variant)' }}>
-                          {selectedMondai
-                            ? CHOUKAI_MONDAI_TYPE_DESCRIPTIONS[selectedMondai]
-                            : JLPT_EXAM_CONTENT.mondaiTypeFieldHint}
-                        </p>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -216,7 +287,6 @@ export function JlptQuestionGroupFormDialog(props: JlptGroupFormDialogProps) {
                   <FormItem className="gap-1.5">
                     <FormLabel>{JLPT_EXAM_CONTENT.orderIndexFieldLabel}</FormLabel>
                     <FormControl><Input type="number" {...field} placeholder={JLPT_EXAM_CONTENT.orderIndexFieldPlaceholder} /></FormControl>
-                    <p className="text-xs" style={{ color: 'var(--on-surface-variant)' }}>{JLPT_EXAM_CONTENT.orderIndexFieldHint}</p>
                     <FormMessage />
                   </FormItem>
                 )}

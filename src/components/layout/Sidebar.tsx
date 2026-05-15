@@ -41,7 +41,7 @@ export function Sidebar() {
           {!isCollapsed && (
             <Link to="/dashboard" className="flex items-center gap-2">
               <img
-                src="/projectLogo.png"
+                src="/torii.svg"
                 alt="Tacho"
                 className="w-7 h-7 object-contain brightness-0 invert"
               />
