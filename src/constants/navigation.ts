@@ -14,6 +14,7 @@ import {
   ExamIcon,
   RobotIcon,
   ClipboardTextIcon,
+  ChatsIcon,
 } from '@phosphor-icons/react'
 
 export interface NavItem {
@@ -44,6 +45,7 @@ export const ADMIN_NAV_ITEMS: AdminNavEntry[] = [
     ],
   },
   { icon: MicrophoneIcon, label: 'Shadowing', href: '/admin/shadowing' },
+  { icon: ChatsIcon, label: 'Hội thoại', href: '/admin/conversation-scenarios' },
   {
     icon: ClipboardTextIcon,
     label: 'JLPT',
@@ -83,6 +85,7 @@ export const ADMIN_NAV_BREADCRUMB_MAP: Record<string, string> = {
   'admin/learning': 'Học tập',
   'admin/shadowing': 'Shadowing',
   'admin/shadowing/:id': 'Chủ đề Shadowing',
+  'admin/conversation-scenarios': 'Kịch bản hội thoại',
   'admin/jlpt/exams': 'Đề thi JLPT',
   'admin/jlpt/exams/:id': 'Chi tiết đề thi',
   'admin/jlpt/ai-questions': 'Câu hỏi AI',
